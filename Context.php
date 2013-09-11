@@ -1,8 +1,8 @@
 <?php
 
-namespace craft\session;
+namespace craft;
 
-class Mog extends \ArrayObject
+class Context extends \ArrayObject
 {
 
     /** @var array */
@@ -18,9 +18,6 @@ class Mog extends \ArrayObject
     public $server;
 
     /** @var array */
-    public $env;
-
-    /** @var array */
     public $headers;
 
     /** @var string */
@@ -28,9 +25,6 @@ class Mog extends \ArrayObject
 
     /** @var bool */
     public $local;
-
-    /** @var string */
-    public $lang = 'fr-FR';
 
     /** @var string */
     public $method = 'get';
@@ -69,7 +63,6 @@ class Mog extends \ArrayObject
         // advanced data
         $this->ip = $this->server['REMOTE_ADDR'];
         $this->local = in_array($this->ip, ['127.0.0.1', '::1']);
-        $this->lang = explode(',', $this->server['HTTP_ACCEPT_LANGUAGE'])[0];
         $this->method = $this->server['REQUEST_METHOD'];
         $this->async = isset($this->server['HTTP_X_REQUESTED_WITH']) and strtolower($this->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
         $this->sync = !$this->async;

@@ -2,23 +2,19 @@
 
 namespace craft;
 
-class View
+class Engine
 {
 
     /** @var array */
-    protected $_config = [
-        'dir' => null,
-        'vars' => []
-    ];
-
+    protected $_vars = [];
 
     /**
-     * Setup with config
-     * @param array $config
+     * Setup with inner vars
+     * @param array $vars
      */
-    public function __construct(array $config = [])
+    public function __construct(array $vars = [])
     {
-        $this->_config = $config + $this->_config;
+        $this->_vars = $vars + $this->_vars;
     }
 
     /**
@@ -28,7 +24,7 @@ class View
      */
     public function set($key, $value)
     {
-        $this->_config['vars'][$key] = $value;
+        $this->_vars[$key] = $value;
     }
 
     /**
@@ -44,6 +40,9 @@ class View
             'render' => 'template',
             'view' => null
         ] + $options;
+
+        // merge vars
+        $vars = $this->_vars + $vars;
 
         // dispatch to specific render method
         $method = 'render' . ucfirst($options['render']);

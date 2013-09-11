@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the Wicked package.
+ * This file is part of the Craft package.
  *
  * Copyright Aymeric Assier <aymeric.assier@gmail.com>
  *
@@ -12,7 +12,7 @@
  * Bootstrat : DO NOT CHANGE ANYTHING !!
  *
  * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-05-02
+ * @date 2013-09-11
  * @version 0.1
  */
 
@@ -89,56 +89,53 @@ function debug()
 
 /**
  * Session helper
- * @param $name
+ * @param      $key
  * @param null $value
- * @return mixed
+ * @return null
  */
-function session($name, $value = null)
+function session($key, $value = null)
 {
     if(is_null($value)){
-        return craft\session\Data::get($name);
+        return isset($_SESSION['craft.data'][$key]) ? $_SESSION['craft.data'][$key] : null;
     }
     else {
-        craft\session\Data::set($name, $value);
+        $_SESSION['craft.data'][$key] = $value;
     }
 }
 
 
 /**
  * Flash helper
- * @param $name
+ * @param      $key
  * @param null $value
- * @return string
+ * @return null
  */
-function flash($name, $value = null)
+function flash($key, $value = null)
 {
     if(is_null($value)){
-        return craft\session\Flash::get($name);
+        $message = isset($_SESSION['craft.flash'][$key]) ? $_SESSION['craft.flash'][$key] : null;
+        unset($_SESSION['craft.flash'][$key]);
+        return $message;
     }
     else {
-        craft\session\Flash::set($name, $value);
+        $_SESSION['craft.flash'][$key] = $value;
     }
 }
 
 
 /**
- * Log in and out
- * @param $prop
- * @return mixed
+ * Env/Config helper
+ * @param      $key
+ * @param null $value
+ * @return null
  */
-function auth($prop = null)
+function env($key, $value = null)
 {
-    switch($prop){
-        case 'logged':
-            return craft\session\Auth::logged();
-        case 'user':
-            return craft\session\Auth::user();
-        case 'rank':
-            return craft\session\Auth::rank();
-        case null:
-            return craft\session\Auth::logged();
-        default:
-            return null;
+    if(is_null($value)){
+        return isset($_SESSION['craft.env'][$key]) ? $_SESSION['craft.env'][$key] : null;
+    }
+    else {
+        $_SESSION['craft.env'][$key] = $value;
     }
 }
 
@@ -168,4 +165,31 @@ function hydrate(&$object, array $data, $force = false)
     foreach($data as $field => $value)
         if($force or (!$force and property_exists($object, $field)))
             $object->{$field} = $value;
+}
+
+
+/**
+ * Context helper
+ * @param null $key
+ * @param null $value
+ * @return \craft\Context
+ */
+function ctx($key = null, $value = null)
+{
+    static $ctx;
+    if(!$ctx){
+        $ctx = new craft\Context();
+    }
+
+    // bag set
+    if($key and !is_null($value)){
+        $ctx[$key] = $value;
+        return $ctx;
+    }
+    // bag get
+    elseif($key and is_null($value)){
+        return $ctx[$key];
+    }
+
+    return $ctx;
 }

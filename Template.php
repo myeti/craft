@@ -8,7 +8,7 @@ class Template
     /** @var string */
     protected $_file;
 
-    /** @var View */
+    /** @var Template */
     protected $_layout;
 
     /** @var array */
@@ -218,7 +218,7 @@ class Template
      */
     protected function asset($filename)
     {
-        return url('') . 'public/' . $filename;
+        return url() . 'public/' . $filename;
     }
 
 }

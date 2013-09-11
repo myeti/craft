@@ -2,8 +2,6 @@
 
 namespace craft;
 
-use craft\session\Auth;
-
 class App
 {
 
@@ -15,8 +13,8 @@ class App
     /** @var Builder */
     protected $_builder;
 
-    /** @var View */
-    protected $_view;
+    /** @var Engine */
+    protected $_engine;
 
     /**
      * Setup with components
@@ -24,11 +22,11 @@ class App
      * @param Builder $builder
      * @param View $view
      */
-    public function __construct(Router $router, Builder $builder = null, View $view = null)
+    public function __construct(Router $router, Builder $builder = null, Engine $engine = null)
     {
         $this->_router = $router;
         $this->_builder = $builder ?: new Builder();
-        $this->_view = $view ?: new View();
+        $this->_engine = $engine ?: new Engine();
     }
 
     /**
@@ -40,35 +38,41 @@ class App
         $query = $query ?: $_SERVER['QUERY_STRING'];
 
         // start process
-        $this->fire('start', ['query' => $query]);
+        $this->fire('start', ['query' => &$query]);
 
         // route
         $route = $this->_router->find($query);
-        $this->fire('route', ['route' => $route]);
+        $this->fire('route', ['route' => &$route]);
+
+        // env data
+        foreach($route->env as $key => $value){
+            env($key, $value);
+        }
 
         // 404
         if(!$route){
-            $this->fire(404, ['route' => $route]);
+            $this->fire(404, ['route' => &$route]);
         }
         else {
 
             // resolve
-            $stm = $this->_builder->resolve($route->target);
-            $this->fire('resolve', ['statement', $stm]);
+            $build = $this->_builder->resolve($route->target);
+            $this->fire('resolve', ['build' => &$build]);
 
             // 403
-            if(isset($stm->metadata['auth']) and $stm->metadata['auth'] < Auth::rank()){
-                $this->fire(403, ['statement', $stm]);
+            if(isset($build->metadata['auth']) and $build->metadata['auth'] < 0){
+                $this->fire(403, ['build' => &$build]);
             }
             else {
 
-                // build
-                $data = $this->_builder->call($stm->action, $route->args);
-                $this->fire('call', ['statement', $stm, 'data' => $data]);
+                // call
+                $data = $this->_builder->call($build->action, $route->args);
+                $this->fire('call', ['build' => &$build, 'data' => &$data]);
 
                 // render
-                $this->_view->render($data, $stm->metadata);
-                $this->fire('render', ['statement', $stm, 'data' => $data]);
+                $this->_engine->render($data, $build->metadata);
+                $this->fire('render', ['build' => &$build, 'data' => &$data]);
+
             }
 
         }

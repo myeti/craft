@@ -29,23 +29,34 @@ class Router
             // make pattern
             $pattern = str_replace('/', '\/', $prepattern);
             $pattern = preg_replace('/(:([a-z_]+))/', '(?<${1}>[^/]+)', $pattern);
+            $pattern = preg_replace('/(\+([a-z_]+))/', '(?<env_${1}>[^/]+)', $pattern);
             $pattern = '/' . $pattern . '/';
 
             // compare
-            if(preg_match($pattern, $query, $out)){
+            if(preg_match($pattern, $query, $args)){
 
                 // clean args
-                foreach($out as $key => $value){
+                $env = [];
+                foreach($args as $key => $value){
+
+                    // clear int
                     if(is_int($key)){
-                        unset($out[$key]);
+                        unset($args[$key]);
                     }
+                    // clear env
+                    if(substr($key, 0, 4) == 'env_'){
+                        $env[substr($key, 4)] = $args[$key];
+                        unset($args[$key]);
+                    }
+
                 }
 
                 // make route
                 $route = new \stdClass();
                 $route->query = $query;
                 $route->target = $target;
-                $route->args = $out;
+                $route->args = $args;
+                $route->env = $env;
 
                 return $route;
             }
