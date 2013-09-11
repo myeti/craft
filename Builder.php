@@ -27,6 +27,9 @@ class Builder
      */
     public function resolve($target)
     {
+        // init
+        $parentRef = null;
+
         // function
         if($target instanceof \Closure or (is_string($target) and function_exists($target)))
         {
@@ -48,6 +51,9 @@ class Builder
             // apply reflection
             $ref = new \ReflectionMethod($target[0], $target[1]);
             $closure = $ref->isStatic() ? $ref->getClosure() : $ref->getClosure(new $target[0]());
+
+            // parent reflection
+            $parentRef = new \ReflectionClass($target[0]);
         }
         else {
             throw new \InvalidArgumentException;
@@ -56,8 +62,19 @@ class Builder
         // get metadata
         preg_match_all('/@([a-zA-Z0-9]+) ([a-zA-Z0-9._\-\/ ]+)/', $ref->getDocComment(), $out, PREG_SET_ORDER);
         $metadata = [];
-        foreach($out as $match)
+        foreach($out as $match){
             $metadata[$match[1]] = $match[2];
+        }
+
+        // merge with parent metadata
+        if($parentRef and $parentRef instanceof \ReflectionClass){
+            preg_match_all('/@([a-zA-Z0-9]+) ([a-zA-Z0-9._\-\/ ]+)/', $parentRef->getDocComment(), $out, PREG_SET_ORDER);
+            foreach($out as $match){
+                if(!isset($metadata[$match[1]])){
+                    $metadata[$match[1]] = $match[2];
+                }
+            }
+        }
 
         // make statement
         $stm = new \stdClass();
