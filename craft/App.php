@@ -139,13 +139,4 @@ class App
         echo $view;
     }
 
-
-    /**
-     * Thank you :)
-     */
-    public function __toString()
-    {
-        return 'Handcrafted with love :)';
-    }
-
 }
