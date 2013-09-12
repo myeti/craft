@@ -1,3 +1,3 @@
-<?php self::layout('views/layout.php') ?>
+<?php self::layout('view/layout.php') ?>
 
 <h1>Hello human :)</h1>

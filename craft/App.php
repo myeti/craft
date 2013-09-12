@@ -61,6 +61,7 @@ class App
     {
         // get query
         $query = $query ?: $_SERVER['QUERY_STRING'];
+        $query = '/' . ltrim($query, '/');
 
         // start process
         $this->fire('start', ['query' => &$query]);
@@ -69,15 +70,15 @@ class App
         $route = $this->_router->find($query);
         $this->fire('route', ['route' => &$route]);
 
-        // env data
-        foreach($route->env as $key => $value){
-            env($key, $value);
-        }
-
         // 404
         if(!$route){
             $this->fire(404, ['route' => &$route]);
             return false;
+        }
+
+        // env data
+        foreach($route->env as $key => $value){
+            env($key, $value);
         }
 
         return $this->_resolve($route);
@@ -119,7 +120,7 @@ class App
 
         // need rendering ?
         if(!empty($build->metadata['view'])){
-            $this->_render($data, $build->metadata);
+            $this->_render((array)$data, $build->metadata);
         }
 
         return $data;
@@ -131,12 +132,12 @@ class App
      * @param       $data
      * @param array $metadata
      */
-    protected function _render($data, array $metadata = [])
+    protected function _render(array $data, array $metadata = [])
     {
         // create view
         $view = new View($metadata['view'], $data);
         $this->fire('render', ['view' => &$view, 'data' => &$data, 'metadata' => &$metadata]);
-        echo $view;
+        echo $view->display();
     }
 
 }

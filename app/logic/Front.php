@@ -7,7 +7,7 @@ class Front
 
     /**
      * Landing page
-     * @view views/front.index.php
+     * @view view/front.index.php
      */
     public function index()
     {
@@ -16,7 +16,7 @@ class Front
 
     /**
      * About page
-     * @view views/front.index.php
+     * @view view/front.index.php
      */
     public function about()
     {

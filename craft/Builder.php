@@ -49,7 +49,7 @@ class Builder
             $closure = $target instanceof \Closure ? $target : $ref->getClosure();
         }
         // method in array
-        elseif(($is_string = is_string($target) and strpos('::', $target)) or (is_array($target) and count($target) === 2)){
+        elseif(($is_string = is_string($target) and strpos($target, '::')) or (is_array($target) and count($target) === 2)){
 
             // resolve class::method
             if($is_string){

@@ -173,16 +173,6 @@ class View
 
 
     /**
-     * Shortcut : display
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->display();
-    }
-
-
-    /**
      * Meta markup
      * @return string
      */
