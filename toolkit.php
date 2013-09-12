@@ -7,12 +7,8 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  *
- * - - - - - - - - - - - - - -
- *
- * Bootstrat : DO NOT CHANGE ANYTHING !!
- *
  * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-09-11
+ * @date 2013-09-12
  * @version 0.1
  */
 
@@ -38,6 +34,8 @@ ini_set("session.cookie_lifetime", 604800);
 ini_set("session.gc_maxlifetime", 604800);
 session_set_cookie_params(604800);
 session_start();
+
+craft\Auth::init();
 
 
 /*

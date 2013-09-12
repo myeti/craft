@@ -1,7 +1,6 @@
 <?php
-
 /**
- * This file is part of the Wicked package.
+ * This file is part of the Craft package.
  *
  * Copyright Aymeric Assier <aymeric.assier@gmail.com>
  *
@@ -9,7 +8,7 @@
  * file that was distributed with this source code.
  *
  * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-05-02
+ * @date 2013-09-12
  * @version 0.1
  */
 namespace craft;
