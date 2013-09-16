@@ -132,12 +132,12 @@ Du côté du layout, il faut spécifier la méthode `self::content()` à l'endro
 
 ## Le contexte
 
-Les données globales type POST, SERVER, adresse ip, device, etc... sont accesible via la fonction `ctx()` :
+Les données globales type POST, SERVER, adresse ip, device, etc... sont accesible grâce au `mog()` (Kupo !) :
 
 ```php
-ip = ctx()->ip;
-$referer = ctx()->server['HTTP_REFERER'];
-$ajax = ctx()->async;
+ip = mog()->ip;
+$referer = mog()->server['HTTP_REFERER'];
+$ajax = mog()->async;
 ```
 
 Voir la classe pour plus de détails.

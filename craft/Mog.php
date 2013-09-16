@@ -13,7 +13,7 @@
  */
 namespace craft;
 
-class Context extends \ArrayObject
+class Mog extends \ArrayObject
 {
 
     /** @var array */
@@ -86,6 +86,27 @@ class Context extends \ArrayObject
 
         // stopwatch
         $this->start = microtime(true);
+    }
+
+
+    /**
+     * Easter Egg, Kupo !
+     * @return string
+     */
+    public function __toString()
+    {
+        $dialog = [
+            'Kupo ?!',
+            'I\'m hungry...',
+            'May I help you ?',
+            'It\'s dark in here...',
+            'I haven\'t received any mail lately, Kupo.',
+            'It\'s dangerous outside ! Kupo !',
+            'Don\'t call me if you don\'t need me, Kupo !',
+            'What do you want to do, Kupo ?'
+        ];
+
+        return 'o-&#949;(:o) ' . $dialog[array_rand($dialog)];
     }
 
 }

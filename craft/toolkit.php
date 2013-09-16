@@ -172,11 +172,11 @@ function hydrate(&$object, array $data, $force = false)
  * @param null $value
  * @return \craft\Context
  */
-function ctx($key = null, $value = null)
+function mog($key = null, $value = null)
 {
     static $ctx;
     if(!$ctx){
-        $ctx = new craft\Context();
+        $ctx = new craft\Mog();
     }
 
     // bag set
