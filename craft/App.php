@@ -60,11 +60,7 @@ class App
     protected function _route($query)
     {
         // get query
-        $query = $query ?: $_SERVER['QUERY_STRING'];
         $query = '/' . ltrim($query, '/');
-
-        // start process
-        $this->fire('start', ['query' => &$query]);
 
         // route
         $route = $this->_router->find($query);
