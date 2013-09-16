@@ -31,7 +31,7 @@ class Router
     /**
      * Pattern matching
      * @param $query
-     * @return bool|\stdClass
+     * @return bool|Route
      */
     public function find($query)
     {
@@ -63,7 +63,7 @@ class Router
                 }
 
                 // make route
-                $route = new \stdClass();
+                $route = new Route();
                 $route->query = $query;
                 $route->target = $target;
                 $route->args = $args;

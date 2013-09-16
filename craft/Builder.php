@@ -34,7 +34,7 @@ class Builder
      * Turn target into \Closure and get metadata
      * @param $target
      * @throws \InvalidArgumentException
-     * @return bool|\stdClass
+     * @return bool|Build
      */
     public function resolve($target)
     {
@@ -88,11 +88,11 @@ class Builder
         }
 
         // make statement
-        $stm = new \stdClass();
-        $stm->action = $closure;
-        $stm->metadata = $metadata;
+        $build = new Build();
+        $build->action = $closure;
+        $build->metadata = $metadata;
 
-        return $stm;
+        return $build;
     }
 
     /**

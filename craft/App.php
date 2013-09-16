@@ -87,10 +87,10 @@ class App
 
     /**
      * Step 2 : action resolving
-     * @param \stdClass $route
+     * @param Route $route
      * @return bool|mixed
      */
-    protected function _resolve(\stdClass $route)
+    protected function _resolve(Route $route)
     {
         // resolve
         $build = $this->_builder->resolve($route->target);
@@ -108,11 +108,11 @@ class App
 
     /**
      * Step 3 : action calling
-     * @param \stdClass $build
+     * @param Build $build
      * @param array     $args
      * @return mixed
      */
-    protected function _call(\stdClass $build, array $args = [])
+    protected function _call(Build $build, array $args = [])
     {
         // call
         $data = $this->_builder->call($build->action, $args);
