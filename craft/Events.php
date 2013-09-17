@@ -26,7 +26,7 @@ trait Events
      */
     public function on($name, \Closure $callback)
     {
-        // create event
+        // create event repository
         if(!isset($this->_events[$name])){
             $this->_events[$name] = [];
         }
@@ -43,8 +43,9 @@ trait Events
     public function fire($name, array $args = [])
     {
         // no callbacks
-        if(!isset($this->_events[$name]))
+        if(!isset($this->_events[$name])) {
             return;
+        }
 
         // $this as the first arg
         $ref = &$this;

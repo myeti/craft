@@ -8,4 +8,4 @@ $router = new craft\Router([
 ]);
 
 $app = new craft\App($router);
-$app->process();
+$app->handle();

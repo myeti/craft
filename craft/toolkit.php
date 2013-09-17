@@ -17,7 +17,7 @@
  */
 require 'Loader.php';
 spl_autoload_register('craft\Loader::load');
-craft\Loader::vendor('craft', dirname(__FILE__));
+craft\Loader::vendor('craft', __DIR__);
 craft\Loader::vendor('my', dirname($_SERVER['SCRIPT_FILENAME']));
 
 /*
@@ -195,7 +195,7 @@ function mog($key = null, $value = null)
 
 /**
  * Auth helper : read only
- * @return stdClass
+ * @return \stdClass
  */
 function auth()
 {
@@ -204,7 +204,7 @@ function auth()
         $std = new \stdClass();
     }
 
-    // update date
+    // update data
     $std->logged = craft\Auth::logged();
     $std->rank = craft\Auth::rank();
     $std->user = craft\Auth::user();

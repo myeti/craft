@@ -90,7 +90,7 @@ class Mog extends \ArrayObject
 
 
     /**
-     * Easter Egg, Kupo !
+     * Kupo !
      * @return string
      */
     public function __toString()

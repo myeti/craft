@@ -24,6 +24,7 @@ class App
     /** @var Builder */
     protected $_builder;
 
+
     /**
      * Setup with components
      * @param Router $router
@@ -35,10 +36,11 @@ class App
         $this->_builder = $builder ?: new Builder();
     }
 
+
     /**
      * Main process
      */
-    public function process($query = null)
+    public function handle($query = null)
     {
         // resolve query
         $query = $query ?: $_SERVER['QUERY_STRING'];
@@ -93,7 +95,7 @@ class App
         $this->fire('resolve', ['build' => &$build]);
 
         // 403
-        if(isset($build->metadata['auth']) and $build->metadata['auth'] < Auth::rank()){
+        if(isset($build->metadata['auth']) and (int)$build->metadata['auth'] < Auth::rank()){
             $this->fire(403, ['build' => &$build]);
             return false;
         }
