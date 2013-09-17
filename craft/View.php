@@ -28,6 +28,9 @@ class View
     /** @var array */
     protected $_slots = [];
 
+    /** @var array */
+    protected static $_globalVars = [];
+
 
     /**
      * @param $file
@@ -152,6 +155,7 @@ class View
             return $content;
     }
 
+
     /**
      * Compile and return content
      * @return string
@@ -162,7 +166,7 @@ class View
         ob_start();
 
         // extract vars
-        extract($this->_vars);
+        extract($this->_vars + static::$_globalVars);
 
         // import view
         require $this->_file;
@@ -212,6 +216,7 @@ class View
         return $str . "\n";
     }
 
+
     /**
      * Asset public file
      * @param $filename
@@ -220,6 +225,16 @@ class View
     protected function asset($filename)
     {
         return url() . 'public/' . $filename;
+    }
+
+
+    /**
+     * Add general vars
+     * @param $vars array
+     */
+    public static function vars(array $vars)
+    {
+        static::$_globalVars = $vars + static::$_globalVars;
     }
 
 }
