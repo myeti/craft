@@ -1,13 +1,55 @@
-# Craft Framework
+# Craft Framework : simple, précis, efficace.
 
-Simple, précis, efficace.
+## Le cadre
 
+Craft est un ensemble de classes simples et légères permettant de monter vos webapps.
+Le framework n'impose aucune structure de dossier particulière, cependant il est recommandé de garder un ensemble cohérent
+et cloisonné entre la logique (les actions) et le rendu (les vues) :
+
+```
+/craft
+/app
+    /logic
+        Front.php
+    /view
+        layout.php
+        front.index.php
+        front.about.php
+    /public
+        /css
+        /js
+        /img
+    index.php
+    .htaccess
+```
+
+Le point d'entrée de votre application est le fichier `index.php`. pour commencer, il est nécessaire d'importer le toolkit,
+donnant accès à l'autoloader et à la librairie :
+
+```php
+# index.php
+require '../craft/toolkit.php';
+```
+
+Craft utilise les namespaces pour trouver les classes internes (vendor `craft`) ainsi que vos classes (vendor `my`).
+Ainsi, pour la classe `app/logic/Front.php`, le namespace sera : `my\logic` :
+
+```php
+$front = new my\logic\Front();
+```
+
+Idem pour les classes internes :
+
+```php
+$router = new craft\Router();
+```
 
 ## Le routing
 
 La définition des règles de routage se fait de la manière suivante : une url pour une action.
 
 ```php
+# index.php
 $router = new craft\Router([
     '/' =>      'my\logic\Front::index',
     '/about' => 'my\logic\Front::about'
@@ -22,6 +64,7 @@ $app->process();
 Ils existent 2 type de paramètres, les arguments `:` et les variables d'environnement `+` :
 
 ```php
+# index.php
 $router = new craft\Router([
     '/+lang/about' =>       'my\logic\Front::about',
     '/+lang/page/:id' =>    'my\logic\Front::page',
@@ -41,23 +84,22 @@ Le routeur accepte différents types d'actions :
 - le nom d'une fonction : `my_front_index`
 - une fonction anonyme : `function(){ echo 'Hello :)'; }`
 
-### 404
-
 Si aucune règle ne match l'url, un évenement 404 est déclenché.
 
 
 ## Les actions
 
-Afin de laisser une plus grande liberté aux développeurs, les contrôleurs n'étendent d'aucune classes de `craft` :
+Afin de laisser une plus grande liberté aux développeurs, les contrôleurs n'étendent d'aucune classes de Craft :
 
 ```php
+# logic/Front.php
 namespace my\logic;
 
 class Front
 {
 
     /**
-     * @view views/front.index.php
+     * @view view/front.index.php
      */
     public function index()
     {
@@ -65,7 +107,7 @@ class Front
     }
 
     /**
-     * @view views/front.about.php
+     * @view view/front.about.php
      */
     public function about()
     {
@@ -87,7 +129,7 @@ Restriction d'utilisateur : `@auth 5`. Ici 5 correspond au rang du l'utilisateur
 ### Les valeurs de retour
 
 Les données retournées par les actions sous forme de tableau seront transmis à la vue (si elle est définie) pour l'affichage.
-Dans notre cas, `['author' => 'Babor Lelefan']` sera accessible par la variable `$author` dans la vue `views/front.about.php`.
+Dans notre cas, `['author' => 'Babor Lelefan']` sera accessible par la variable `$author` dans la vue `view/front.about.php`.
 
 
 ## Les vues
@@ -95,8 +137,8 @@ Dans notre cas, `['author' => 'Babor Lelefan']` sera accessible par la variable 
 Craft propose un système de templating simple, sans syntaxe particulière :
 
 ```php
-# views/front.about.php
-<?php self::layout('views/layout.php') ?>
+# view/front.about.php
+<?php self::layout('view/layout.php') ?>
 <h1>Webapp handcrafted by <?= $author ?></h1>
 ```
 
@@ -105,10 +147,10 @@ La variable `$author` correspond à la donnée retournée par l'action `my\logic
 ### Le layout
 
 Afin de subvenir au besoin d'imbriquation des templates, il est possible de définir le layout d'une vue grâce à la méthode `self::layout()`.
-Du côté du layout, il faut spécifier la méthode `self::content()` à l'endroit où l'en souhaite afficher le template :
+Du côté du layout, il faut spécifier la méthode `self::content()` à l'endroit où l'on souhaite afficher le template :
 
 ```php
-# views/layout.php
+# view/layout.php
 <!doctype html>
 <html>
 <head>
@@ -127,7 +169,7 @@ Du côté du layout, il faut spécifier la méthode `self::content()` à l'endro
 
 ### Helpers
 
-3 helpers sont disponibles dans l'exemples ci-dessus : le `css` et `js` qui permet d'affichir une balise css ou js et le `meta` qui permet de gerer le viewport et l'encodage.
+3 helpers sont disponibles dans l'exemples ci-dessus : `css` et `js` qui permettent d'affichir une balise css ou js et `meta` qui permet de gérer le viewport et l'encodage.
 
 
 ## Le contexte
@@ -153,7 +195,7 @@ $foo = session('foo');
 
 ### Les messages flash
 
-L'utilisation des messages flash se fait de la même manière qu'avec la fonction `session()`, attention cependant, la récupération d'un message le consomme !
+L'utilisation des messages flash se fait de la même manière qu'avec la fonction `session()`. Attention : la récupération d'un message le consomme !
 
 ```php
 flash('success', 'Yeah !');
@@ -163,7 +205,7 @@ $another = flash('success');    # retourne null
 
 ### Les redirections
 
-Il est possible de rediriger vers une url spécifique grâce à : `go('somewhere/please')` (renvoi vers `www.yourapp.com/somwhere/please`).
+Il est possible de rediriger vers une url spécifique grâce à : `go('somewhere/please')` (renvoi vers `www.yourapp.com/somewhere/please`).
 
 ### L'authentification
 
@@ -177,17 +219,25 @@ craft\Auth::login(5, $user);
 craft\Auth::logout();
 
 # get data
-$isLOgged = craft\Auth::logged();
+$isLogged = craft\Auth::logged();
 $rank = craft\Auth::rank();
 $user = craft\Auth::user();
 ```
 
+Un helper permet d'accéder au données d'authentification plus facilement (principalement depuis la vue) :
+
+```php
+$isLogged = auth()->logged;
+$rank = auth()->rank;
+$user = auth()->user;
+```
 
 ## Les événements
 
 Durant le processus d'une application Craft, plusieurs évenements sont déclenchés à certaines étapes clés afin de permettre au développeur de modifier le comportement du framework.
 
 ```php
+# index.php
 $app = new App($router);
 
 $app->on('call', function($self, $build, $data){
@@ -214,5 +264,7 @@ Voici la liste des évenements propres à Craft :
 - `404` : aucune règle ne match l'url
 - `403` : l'utilisateur n'a pas le rang nécessaire
 
+
+## Enjoy :)
 
 *version de la doc : 0.1, le 16.09.13*
