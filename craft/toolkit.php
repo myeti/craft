@@ -174,20 +174,35 @@ function hydrate(&$object, array $data, $force = false)
  */
 function mog($key = null, $value = null)
 {
-    static $ctx;
-    if(!$ctx){
-        $ctx = new craft\Mog();
+    static $mog;
+    if(!$mog){
+        $mog = new craft\Mog();
     }
 
     // bag set
     if($key and !is_null($value)){
-        $ctx[$key] = $value;
-        return $ctx;
+        $mog[$key] = $value;
+        return $mog;
     }
     // bag get
     elseif($key and is_null($value)){
-        return $ctx[$key];
+        return $mog[$key];
     }
 
-    return $ctx;
+    return $mog;
+}
+
+
+/**
+ * Auth helper : read only
+ * @return stdClass
+ */
+function auth()
+{
+    $std = new \stdClass();
+    $std->logged = craft\Auth::logged();
+    $std->rank = craft\Auth::rank();
+    $std->user = craft\Auth::user();
+
+    return $std;
 }
