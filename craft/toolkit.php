@@ -199,7 +199,12 @@ function mog($key = null, $value = null)
  */
 function auth()
 {
-    $std = new \stdClass();
+    static $std;
+    if(!$std){
+        $std = new \stdClass();
+    }
+
+    // update date
     $std->logged = craft\Auth::logged();
     $std->rank = craft\Auth::rank();
     $std->user = craft\Auth::user();
