@@ -16,11 +16,11 @@ class Front
 
     /**
      * About page
-     * @view view/front.index.php
+     * @view view/front.about.php
      */
     public function about()
     {
-        return ['author' => 'Aymeric Assier'];
+        return ['author' => 'Babor Lelefan'];
     }
 
 }

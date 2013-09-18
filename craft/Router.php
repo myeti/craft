@@ -41,7 +41,7 @@ class Router
             $pattern = str_replace('/', '\/', $prepattern);
             $pattern = preg_replace('/(:([a-z_]+))/', '(?<${1}>[^/]+)', $pattern);
             $pattern = preg_replace('/(\+([a-z_]+))/', '(?<env_${1}>[^/]+)', $pattern);
-            $pattern = '/' . $pattern . '/';
+            $pattern = '/^' . $pattern . '$/';
 
             // compare
             if(preg_match($pattern, $query, $args)){

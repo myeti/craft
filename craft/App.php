@@ -43,7 +43,11 @@ class App
     public function handle($query = null)
     {
         // resolve query
-        $query = $query ?: $_SERVER['QUERY_STRING'];
+        if(!$query) {
+            $query = isset($_SERVER['PATH_INFO'])
+                ? $_SERVER['PATH_INFO']
+                : '/';
+        }
 
         // start process
         $this->fire('start', ['query' => &$query]);
