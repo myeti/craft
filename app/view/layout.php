@@ -1,8 +1,10 @@
 <!doctype html>
 <html>
 <head>
-    <title>My Crafted App !</title>
+    <title>Your App</title>
     <?= self::meta(); ?>
+    <?= self::css('public/css/layout'); ?>
+    <?= self::css('public/css/content'); ?>
 </head>
 <body>
 

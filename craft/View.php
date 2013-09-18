@@ -196,8 +196,8 @@ class View
     protected function css()
     {
         $str = '';
-        foreach(func_get_vars() as $file)
-            $str .= "\n\t" . '<link type="text/css" media="screen" href="' . static::asset('css/' . $file . '.css') . '" rel="stylesheet" />';
+        foreach(func_get_args() as $file)
+            $str .= "\n\t" . '<link type="text/css" media="screen" href="' . static::asset($file . '.css') . '" rel="stylesheet" />';
 
         return $str . "\n";
     }
@@ -210,8 +210,8 @@ class View
     protected function js()
     {
         $str = '';
-        foreach(func_get_vars() as $file)
-            $str .= "\n\t" . '<script type="text/javascript" src="' . static::asset('js/' . $file . '.js') . '"></script>';
+        foreach(func_get_args() as $file)
+            $str .= "\n\t" . '<script type="text/javascript" src="' . static::asset($file . '.js') . '"></script>';
 
         return $str . "\n";
     }
@@ -224,7 +224,7 @@ class View
      */
     protected function asset($filename)
     {
-        return url() . 'public/' . $filename;
+        return url() . $filename;
     }
 
 

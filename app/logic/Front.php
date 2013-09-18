@@ -11,16 +11,17 @@ class Front
      */
     public function index()
     {
-
+        go('/welcome');
     }
 
+
     /**
-     * About page
-     * @view view/front.about.php
+     * Hey, welcome !
+     * @view view/front.welcome.php
      */
-    public function about()
+    public function welcome()
     {
-        return ['author' => 'Babor Lelefan'];
+
     }
 
 }
