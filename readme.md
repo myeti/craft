@@ -244,7 +244,7 @@ Durant le processus d'une application Craft, plusieurs évenements sont déclenc
 
 ```php
 # index.php
-$app = new App($router);
+$app = new craft\App($router);
 
 $app->on('call', function($self, $build, $data){
 
