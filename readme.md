@@ -1,4 +1,4 @@
-# Craft Framework : simple, précis, efficace.
+# Craft : simple, précis, efficace.
 
 ## Le cadre
 
