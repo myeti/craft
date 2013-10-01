@@ -121,7 +121,7 @@ class App
         $this->fire('call', ['build' => &$build, 'data' => &$data]);
 
         // need rendering ?
-        if(!empty($build->metadata['view'])){
+        if(!empty($build->metadata['render'])){
             $this->_render((array)$data, $build->metadata);
         }
 
@@ -130,15 +130,15 @@ class App
 
 
     /**
-     * Step 4 : view rendering (optional)
+     * Step 4 : views rendering (optional)
      * @param       $data
      * @param array $metadata
      */
     protected function _render(array $data, array $metadata = [])
     {
-        // create view
-        $view = new View($metadata['view'], $data);
-        $this->fire('render', ['view' => &$view, 'data' => &$data, 'metadata' => &$metadata]);
+        // create views
+        $view = new View($metadata['render'], $data);
+        $this->fire('render', ['views' => &$view, 'data' => &$data, 'metadata' => &$metadata]);
         echo $view->display();
     }
 

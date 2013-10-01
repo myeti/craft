@@ -14,12 +14,12 @@ $router = new craft\Router([
 $app = new craft\App($router);
 
 // listen 404 event
-$app->on(404, function () {
+$app->on(404, function() {
     go('/404');
 });
 
 // listen 403 event
-$app->on(403, function () {
+$app->on(403, function() {
     go('/403');
 });
 

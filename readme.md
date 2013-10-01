@@ -11,7 +11,7 @@ et cloisonné entre la logique (les actions) et le rendu (les vues) :
 /app
     /logic
         Front.php
-    /view
+    /views
         layout.php
         front.index.php
         front.about.php
@@ -23,7 +23,7 @@ et cloisonné entre la logique (les actions) et le rendu (les vues) :
     .htaccess
 ```
 
-Le point d'entrée de votre application est le fichier `index.php`. pour commencer, il est nécessaire d'importer le toolkit,
+Le point d'entrée de votre application est le fichier `index.php`. Pour commencer, il est nécessaire d'importer le toolkit,
 donnant accès à l'autoloader et à la librairie :
 
 ```php
@@ -31,14 +31,14 @@ donnant accès à l'autoloader et à la librairie :
 require '../craft/toolkit.php';
 ```
 
-Craft utilise les namespaces pour trouver les classes internes (vendor `craft`) ainsi que vos classes (vendor `my`).
-Ainsi, pour la classe `app/logic/Front.php`, le namespace sera : `my\logic` :
+Craft utilise les namespaces pour charger les classes core (vendor `craft`) ainsi que vos classes (vendor `my`).
+Ainsi, pour la classe `app/logic/Front.php`, le namespace est : `my\logic` :
 
 ```php
 $front = new my\logic\Front();
 ```
 
-Idem pour les classes internes :
+Idem pour les classes core :
 
 ```php
 $router = new craft\Router();
@@ -56,7 +56,7 @@ $router = new craft\Router([
 ]);
 
 $app = new craft\App($router);
-$app->process();
+$app->handle();
 ```
 
 ### Les paramètres
@@ -71,16 +71,21 @@ $router = new craft\Router([
 ]);
 ```
 
-Dans notre cas, `+lang` deviendra une variable d'environnement globale à toute l'application, récupérable grâce à la fonction `$lang = env('lang');`.
+Dans notre cas, `+lang` deviendra une variable d'environnement globale à toute l'application, récupérable grâce à :
+
+```php
+$lang = env('lang');
+```
+
 L'argument `:id` sera, lui, transmis à l'action.
 
-Par exemple : `www.yourapp.com/fr/page/5`, determinera `fr` comme variable d'environnement, et l'id `5` sera passé à l'action.
+Par exemple : `www.yourapp.com/fr/page/5`, determinera `fr` comme langue globale, et l'id `5` sera passé à l'action.
 
 ### Types d'action
 
 Le routeur accepte différents types d'actions :
 - le couple Class/Method sous forme de chaine : `my\logic\Front::index`
-- le couple Class/Method sous forme de tableau : `['my\logic\Front', 'index']`
+- le couple Class/Method sous forme de tuple : `['my\logic\Front', 'index']`
 - le nom d'une fonction : `my_front_index`
 - une fonction anonyme : `function(){ echo 'Hello :)'; }`
 
@@ -89,7 +94,7 @@ Si aucune règle ne match l'url, un évenement 404 est déclenché.
 
 ## Les actions
 
-Afin de laisser une plus grande liberté aux développeurs, les contrôleurs n'étendent d'aucune classes de Craft :
+Afin de laisser une plus grande liberté aux développeurs, les contrôleurs n'étendent d'aucune classe de Craft :
 
 ```php
 # logic/Front.php
@@ -99,7 +104,7 @@ class Front
 {
 
     /**
-     * @view view/front.index.php
+     * @render view/front.index.php
      */
     public function index()
     {
@@ -107,7 +112,7 @@ class Front
     }
 
     /**
-     * @view view/front.about.php
+     * @render view/front.about.php
      */
     public function about()
     {
@@ -120,9 +125,9 @@ class Front
 ### Méta-données
 
 Craft intègre un système de méta-données basé sur les commentaires PHP.
-Le framework va nottament définir la vue à afficher ou les permissions d'utilisateur à vérifier en fonction des paramètres `@`.
+Le framework va nottament définir la vue à afficher ou les permissions d'utilisateur à vérifier en fonction des tags `@`.
 
-Affichage d'une vue : `@view dir/to/template.php`.
+Affichage d'une vue : `@render dir/to/template.php`.
 
 Restriction d'utilisateur : `@auth 5`. Ici 5 correspond au rang du l'utilisateur, si le rang n'est pas assez élevé, un évenement 403 est déclenché.
 
@@ -139,6 +144,7 @@ Craft propose un système de templating simple, sans syntaxe particulière :
 ```php
 # view/front.about.php
 <?php self::layout('view/layout.php') ?>
+
 <h1>Webapp handcrafted by <?= $author ?></h1>
 ```
 
@@ -169,7 +175,7 @@ Du côté du layout, il faut spécifier la méthode `self::content()` à l'endro
 
 ### Helpers
 
-3 helpers sont disponibles dans l'exemples ci-dessus : `css` et `js` qui permettent d'affichir une balise css ou js et `meta` qui permet de gérer le viewport et l'encodage.
+3 helpers sont disponibles dans l'exemples ci-dessus : `css` et `js` qui permettent d'afficher une balise css ou js et `meta` qui permet de gérer le viewport et l'encodage.
 
 
 ## Le contexte
@@ -177,7 +183,7 @@ Du côté du layout, il faut spécifier la méthode `self::content()` à l'endro
 Les données globales type POST, SERVER, adresse ip, device, etc... sont accesible grâce au `mog()` (Kupo !) :
 
 ```php
-ip = mog()->ip;
+$ip = mog()->ip;
 $referer = mog()->server['HTTP_REFERER'];
 $ajax = mog()->async;
 ```
@@ -248,10 +254,10 @@ $app->on('call', function($self, $build, $data){
 
 });
 
-$app->process();
+$app->handle();
 ```
 
-L'exemple ci-dessus permet d'afficher les données renvoyées au format JSON pour les actions ayant `@json`.
+L'exemple ci-dessus permet d'afficher les données renvoyées au format JSON pour les actions ayant la métadonnée `@json`.
 
 Voici la liste des évenements propres à Craft :
 

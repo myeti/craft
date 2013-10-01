@@ -128,7 +128,7 @@ class View
 
 
     /**
-     * Generate view
+     * Generate views
      * @return string
      */
     public function display()
@@ -168,7 +168,7 @@ class View
         // extract vars
         extract($this->_vars + static::$_globalVars);
 
-        // import view
+        // import views
         require $this->_file;
 
         // get content

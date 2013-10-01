@@ -6,7 +6,7 @@ class Error
 {
 
     /**
-     * @view view/error.404.php
+     * @render views/error.404.php
      */
     function notfound()
     {
@@ -14,7 +14,7 @@ class Error
     }
 
     /**
-     * @view view/error.404.php
+     * @render views/error.404.php
      */
     function forbidden()
     {
