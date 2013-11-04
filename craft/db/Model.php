@@ -26,8 +26,7 @@ trait Model
 	 */
 	public static function find(array $where = [], $orderBy = null, $limit = null, $step = null)
 	{
-		$model = strtolower(get_called_class());
-		return Syn::find($model, $where, $orderBy, $limit, $step);
+		return Syn::find(static::model(), $where, $orderBy, $limit, $step);
 	}
 
 	/**
@@ -37,8 +36,7 @@ trait Model
 	 */
 	public static function one($where = null)
 	{
-		$model = strtolower(get_called_class());
-		return Syn::one($model, $where);
+		return Syn::one(static::model(), $where);
 	}
 
 	/**
@@ -46,10 +44,9 @@ trait Model
 	 * @param  object $entity
 	 * @return bool
 	 */
-	public static function save($entity)
+	public static function save(&$entity)
 	{
-		$model = strtolower(get_called_class());
-		return Syn::save($model, $entity);
+		return Syn::save(static::model(), $entity);
 	}
 
 	/**
@@ -59,8 +56,17 @@ trait Model
 	 */
 	public static function wipe($entity)
 	{
-		$model = strtolower(get_called_class());
-		return Syn::wipe($model, $entity);
+		return Syn::wipe(static::model(), $entity);
+	}
+
+	/**
+	 * Get model name
+	 * @return  string
+	 */
+	protected static model()
+	{
+		$exp = explode('\\', get_called_class());
+		return strtolower(end($exp));
 	}
 
 }

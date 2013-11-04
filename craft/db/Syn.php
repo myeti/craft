@@ -17,13 +17,13 @@ abstract class Syn
 {
 
 	/** @var \PDO */
-	protected $_pdo;
+	protected static $_pdo;
 
 	/** @var string */
-	protected $_prefix;
+	protected static $_prefix;
 
 	/** @var array */
-	protected $_models = [];
+	protected static $_models = [];
 
 	/**
 	 * Register models@
@@ -177,7 +177,7 @@ abstract class Syn
 	public static function one($table, $where = null)
 	{
 		// id or conditions ?
-		if($where and is_int($where)){
+		if(is_string($where)){
 			$where = ['id' => $where];
 		}
 
