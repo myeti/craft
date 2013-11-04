@@ -99,7 +99,7 @@ class App
         $this->fire('resolve', ['build' => &$build]);
 
         // 403
-        if(isset($build->metadata['auth']) and (int)$build->metadata['auth'] < Auth::rank()){
+        if(isset($build->metadata['auth']) and Auth::rank() < (int)$build->metadata['auth']) {
             $this->fire(403, ['build' => &$build]);
             return false;
         }
