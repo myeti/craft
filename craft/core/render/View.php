@@ -6,12 +6,8 @@
  *
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
- *
- * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-09-12
- * @version 0.1
  */
-namespace craft;
+namespace craft\core\render;
 
 class View
 {
@@ -39,7 +35,11 @@ class View
      */
     public function __construct($file, array $vars = [])
     {
+        // format
         $file = strtolower($file);
+        if(substr($file, -4) != '.php') {
+            $file .= '.php';
+        }
 
         if(!file_exists($file))
             throw new \InvalidArgumentException('Template [' . $file . '] does not exist', 404);
@@ -196,8 +196,14 @@ class View
     protected function css()
     {
         $str = '';
-        foreach(func_get_args() as $file)
+        foreach(func_get_args() as $file) {
+
+            if(substr($file, -4) == '.css') {
+                $file = substr($file, 0, -4);
+            }
+
             $str .= "\n\t" . '<link type="text/css" media="screen" href="' . static::asset($file . '.css') . '" rel="stylesheet" />';
+        }
 
         return $str . "\n";
     }
@@ -210,8 +216,14 @@ class View
     protected function js()
     {
         $str = '';
-        foreach(func_get_args() as $file)
+        foreach(func_get_args() as $file) {
+
+            if(substr($file, -3) == '.js') {
+                $file = substr($file, 0, -3);
+            }
+
             $str .= "\n\t" . '<script type="text/javascript" src="' . static::asset($file . '.js') . '"></script>';
+        }
 
         return $str . "\n";
     }

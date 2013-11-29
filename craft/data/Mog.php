@@ -6,14 +6,10 @@
  *
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
- *
- * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-09-12
- * @version 0.1
  */
-namespace craft;
+namespace craft\data;
 
-class Mog extends \ArrayObject
+class Mog
 {
 
     /** @var array */
@@ -26,10 +22,13 @@ class Mog extends \ArrayObject
     public $files = [];
 
     /** @var array */
-    public $server;
+    public $end = [];
 
     /** @var array */
-    public $headers;
+    public $server = [];
+
+    /** @var array */
+    public $headers = [];
 
     /** @var string */
     public $ip;

@@ -6,18 +6,15 @@
  *
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
- *
- * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-09-12
- * @version 0.1
  */
-namespace craft;
+namespace craft\core\router;
 
 class Router
 {
 
     /** @var array  */
     protected $_routes = [];
+
 
     /**
      * Setup with routes
@@ -27,6 +24,7 @@ class Router
     {
         $this->_routes = $routes;
     }
+
 
     /**
      * Pattern matching
@@ -75,6 +73,7 @@ class Router
 
         return false;
     }
+
 
     /**
      * Backward finder

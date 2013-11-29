@@ -1,3 +1,3 @@
-<?php self::layout('views/layout.php') ?>
+<?php self::layout('views/layout') ?>
 
 Mmmh... Vous êtes perdu ?

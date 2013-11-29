@@ -1,11 +1,10 @@
 <?php
 
-require '../craft/toolkit.php';
+require '../craft/hello.php';
 
 // setup router
 $router = new craft\Router([
-    '/'        => 'my\logic\Front::index',
-    '/welcome' => 'my\logic\Front::welcome',
+    '/'        => 'my\logic\Front::hello',
     '/404'     => 'my\logic\Error::notfound',
     '/403'     => 'my\logic\Error::forbidden'
 ]);

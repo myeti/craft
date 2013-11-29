@@ -7,19 +7,9 @@ class Front
 
     /**
      * Landing page
-     * @views views/front.index.php
+     * @render views/front.hello
      */
-    public function index()
-    {
-        go('/welcome');
-    }
-
-
-    /**
-     * Hey, welcome !
-     * @views views/front.welcome.php
-     */
-    public function welcome()
+    public function hello()
     {
 
     }

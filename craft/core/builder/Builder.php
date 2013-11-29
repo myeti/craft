@@ -6,12 +6,10 @@
  *
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
- *
- * @author Aymeric Assier <aymeric.assier@gmail.com>
- * @date 2013-09-12
- * @version 0.1
  */
-namespace craft;
+namespace craft\core\builder;
+
+use craft\box\Annotation;
 
 class Builder
 {
@@ -21,6 +19,7 @@ class Builder
         'base' => null
     ];
 
+
     /**
      * Setup with config
      * @param array $config
@@ -29,6 +28,7 @@ class Builder
     {
         $this->_config = $config + $this->_config;
     }
+
 
     /**
      * Turn target into \Closure and get metadata
@@ -42,14 +42,13 @@ class Builder
         $parentRef = null;
 
         // function
-        if($target instanceof \Closure or (is_string($target) and function_exists($target)))
-        {
+        if($target instanceof \Closure or (is_string($target) and function_exists($target))) {
             // apply reflection
             $ref = new \ReflectionFunction($target);
             $closure = $target instanceof \Closure ? $target : $ref->getClosure();
         }
         // method in array
-        elseif(($is_string = is_string($target) and strpos($target, '::')) or (is_array($target) and count($target) === 2)){
+        elseif(($is_string = is_string($target) and strpos($target, '::')) or (is_array($target) and count($target) === 2)) {
 
             // resolve class::method
             if($is_string){
@@ -71,20 +70,12 @@ class Builder
         }
 
         // get metadata
-        preg_match_all('/@([a-zA-Z0-9]+) ([a-zA-Z0-9._\-\/ ]+)/', $ref->getDocComment(), $out, PREG_SET_ORDER);
-        $metadata = [];
-        foreach($out as $match){
-            $metadata[$match[1]] = $match[2];
-        }
+        $metadata = Annotation::get($ref) ?: [];
 
         // merge with parent metadata
         if($parentRef and $parentRef instanceof \ReflectionClass){
-            preg_match_all('/@([a-zA-Z0-9]+) ([a-zA-Z0-9._\-\/ ]+)/', $parentRef->getDocComment(), $out, PREG_SET_ORDER);
-            foreach($out as $match){
-                if(!isset($metadata[$match[1]])){
-                    $metadata[$match[1]] = $match[2];
-                }
-            }
+            $parentMetadata = Annotation::get($parentRef) ?: [];
+            $metadata = $parentMetadata + $metadata;
         }
 
         // make statement
@@ -95,13 +86,14 @@ class Builder
         return $build;
     }
 
+
     /**
      * Call action
-     * @param callable $action
+     * @param Closure $action
      * @param array $args
      * @return mixed
      */
-    public function call(callable $action, array $args = [])
+    public function call(\Closure $action, array $args = [])
     {
         return call_user_func_array($action, $args);
     }

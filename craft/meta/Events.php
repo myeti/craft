@@ -11,7 +11,7 @@
  * @date 2013-09-12
  * @version 0.1
  */
-namespace craft;
+namespace craft\meta;
 
 trait Events
 {
