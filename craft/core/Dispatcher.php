@@ -23,10 +23,31 @@ class Dispatcher
     /**
      * Setup components
      * @param array $handlers
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $handlers)
     {
-        $this->_handlers = $handlers;
+        foreach($handlers as $name => $handler) {
+
+            // error
+            if(!($handler instanceof Handler)) {
+                throw new \InvalidArgumentException('Dispatcher must receive only Handler objects in its constructor.');
+            }
+
+            // assign
+            $this->handler($name, $handler);
+
+        }
+    }
+
+    /**
+     * Set handler
+     * @param $name
+     * @param Handler $handler
+     */
+    public function handler($name, Handler $handler)
+    {
+        $this->_handlers[$name] = $handler;
     }
 
 
@@ -38,7 +59,7 @@ class Dispatcher
      * @throws \Exception
      * @return mixed
      */
-    public function handle($query, $service = false)
+    public function query($query, $service = false)
     {
         // init context
         $context = new Context();
@@ -50,35 +71,35 @@ class Dispatcher
 
         // chain handlers
         foreach($this->_handlers as $name => $handler) {
-            if($handler instanceof Handler) {
 
-                // run
-                try {
-                    $this->fire($name . '.start', ['context' => &$context]);
-                    $context = $handler->handle($context);
+            // run
+            try {
+                $this->fire($name . '.start', ['context' => &$context]);
+                $context = $handler->handle($context);
+            }
+            catch(\Exception $e) {
+
+                // code as event
+                if($e->getCode() > 0) {
+                    $this->fire($e->getCode(), ['context' => &$context]);
                 }
-                catch(\Exception $e) {
-
-                    // code as event
-                    if($e->getCode() > 0) {
-                        $this->fire($e->getCode(), ['context' => &$context]);
-                    }
-                    // forward exception
-                    else {
-                        throw $e;
-                    }
-
+                // forward exception
+                else {
+                    throw $e;
                 }
 
-                // must return Context
-                if(!($context instanceof Context)) {
-                    throw new \RuntimeException('Handler "' . $name . '" must return the Context object.');
-                }
-
-                // next
-                $this->fire($name . '.end', ['context' => &$context]);
+                // any case : halt
+                break;
 
             }
+
+            // must return Context
+            if(!($context instanceof Context)) {
+                throw new \RuntimeException('Handler "' . $name . '" must return the Context object.');
+            }
+
+            // next
+            $this->fire($name . '.end', ['context' => &$context]);
         }
 
         // end process
@@ -95,7 +116,7 @@ class Dispatcher
      */
     public function __invoke($query)
     {
-        return $this->handle($query, true);
+        return $this->query($query, true);
     }
 
 }

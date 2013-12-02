@@ -2,25 +2,22 @@
 
 require '../craft/hello.php';
 
-// setup router
-$router = new craft\Router([
-    '/'        => 'my\logic\Front::hello',
-    '/404'     => 'my\logic\Error::notfound',
-    '/403'     => 'my\logic\Error::forbidden'
-]);
-
 // create app
-$app = new craft\App($router);
+$app = new craft\App([
+    '/'         => 'my\logic\Front::hello',
+    '/lost'     => 'my\logic\Error::lost',
+    '/sorry'    => 'my\logic\Error::sorry'
+]);
 
 // listen 404 event
 $app->on(404, function() {
-    go('/404');
+    go('/lost');
 });
 
 // listen 403 event
 $app->on(403, function() {
-    go('/403');
+    go('/sorry');
 });
 
-// go !
-$app->handle();
+// plug & wait
+$app->plug();

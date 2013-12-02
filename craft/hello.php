@@ -23,23 +23,15 @@ craft\Loader::vendors([
 ]);
 
 craft\Loader::aliases([
-
-    'craft\Router'      => 'craft\core\handlers\Router',
-    'craft\View'        => 'craft\core\data\View',
-    'craft\Context'     => 'craft\core\Context',
-
     'craft\Session'     => 'craft\data\Session',
     'craft\Flash'       => 'craft\data\Flash',
     'craft\Auth'        => 'craft\data\Auth',
     'craft\Env'         => 'craft\data\Env',
     'craft\Bag'         => 'craft\data\Bag',
     'craft\Mog'         => 'craft\data\Mog',
-
-    'craft\Events'      => 'craft\meta\Events',
-
     'craft\Syn'         => 'craft\db\Syn',
     'craft\Model'       => 'craft\db\Model',
-
+    'craft\Context'     => 'craft\core\Context',
 ]);
 
 
@@ -47,7 +39,7 @@ craft\Loader::aliases([
  * Define base url
  */
 
-define('APP_URL', dirname($_SERVER['SCRIPT_NAME']) . '/');
+define('APP_URL', dirname($_SERVER['SCRIPT_NAME']) . DIRECTORY_SEPARATOR);
 
 
 /*

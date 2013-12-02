@@ -10,11 +10,10 @@
 namespace craft;
 
 use craft\core\Dispatcher;
+use craft\core\handlers\Router;
 use craft\core\handlers\Builder;
 use craft\core\handlers\Caller;
 use craft\core\handlers\Engine;
-
-use craft\Router;
 use craft\Bag;
 
 class App extends Dispatcher
@@ -26,21 +25,23 @@ class App extends Dispatcher
 
     /**
      * Setup router and URI protocol
-     * @param Router $router
+     * @param array $routes
      * @param string $protocol
      */
-    public function __construct(Router $router, $protocol = 'PATH_INFO')
+    public function __construct(array $routes, $protocol = 'PATH_INFO')
     {
+        // set uri protocol
         $this->_protocol = strtoupper($protocol);
 
+        // setup dispatcher
         parent::__construct([
-            'router' => $router,
-            'builder' => new Builder(),
-            'caller' => new Caller(),
-            'engine' => new Engine()
+            'router'    => new Router($routes),
+            'builder'   => new Builder(),
+            'caller'    => new Caller(),
+            'engine'    => new Engine()
         ]);
 
-        // put in zi bag
+        // put context in ze bag
         $this->on('start', function($context){
             Bag::set('context', $context);
         });
@@ -49,19 +50,15 @@ class App extends Dispatcher
 
     /**
      * Main process
-     * @param null|string $query
-     * @param bool $service
      * @return mixed
      */
-    public function handle($query = null, $service = false)
+    public function plug()
     {
         // resolve protocol query
-        if(!$query) {
-            $query = isset($_SERVER[$this->_protocol]) ? $_SERVER[$this->_protocol] : '/';
-        }
+        $query = isset($_SERVER[$this->_protocol]) ? $_SERVER[$this->_protocol] : '/';
 
         // start process
-        return parent::handle($query, $service);
+        return $this->query($query);
     }
 
 }
