@@ -22,7 +22,7 @@ class Mog
     public $files = [];
 
     /** @var array */
-    public $end = [];
+    public $env = [];
 
     /** @var array */
     public $server = [];

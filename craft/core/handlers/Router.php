@@ -7,9 +7,18 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\core\router;
+namespace craft\core\handlers;
 
-class Router
+use craft\core\Handler;
+use craft\core\Context;
+use craft\core\data\Route;
+use craft\data\Env;
+
+/**
+ * Class Router
+ * Find route with query
+ */
+class Router implements Handler
 {
 
     /** @var array  */
@@ -23,6 +32,37 @@ class Router
     public function __construct(array $routes)
     {
         $this->_routes = $routes;
+    }
+
+
+    /**
+     * Handle routing
+     * @param Context $context
+     * @throws \RuntimeException
+     * @return Context
+     */
+    public function handle(Context $context)
+    {
+        // get query
+        $context->query = '/' . ltrim($context->query, '/');
+
+        // route
+        $route = $this->find($context->query);
+
+        // 404
+        if(!$route){
+            throw new \RuntimeException('Route "' . $context->query . '" not found.', 404);
+        }
+
+        // env data
+        foreach($route->env as $key => $value){
+            Env::set($key, $value);
+        }
+
+        // set route
+        $context->route = $route;
+
+        return $context;
     }
 
 

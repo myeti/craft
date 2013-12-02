@@ -41,19 +41,16 @@ abstract class FlatArray
 	 */
 	public static function set($name, $value)
 	{
-		$data = static::find($name, true);
-		$data = $value;
+		static::find($name, $value);
 	}
 
-	/**
-	 * Remove value using dot syntax
-	 * @param  [type] $name [description]
-	 * @return [type]       [description]
-	 */
+    /**
+     * Remove value using dot syntax
+     * @param string $name
+     */
 	public static function drop($name)
 	{
-		$data = static::find($name, true);
-		unset($data);
+		static::find($name, null);
 	}
 
 	/**
@@ -65,13 +62,13 @@ abstract class FlatArray
 		return static::$_data;
 	}
 
-	/**
-	 * Find a sub-value using dot syntax
-	 * @param  string  $name
-	 * @param  boolean $silent continue when not found
-	 * @return mixed
-	 */
-	protected static function find($name, $silent = false)
+    /**
+     * Find a sub-value using dot syntax
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
+	protected static function find($name, $value = INF)
 	{
 		// split segments
 		$segments = explode('.', $name);
@@ -82,20 +79,19 @@ abstract class FlatArray
 
 			// create space
 			if(!isset($cursor[$segment])) {
-
-				if($silent) {
-					$cursor[$segment] = [];
-				}
-				else {
-					break;
-				}
-
+                $cursor[$segment] = null;
 			}
 
 			// next segment
 			$cursor = &$cursor[$segment];
 		}
 
+        // set
+        if($value !== INF) {
+            $cursor = $value;
+        }
+
+        // get
 		return $cursor;
 	}
 

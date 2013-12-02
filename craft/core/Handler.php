@@ -7,15 +7,16 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\core\builder;
+namespace craft\core;
 
-class Build
+interface Handler
 {
 
-    /** @var \Closure */
-    public $action;
+    /**
+     * Handle an give back the context
+     * @param Context $context
+     * @return Context
+     */
+    public function handle(Context $context);
 
-    /** @var array */
-    public $metadata = [];
-
-}
+} 

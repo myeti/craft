@@ -9,135 +9,93 @@
  */
 namespace craft\core;
 
-use craft\core\router\Route;
-use craft\core\router\Router;
-use craft\core\builder\Build;
-use craft\core\builder\Builder;
-use craft\core\render\View;
 use craft\meta\Events;
-use craft\data\Auth;
-use craft\data\Env;
 
 class Dispatcher
 {
 
     use Events;
 
-    /** @var Router */
-    protected $_router;
-
-    /** @var Builder */
-    protected $_builder;
+    /** @var array */
+    protected $_handlers = [];
 
 
     /**
-     * Setup with components
-     * @param Router $router
-     * @param Builder $builder
+     * Setup components
+     * @param array $handlers
      */
-    public function __construct(Router $router, Builder $builder)
+    public function __construct(array $handlers)
     {
-        $this->_router = $router;
-        $this->_builder = $builder;
+        $this->_handlers = $handlers;
     }
 
 
     /**
      * Main process
+     * @param string $query
+     * @param bool $service
+     * @throws \RuntimeException
+     * @throws \Exception
+     * @return mixed
      */
-    public function handle($query)
+    public function handle($query, $service = false)
     {
-        // start process
-        $this->fire('start', ['query' => &$query]);
-        $this->_route($query);
+        // init context
+        $context = new Context();
+        $context->query = (string)$query;
+        $context->service = (bool)$service;
+
+        // start event
+        $this->fire('start', ['context' => &$context]);
+
+        // chain handlers
+        foreach($this->_handlers as $name => $handler) {
+            if($handler instanceof Handler) {
+
+                // run
+                try {
+                    $this->fire($name . '.start', ['context' => &$context]);
+                    $context = $handler->handle($context);
+                }
+                catch(\Exception $e) {
+
+                    // code as event
+                    if($e->getCode() > 0) {
+                        $this->fire($e->getCode(), ['context' => &$context]);
+                    }
+                    // forward exception
+                    else {
+                        throw $e;
+                    }
+
+                }
+
+                // must return Context
+                if(!($context instanceof Context)) {
+                    throw new \RuntimeException('Handler "' . $name . '" must return the Context object.');
+                }
+
+                // next
+                $this->fire($name . '.end', ['context' => &$context]);
+
+            }
+        }
 
         // end process
         $this->fire('end');
+
+        return $context->data;
     }
 
 
     /**
-     * Step 1 : routing
+     * Main process as a Service
      * @param $query
-     * @return bool|mixed
-     */
-    protected function _route($query)
-    {
-        // get query
-        $query = '/' . ltrim($query, '/');
-
-        // route
-        $route = $this->_router->find($query);
-        $this->fire('route', ['route' => &$route]);
-
-        // 404
-        if(!$route){
-            $this->fire(404, ['route' => &$route]);
-            return false;
-        }
-
-        // env data
-        foreach($route->env as $key => $value){
-            Env::set($key, $value);
-        }
-
-        return $this->_resolve($route);
-    }
-
-
-    /**
-     * Step 2 : action resolving
-     * @param Route $route
-     * @return bool|mixed
-     */
-    protected function _resolve(Route $route)
-    {
-        // resolve
-        $build = $this->_builder->resolve($route->target);
-        $this->fire('resolve', ['build' => &$build]);
-
-        // 403
-        if(Auth::logged() and isset($build->metadata['auth']) and Auth::rank() < (int)$build->metadata['auth']) {
-            $this->fire(403, ['build' => &$build]);
-            return false;
-        }
-
-        return $this->_call($build, $route->args);
-    }
-
-
-    /**
-     * Step 3 : action calling
-     * @param Build $build
-     * @param array     $args
      * @return mixed
      */
-    protected function _call(Build $build, array $args = [])
+    public function __invoke($query)
     {
-        // call
-        $data = $this->_builder->call($build->action, $args);
-        $this->fire('call', ['build' => &$build, 'data' => &$data]);
-
-        // need rendering ?
-        if(!empty($build->metadata['render'])){
-            $this->_render((array)$data, $build->metadata);
-        }
-
-        return $data;
-    }
-
-
-    /**
-     * Step 4 : views rendering (optional)
-     * @param       $data
-     * @param array $metadata
-     */
-    protected function _render(array $data, array $metadata = [])
-    {
-        // create views
-        $view = new View($metadata['render'], $data);
-        $this->fire('render', ['views' => &$view, 'data' => &$data, 'metadata' => &$metadata]);
-        echo $view->display();
+        return $this->handle($query, true);
     }
 
 }

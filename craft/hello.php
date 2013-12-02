@@ -13,24 +13,20 @@
  * Autoloader
  */
 
-require 'core/Loader.php';
+require 'Loader.php';
 
-craft\core\Loader::register();
+craft\Loader::register();
 
-craft\core\Loader::vendors([
+craft\Loader::vendors([
     'craft' => __DIR__,
     'my'    => dirname($_SERVER['SCRIPT_FILENAME'])
 ]);
 
-craft\core\Loader::aliases([
+craft\Loader::aliases([
 
-    'craft\Build'       => 'craft\core\builder\Build',
-    'craft\Builder'     => 'craft\core\builder\Builder',
-    'craft\Route'       => 'craft\core\router\Route',
-    'craft\Router'      => 'craft\core\router\Router',
-    'craft\View'        => 'craft\core\render\View',
-    'craft\Dispatcher'  => 'craft\core\Dispatcher',
-    'craft\Loader'      => 'craft\core\Loader',
+    'craft\Router'      => 'craft\core\handlers\Router',
+    'craft\View'        => 'craft\core\data\View',
+    'craft\Context'     => 'craft\core\Context',
 
     'craft\Session'     => 'craft\data\Session',
     'craft\Flash'       => 'craft\data\Flash',
@@ -82,7 +78,7 @@ craft\data\Env::init();
  */
 function path($path)
 {
-    return craft\core\Loader::path($path);
+    return craft\Loader::path($path);
 }
 
 

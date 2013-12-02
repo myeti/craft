@@ -7,26 +7,39 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\core\builder;
+namespace craft\core\handlers;
 
+use craft\core\Handler;
+use craft\core\Context;
+use craft\core\data\Build;
 use craft\box\Annotation;
+use craft\data\Auth;
 
-class Builder
+/**
+ * Class Builder
+ * Build and call action with the Route
+ */
+class Builder implements Handler
 {
 
-    /** @var array */
-    protected $_config = [
-        'base' => null
-    ];
-
-
     /**
-     * Setup with config
-     * @param array $config
+     * Handle context
+     * @param Context $context
+     * @throws \RuntimeException
+     * @return mixed|void
      */
-    public function __construct(array $config = [])
+    public function handle(Context $context)
     {
-        $this->_config = $config + $this->_config;
+        // resolve
+        $build = $this->resolve($context->route->target);
+        $context->build = $build;
+
+        // firewall
+        if(isset($build->metadata['auth']) and Auth::rank() < (int)$build->metadata['auth']) {
+            throw new \RuntimeException('User not allowed on this action', 403);
+        }
+
+        return $context;
     }
 
 
@@ -55,9 +68,6 @@ class Builder
                 $target = explode('::', $target);
             }
 
-            // base namespace
-            $target[0] = $this->_config['base'] . $target[0];
-
             // apply reflection
             $ref = new \ReflectionMethod($target[0], $target[1]);
             $closure = $ref->isStatic() ? $ref->getClosure() : $ref->getClosure(new $target[0]());
@@ -75,7 +85,7 @@ class Builder
         // merge with parent metadata
         if($parentRef and $parentRef instanceof \ReflectionClass){
             $parentMetadata = Annotation::get($parentRef) ?: [];
-            $metadata = $parentMetadata + $metadata;
+            $metadata = array_merge($parentMetadata, $metadata);
         }
 
         // make statement
@@ -84,18 +94,6 @@ class Builder
         $build->metadata = $metadata;
 
         return $build;
-    }
-
-
-    /**
-     * Call action
-     * @param Closure $action
-     * @param array $args
-     * @return mixed
-     */
-    public function call(\Closure $action, array $args = [])
-    {
-        return call_user_func_array($action, $args);
     }
 
 }

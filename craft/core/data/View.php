@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\core\render;
+namespace craft\core\data;
 
 class View
 {
@@ -15,14 +15,14 @@ class View
     /** @var string */
     protected $_file;
 
-    /** @var View */
-    protected $_layout;
-
     /** @var array */
     protected $_vars = [];
 
     /** @var array */
     protected $_slots = [];
+
+    /** @var View */
+    public $layout;
 
     /** @var array */
     protected static $_globalVars = [];
@@ -35,14 +35,16 @@ class View
      */
     public function __construct($file, array $vars = [])
     {
-        // format
+        // clean
         $file = strtolower($file);
         if(substr($file, -4) != '.php') {
             $file .= '.php';
         }
 
-        if(!file_exists($file))
-            throw new \InvalidArgumentException('Template [' . $file . '] does not exist', 404);
+        // view exists ?
+        if(!file_exists($file)) {
+            throw new \RuntimeException('Template "' . $file . '" does not exist.');
+        }
 
         $this->_file = $file;
         $this->_vars = $vars;
@@ -101,7 +103,7 @@ class View
      */
     protected function layout($file, array $vars = [])
     {
-        $this->_layout = new self($file, $vars);
+        $this->layout = new self($file, $vars);
     }
 
 
@@ -118,41 +120,27 @@ class View
     /**
      * Inner access : Import raw partial
      * @param $file
-     * @throws \InvalidArgumentException
+     * @return string
      */
     protected function load($file)
     {
         $partial = new self($file);
-        $partial->display();
+        return $partial->compile();
     }
 
 
     /**
-     * Generate views
-     * @return string
+     * Copy data to another view
      */
-    public function display()
+    public function copyTo(View &$view)
     {
-        // compile
-        $content = $this->compile();
+        // give slots
+        foreach($this->_slots as $slot => $value)
+            $view->slot($slot, $value);
 
-        // has layout ?
-        if($this->_layout)
-        {
-            // give slots
-            foreach($this->_slots as $slot => $value)
-                $this->_layout->slot($slot, $value);
-
-            // give vars
-            foreach($this->_vars as $name => $arg)
-                $this->_layout->set($name, $arg);
-
-            // push content
-            $this->_layout->slot('content', $content);
-            return $this->_layout->display();
-        }
-        else
-            return $content;
+        // give vars
+        foreach($this->_vars as $name => $arg)
+            $view->set($name, $arg);
     }
 
 
@@ -160,13 +148,13 @@ class View
      * Compile and return content
      * @return string
      */
-    protected function compile()
+    public function compile()
     {
         // start streaming
         ob_start();
 
         // extract vars
-        extract($this->_vars + static::$_globalVars);
+        extract(array_merge($this->_vars, static::$_globalVars));
 
         // import views
         require $this->_file;
@@ -246,7 +234,7 @@ class View
      */
     public static function vars(array $vars)
     {
-        static::$_globalVars = $vars + static::$_globalVars;
+        static::$_globalVars = array_merge(static::$_globalVars, $vars);
     }
 
 }

@@ -55,16 +55,20 @@ abstract class Syn
 	 */
 	public static function mysql(array $config)
 	{
-		$config = [
+        // merge config with defaults
+		$defaults = [
 			'host' => '127.0.0.1',
 			'user' => 'root',
 			'pass' => '',
 			'name' => 'mydb',
 			'prefix' => ''
-		] + $config;
+		];
+        $config = array_merge($defaults, $config);
 
+        // set prefix
 		static::$_prefix = $config['prefix'];
 
+        // init pdo
 		static::$_pdo = new \PDO(
         	'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
         	$config['user'],

@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\box:
+namespace craft\box;
 
 abstract class Lipsum
 {
@@ -72,7 +72,7 @@ abstract class Lipsum
      * @param bool $toArray
      * @return mixed
      */
-    public static function word($nw = static::DEFAULT_WORDS, $toArray = false)
+    public static function word($nw = self::DEFAULT_WORDS, $toArray = false)
     {
         $extract = (array)array_rand(array_flip(static::$words), (int)$nw);
         return (true === $toArray) ? $extract : ucfirst(implode(' ', $extract));
@@ -87,7 +87,7 @@ abstract class Lipsum
      * @param bool $toArray
      * @return mixed
      */
-    public static function line($nl = static::DEFAULT_LINES, $nw = null, $toArray = false)
+    public static function line($nl = self::DEFAULT_LINES, $nw = null, $toArray = false)
     {
         foreach($sentences = range(1, (int)$nl) as $key => $value) {
             $words = $nw ?: rand(static::MIN_WORDS, static::MAX_WORDS);
@@ -108,7 +108,7 @@ abstract class Lipsum
      * @param bool $toArray
      * @return mixed
      */
-    public static function paragraph($np = static::DEFAULT_PARAGRAPHES, $nl = null, $nw = null, $wrapping = false, $toArray = false)
+    public static function paragraph($np = self::DEFAULT_PARAGRAPHES, $nl = null, $nw = null, $wrapping = false, $toArray = false)
     {
         foreach($paragraphes = range(1, (int)$np) as $key => $value) {
             $lines = $nl ?: rand(static::MIN_LINES, static::MAX_LINES);
@@ -137,7 +137,7 @@ abstract class Lipsum
      */
     public static function email()
     {
-        $ext = static::$_exts;
+        $ext = static::$exts;
         $email = static::word() . '@' . static::word() . array_rand(array_flip($ext));
         return strtolower($email);
     }
@@ -149,7 +149,7 @@ abstract class Lipsum
      */
     public static function url()
     {
-        $ext = static::$_exts;
+        $ext = static::$exts;
         $url = 'http://www.' . static::word() . array_rand(array_flip($ext));
         return strtolower($url);
     }

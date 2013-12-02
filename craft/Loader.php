@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\core;
+namespace craft;
 
 abstract class Loader
 {
@@ -80,6 +80,7 @@ abstract class Loader
     /**
      * Load a class
      * @param string $class
+     * @throws \RuntimeException
      * @return bool
      */
     public static function load($class)
@@ -117,6 +118,7 @@ abstract class Loader
     /**
      * Get vendor path
      * @param string $vendor
+     * @throws \RuntimeException
      * @return string
      */
     public static function path($vendor)
