@@ -8,15 +8,15 @@ class Error
     /**
      * @render views/error.404
      */
-    function notfound()
+    function lost()
     {
 
     }
 
     /**
-     * @render views/error.404
+     * @render views/error.403
      */
-    function forbidden()
+    function sorry()
     {
 
     }
