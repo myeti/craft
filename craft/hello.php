@@ -109,14 +109,15 @@ function debug()
 /**
  * Post helper
  * @param null $key
+ * @param string $fallback
  * @return null
  */
-function post($key = null)
+function post($key = null, $fallback = null)
 {
     if(!$key)
         return $_POST;
 
-    return isset($_POST[$key]) ? $_POST[$key] : null;
+    return isset($_POST[$key]) ? $_POST[$key] : $fallback;
 }
 
 

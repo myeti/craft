@@ -66,19 +66,22 @@ abstract class FlatArray
      * Find a sub-value using dot syntax
      * @param string $name
      * @param mixed $value
+     * @param string $fallback
      * @return mixed
      */
-	protected static function find($name, $value = INF)
+	protected static function find($name, $value = INF, $fallback = null)
 	{
 		// split segments
 		$segments = explode('.', $name);
 
 		// walk array
+        $exists = true;
 		$cursor = &static::$_data;
 		foreach($segments as $segment) {
 
 			// create space
 			if(!isset($cursor[$segment])) {
+                $exists = false;
                 $cursor[$segment] = null;
 			}
 
@@ -88,11 +91,12 @@ abstract class FlatArray
 
         // set
         if($value !== INF) {
+            $exists = true;
             $cursor = $value;
         }
 
         // get
-		return $cursor;
+		return $exists ? $cursor : $fallback;
 	}
 
 }
