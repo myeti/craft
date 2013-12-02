@@ -39,13 +39,14 @@ trait Events
     public function fire($name, array $args = [])
     {
         // no callbacks
-        if(!isset($this->_events[$name])) {
+        if(empty($this->_events[$name])) {
             return;
         }
 
-        // $this as the first arg
-        $ref = &$this;
-        array_unshift($args, $ref);
+        // fire * event
+        if($name != '*') {
+            $this->fire('*', ['name' => $name, 'args' => $args]);
+        }
 
         // trigger all callbacks
         foreach($this->_events[$name] as $callback){
