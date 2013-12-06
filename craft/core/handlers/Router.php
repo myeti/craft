@@ -77,8 +77,8 @@ class Router implements Handler
         {
             // make pattern
             $pattern = str_replace('/', '\/', $prepattern);
-            $pattern = preg_replace('/(:([a-z_]+))/', '(?<${1}>[^/]+)', $pattern);
-            $pattern = preg_replace('/(\+([a-z_]+))/', '(?<env_${1}>[^/]+)', $pattern);
+            $pattern = preg_replace('/(:([a-z_]+))/', '(?<${2}>[^\/]+)', $pattern);
+            $pattern = preg_replace('/(\+([a-z_]+))/', '(?<env_${2}>[^\/]+)', $pattern);
             $pattern = '/^' . $pattern . '$/';
 
             // compare
