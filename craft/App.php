@@ -55,7 +55,9 @@ class App extends Dispatcher
     public function plug()
     {
         // resolve protocol query
-        $query = isset($_SERVER[$this->_protocol]) ? $_SERVER[$this->_protocol] : '/';
+        $query = isset($_SERVER[$this->_protocol])
+            ? rtrim($_SERVER[$this->_protocol], '/')
+            : '/';
 
         // start process
         return $this->query($query);

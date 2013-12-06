@@ -271,7 +271,7 @@ abstract class Syn
 		}
 
         // prepare sql
-        $sql = 'DELETE FROM `' . static::prefix() . $table . '`';
+        $sql = 'DELETE FROM `' . static::$_prefix . $table . '`';
 
         // where clause
         $sql .= ' WHERE `id` = ' . $id;
