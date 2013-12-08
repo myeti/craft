@@ -39,7 +39,7 @@ craft\Loader::aliases([
  * Define base url
  */
 
-define('APP_URL', dirname($_SERVER['SCRIPT_NAME']) . DIRECTORY_SEPARATOR);
+define('APP_URL', dirname($_SERVER['SCRIPT_NAME']) . '/');
 
 
 /*
