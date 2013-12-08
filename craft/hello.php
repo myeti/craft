@@ -64,13 +64,14 @@ craft\data\Env::init();
  */
 
 /**
- * Get registered path
- * @param $path
+ * Get absolute path
  * @return string
  */
-function path($path)
+function path()
 {
-    return craft\Loader::path($path);
+    $segments = func_get_args();
+    $root = rtrim(craft\Loader::path('my'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    return $root . ltrim(implode(DIRECTORY_SEPARATOR, $segments), DIRECTORY_SEPARATOR);
 }
 
 
