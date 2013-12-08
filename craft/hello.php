@@ -76,6 +76,7 @@ function path($path)
 
 /**
  * Get complete url
+ * @rudy said : "Ce truc ça fait les frites !"
  * @return string
  */
 function url()
