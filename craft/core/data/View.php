@@ -13,41 +13,29 @@ class View
 {
 
     /** @var string */
-    protected $_file;
+    public $template;
 
     /** @var array */
-    protected $_vars = [];
+    public $vars = [];
 
     /** @var array */
-    protected $_slots = [];
+    public $slots = [];
 
     /** @var View */
     public $layout;
 
     /** @var array */
-    protected static $_globalVars = [];
+    public static $globals = [];
 
 
     /**
-     * @param $file
+     * @param string $template
      * @param array $vars
-     * @throws \InvalidArgumentException
      */
-    public function __construct($file, array $vars = [])
+    public function __construct($template, array $vars = [])
     {
-        // clean
-        $file = strtolower($file);
-        if(substr($file, -4) != '.php') {
-            $file .= '.php';
-        }
-
-        // view exists ?
-        if(!file_exists($file)) {
-            throw new \RuntimeException('Template "' . $file . '" does not exist.');
-        }
-
-        $this->_file = $file;
-        $this->_vars = $vars;
+        $this->template = $template;
+        $this->vars = $vars;
     }
 
 
@@ -60,11 +48,13 @@ class View
     public function set($name, $value)
     {
         if(is_array($name)) {
-            foreach($name as $key => $value)
-                $this->_vars[$key] = $value;
+            foreach($name as $key => $value) {
+                $this->vars[$key] = $value;
+            }
         }
-        else
-            $this->_vars[$name] = $value;
+        else {
+            $this->vars[$name] = $value;
+        }
 
         return $this;
     }
@@ -78,32 +68,19 @@ class View
      */
     public function slot($name, $content)
     {
-        $this->_slots[$name] = $content;
+        $this->slots[$name] = $content;
         return $this;
     }
 
 
     /**
-     * Inner access : Display slot
+     * Display slot content
      * @param $name
      * @return mixed
      */
     protected function hook($name)
     {
-        return empty($this->_slots[$name])
-            ? null
-            : $this->_slots[$name];
-    }
-
-
-    /**
-     * Inner access : Set layout
-     * @param $file
-     * @param array $vars
-     */
-    protected function layout($file, array $vars = [])
-    {
-        $this->layout = new self($file, $vars);
+        return empty($this->slots[$name]) ? null : $this->slots[$name];
     }
 
 
@@ -118,29 +95,25 @@ class View
 
 
     /**
-     * Inner access : Import raw partial
-     * @param $file
-     * @return string
+     * Set layout
+     * @param string $template
+     * @param array $vars
      */
-    protected function load($file)
+    protected function layout($template, array $vars = [])
     {
-        $partial = new self($file);
-        return $partial->compile();
+        $this->layout = new self($template, $vars);
     }
 
 
     /**
-     * Copy data to another view
+     * Import raw partial
+     * @param string $template
+     * @return string
      */
-    public function copyTo(View &$view)
+    protected function load($template)
     {
-        // give slots
-        foreach($this->_slots as $slot => $value)
-            $view->slot($slot, $value);
-
-        // give vars
-        foreach($this->_vars as $name => $arg)
-            $view->set($name, $arg);
+        $partial = new self($template);
+        return $partial->compile();
     }
 
 
@@ -154,13 +127,27 @@ class View
         ob_start();
 
         // extract vars
-        extract(array_merge($this->_vars, static::$_globalVars));
+        extract(array_merge($this->_vars, static::$globals));
 
         // import views
         require $this->_file;
 
         // get content
-        return ob_get_clean();
+        $content = ob_get_clean();
+
+        // compile layout
+        if($this->layout instanceof View) {
+
+            // give params
+            $this->layout->vars = array_merge($this->layout->vars, $this->vars);
+            $this->layout->slots = array_merge($this->layout->slots, $this->slots);
+            $this->layout->slot('content', $content);
+
+            // compile
+            $content = $this->layout->compile();
+        }
+
+        return $content;
     }
 
 
@@ -232,9 +219,9 @@ class View
      * Add general vars
      * @param $vars array
      */
-    public static function vars(array $vars)
+    public static function globals(array $vars)
     {
-        static::$_globalVars = array_merge(static::$_globalVars, $vars);
+        static::$globals = array_merge(static::$globals, $vars);
     }
 
 }

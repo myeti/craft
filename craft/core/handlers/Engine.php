@@ -33,13 +33,6 @@ class Engine implements Handler
             // compile content
             $content = $view->compile();
 
-            // compile layout
-            if($view->layout) {
-                $view->copyTo($view->layout);
-                $view->layout->slot('content', $content);
-                $content = $view->layout->compile();
-            }
-
             // update context
             $context->view = $view;
             $context->content = $content;
