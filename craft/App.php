@@ -19,20 +19,12 @@ use craft\Bag;
 class App extends Dispatcher
 {
 
-    /** @var string */
-    protected $_protocol;
-
-
     /**
      * Setup router and URI protocol
      * @param array $routes
-     * @param string $protocol
      */
-    public function __construct(array $routes, $protocol = 'PATH_INFO')
+    public function __construct(array $routes)
     {
-        // set uri protocol
-        $this->_protocol = strtoupper($protocol);
-
         // setup dispatcher
         parent::__construct([
             'router'    => new Router($routes),
@@ -55,9 +47,9 @@ class App extends Dispatcher
     public function plug()
     {
         // resolve protocol query
-        $query = isset($_SERVER[$this->_protocol])
-            ? rtrim($_SERVER[$this->_protocol], '/')
-            : '/';
+        $query = $_SERVER['REQUEST_URI'];
+        $query = substr($query, strlen(APP_URL));
+        $query = parse_url($query, PHP_URL_PATH);
 
         // start process
         return $this->query($query);

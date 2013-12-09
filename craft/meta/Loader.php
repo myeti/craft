@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft;
+namespace craft\meta;
 
 abstract class Loader
 {
