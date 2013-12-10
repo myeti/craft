@@ -13,7 +13,7 @@
  * Autoloader
  */
 
-require 'meta\Loader.php';
+require 'meta/Loader.php';
 
 craft\meta\Loader::register();
 

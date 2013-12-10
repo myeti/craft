@@ -140,10 +140,10 @@ class View
         ob_start();
 
         // extract vars
-        extract(array_merge($this->_vars, static::$globals));
+        extract(array_merge($this->vars, static::$globals));
 
         // import views
-        require $this->_file;
+        require $this->template;
 
         // get content
         $content = ob_get_clean();
