@@ -29,11 +29,24 @@ class View
 
 
     /**
+     * Setup view
      * @param string $template
      * @param array $vars
      */
     public function __construct($template, array $vars = [])
     {
+        // clean
+        $template = strtolower($template);
+        if(substr($template, -4) != '.php') {
+            $template .= '.php';
+        }
+
+        // view exists ?
+        if(!file_exists($template)) {
+            throw new \RuntimeException('Template "' . $template . '" does not exist.');
+        }
+
+        // setup
         $this->template = $template;
         $this->vars = $vars;
     }
