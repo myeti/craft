@@ -23,7 +23,7 @@ function path()
 
 /**
  * Get complete url
- * @rudy said : "Ce truc ça fait les frites !"
+ * "Ce truc ça fait les frites !" - Rudy
  * @return string
  */
 function url()
@@ -35,9 +35,8 @@ function url()
 
 /**
  * Redirect to url
- * @param $url
  */
-function go($url)
+function go()
 {
     $segments = func_get_args();
     header('Location: ' . call_user_func_array('url', $segments));

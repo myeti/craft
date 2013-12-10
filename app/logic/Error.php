@@ -8,7 +8,7 @@ class Error
     /**
      * @render views/error.404
      */
-    function lost()
+    public function lost()
     {
 
     }
@@ -16,7 +16,7 @@ class Error
     /**
      * @render views/error.403
      */
-    function sorry()
+    public function sorry()
     {
 
     }

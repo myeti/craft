@@ -1,6 +1,6 @@
 <?php
 
-require '../craft/hello.php';
+require '../craft/bundle.php';
 
 // create app
 $app = new craft\App([
