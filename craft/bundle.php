@@ -13,17 +13,18 @@
  * Autoloader
  */
 
-require 'meta/Loader.php';
+require 'core/Loader.php';
 
-craft\meta\Loader::register();
+craft\core\Loader::register();
 
-craft\meta\Loader::vendors([
+craft\core\Loader::vendors([
     'craft' => __DIR__,
     'my'    => dirname($_SERVER['SCRIPT_FILENAME'])
 ]);
 
-craft\meta\Loader::aliases([
-    'craft\Loader'      => 'craft\meta\Loader',
+craft\core\Loader::aliases([
+    'craft\Loader'      => 'craft\core\Loader',
+    'craft\Context'     => 'craft\core\Context',
     'craft\Session'     => 'craft\data\Session',
     'craft\Flash'       => 'craft\data\Flash',
     'craft\Auth'        => 'craft\data\Auth',
@@ -32,7 +33,6 @@ craft\meta\Loader::aliases([
     'craft\Mog'         => 'craft\data\Mog',
     'craft\Syn'         => 'craft\db\Syn',
     'craft\Model'       => 'craft\db\Model',
-    'craft\Context'     => 'craft\core\Context',
 ]);
 
 
@@ -54,11 +54,11 @@ ini_set("session.gc_maxlifetime", 604800);
 session_set_cookie_params(604800);
 session_start();
 
-craft\data\Session::init();
-craft\data\Flash::init();
-craft\data\Auth::init();
-craft\data\Env::init();
-craft\data\Mog::init();
+craft\Session::init();
+craft\Flash::init();
+craft\Auth::init();
+craft\Env::init();
+craft\Mog::init();
 
 
 /**

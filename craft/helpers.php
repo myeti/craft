@@ -61,7 +61,7 @@ function debug()
  */
 function post($key = null, $fallback = null)
 {
-    return craft\data\Mog::post($key, $fallback);
+    return craft\Mog::post($key, $fallback);
 }
 
 
@@ -86,9 +86,9 @@ function hydrate(&$object, array $data, $force = false)
 function auth()
 {
     return (object)[
-        'logged'    => craft\data\Auth::logged(),
-        'rank'      => craft\data\Auth::rank(),
-        'user'      => craft\data\Auth::user()
+        'logged'    => craft\Auth::logged(),
+        'rank'      => craft\Auth::rank(),
+        'user'      => craft\Auth::user()
     ];
 }
 
@@ -100,5 +100,5 @@ function auth()
  */
 function flash($key)
 {
-    return craft\data\Flash::get($key);
+    return craft\Flash::get($key);
 }

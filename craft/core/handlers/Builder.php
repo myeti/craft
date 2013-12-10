@@ -37,7 +37,8 @@ class Builder implements Handler
 
         // firewall
         if(isset($build->metadata['auth']) and Auth::rank() < (int)$build->metadata['auth']) {
-            throw new EventException(403);
+            throw new EventException(403, 'Action "' . $context->route->target . '" forbidden,
+                user(' . Auth::rank() . ') < action(' . $build->metadata['auth'] . ')');
         }
 
         return $context;

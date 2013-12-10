@@ -52,7 +52,7 @@ class Router implements Handler
 
         // 404
         if(!$route){
-            throw new EventException(404);
+            throw new EventException(404, 'Route "' . $context->query . '" not found.');
         }
 
         // env data

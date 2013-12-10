@@ -21,10 +21,10 @@ class EventException extends \Exception
 	/**
 	 * Init with event name
 	 * @param string  $name
-	 * @param array  $args
 	 * @param string  $message
+	 * @param array  $args
 	 */
-	public function __construct($name, array $args = [], $message = null)
+	public function __construct($name, $message = null, array $args = [])
 	{
 		$this->name = $name;
 		$this->args = $args;
