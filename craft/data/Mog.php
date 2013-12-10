@@ -48,6 +48,9 @@ abstract class Mog
     /** @var string */
     protected static $_browser = 'unknown';
 
+    /** @var string */
+    protected static $_from = null;
+
     /** @var float */
     protected static $_time = 0;
 
@@ -71,6 +74,7 @@ abstract class Mog
         static::$_async = isset(static::$_server['HTTP_X_REQUESTED_WITH']) and strtolower(static::$_server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
         static::$_sync = !static::$_async;
         static::$_mobile = isset(static::$_server['HTTP_X_WAP_PROFILE']) or isset(static::$_server['HTTP_PROFILE']);
+        static::$_from = static::server('HTTP_REFERER');
 
         // find browser
         foreach(['Firefox', 'Safari', 'Chrome', 'Opera', 'MSIE'] as $browser)
@@ -228,6 +232,16 @@ abstract class Mog
     public static function mobile()
     {
         return static::$_mobile;
+    }
+
+
+    /**
+     * Get last page visited
+     * @return string
+     */
+    public static function from()
+    {
+        return static::$_from;
     }
 
 
