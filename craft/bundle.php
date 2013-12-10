@@ -24,7 +24,7 @@ craft\core\Loader::vendors([
 
 craft\core\Loader::aliases([
     'craft\Loader'      => 'craft\core\Loader',
-    'craft\Context'     => 'craft\core\Context',
+    'craft\Context'     => 'craft\core\data\Context',
     'craft\Session'     => 'craft\data\Session',
     'craft\Flash'       => 'craft\data\Flash',
     'craft\Auth'        => 'craft\data\Auth',

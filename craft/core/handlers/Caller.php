@@ -9,7 +9,7 @@
  */
 namespace craft\core\handlers;
 
-use craft\core\Context;
+use craft\core\data\Context;
 use craft\core\handler;
 
 class Caller implements Handler

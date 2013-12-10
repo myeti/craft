@@ -11,6 +11,7 @@ namespace craft\core;
 
 use craft\meta\Events;
 use craft\meta\EventException;
+use craft\core\data\Context;
 
 class Dispatcher
 {

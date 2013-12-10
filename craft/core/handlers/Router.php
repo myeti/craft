@@ -10,7 +10,7 @@
 namespace craft\core\handlers;
 
 use craft\core\Handler;
-use craft\core\Context;
+use craft\core\data\Context;
 use craft\core\data\Route;
 use craft\data\Env;
 use craft\meta\EventException;

@@ -7,11 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\core;
-
-use craft\core\data\Route;
-use craft\core\data\Build;
-use craft\core\data\View;
+namespace craft\core\data;
 
 class Context
 {
@@ -37,4 +33,4 @@ class Context
     /** @var string */
     public $content;
 
-} 
+}

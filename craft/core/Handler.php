@@ -9,6 +9,8 @@
  */
 namespace craft\core;
 
+use craft\core\data\Context;
+
 interface Handler
 {
 
@@ -19,4 +21,4 @@ interface Handler
      */
     public function handle(Context $context);
 
-} 
+}
