@@ -9,82 +9,236 @@
  */
 namespace craft\data;
 
-class Mog
+abstract class Mog
 {
 
     /** @var array */
-    public $get = [];
+    protected static $_get = [];
 
     /** @var array */
-    public $post = [];
+    protected static $_post = [];
 
     /** @var array */
-    public $files = [];
+    protected static $_files = [];
 
     /** @var array */
-    public $env = [];
+    protected static $_server = [];
 
     /** @var array */
-    public $server = [];
-
-    /** @var array */
-    public $headers = [];
+    protected static $_headers = [];
 
     /** @var string */
-    public $ip;
+    protected static $_ip = '127.0.0.1';
 
     /** @var bool */
-    public $local;
+    protected static $_local = false;
 
     /** @var string */
-    public $method = 'get';
+    protected static $_method = 'get';
 
     /** @var bool */
-    public $sync = true;
+    protected static $_sync = true;
 
     /** @var bool */
-    public $async = false;
+    protected static $_async = false;
 
     /** @var bool */
-    public $mobile = false;
+    protected static $_mobile = false;
 
     /** @var string */
-    public $browser = 'unknown';
+    protected static $_browser = 'unknown';
 
     /** @var float */
-    public $start = 0;
+    protected static $_time = 0;
 
 
     /**
      * Create request from globals
      */
-    public function __construct()
+    public static function init()
     {
-        // user data
-        $this->get = &$_GET;
-        $this->post = &$_POST;
-        $this->files = &$_FILES;
-        $this->server = &$_SERVER;
-        $this->env = &$_ENV;
-
-        // env data
-        $this->headers = getallheaders();
+        // request data
+        static::$_get = &$_GET;
+        static::$_post = &$_POST;
+        static::$_files = &$_FILES;
+        static::$_server = &$_SERVER;
+        static::$_headers = getallheaders();
 
         // advanced data
-        $this->ip = $this->server['REMOTE_ADDR'];
-        $this->local = in_array($this->ip, ['127.0.0.1', '::1']);
-        $this->method = $this->server['REQUEST_METHOD'];
-        $this->async = isset($this->server['HTTP_X_REQUESTED_WITH']) and strtolower($this->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-        $this->sync = !$this->async;
-        $this->mobile = isset($this->server['HTTP_X_WAP_PROFILE']) or isset($this->server['HTTP_PROFILE']);
+        static::$_ip = static::$_server['REMOTE_ADDR'];
+        static::$_local = in_array(static::$_ip, ['127.0.0.1', '::1']);
+        static::$_method = static::$_server['REQUEST_METHOD'];
+        static::$_async = isset(static::$_server['HTTP_X_REQUESTED_WITH']) and strtolower(static::$_server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        static::$_sync = !static::$_async;
+        static::$_mobile = isset(static::$_server['HTTP_X_WAP_PROFILE']) or isset(static::$_server['HTTP_PROFILE']);
 
         // find browser
         foreach(['Firefox', 'Safari', 'Chrome', 'Opera', 'MSIE'] as $browser)
-            if(strpos($this->server['HTTP_USER_AGENT'], $browser))
-                $this->browser = $browser;
+            if(strpos(static::$_server['HTTP_USER_AGENT'], $browser))
+                static::$_browser = $browser;
 
         // stopwatch
-        $this->start = microtime(true);
+        static::$_time = microtime(true);
+    }
+
+
+    /**
+     * $_GET value
+     * @param  string $key
+     * @param  string $fallback
+     * @return mixed
+     */
+    public static function get($key = null, $fallback = null)
+    {
+        // fallback
+        if($key and !isset(static::$_get[$key])) {
+            return $fallback;
+        }
+
+        return $key ? static::$_get[$key] : static::$_get;
+    }
+
+
+    /**
+     * $_POST value
+     * @param  string $key
+     * @param  string $fallback
+     * @return mixed
+     */
+    public static function post($key = null, $fallback = null)
+    {
+        // fallback
+        if($key and !isset(static::$_post[$key])) {
+            return $fallback;
+        }
+
+        return $key ? static::$_post[$key] : static::$_post;
+    }
+
+
+    /**
+     * $_FILES value
+     * @param  string $key
+     * @param  string $fallback
+     * @return mixed
+     */
+    public static function file($key = null, $fallback = null)
+    {
+        // fallback
+        if($key and !isset(static::$_files[$key])) {
+            return $fallback;
+        }
+
+        return $key ? static::$_files[$key] : static::$_files;
+    }
+
+
+    /**
+     * $_SERVER value
+     * @param  string $key
+     * @param  string $fallback
+     * @return mixed
+     */
+    public static function server($key = null, $fallback = null)
+    {
+        // fallback
+        if($key and !isset(static::$_server[$key])) {
+            return $fallback;
+        }
+
+        return $key ? static::$_server[$key] : static::$_server;
+    }
+
+
+    /**
+     * headers value
+     * @param  string $key
+     * @return mixed
+     */
+    public static function header($key = null)
+    {
+        return $key ? static::$_headers[$key] : static::$_headers;
+    }
+
+
+    /**
+     * Get IP
+     * @return string
+     */
+    public static function ip()
+    {
+        return static::$_ip;
+    }
+
+
+    /**
+     * Is local
+     * @return bool
+     */
+    public static function local()
+    {
+        return static::$_local;
+    }
+
+
+    /**
+     * Get method
+     * @return string
+     */
+    public static function method()
+    {
+        return static::$_method;
+    }
+
+
+    /**
+     * Is synchronous
+     * @return bool
+     */
+    public static function sync()
+    {
+        return static::$_sync;
+    }
+
+
+    /**
+     * Get asynchronous
+     * @return bool
+     */
+    public static function async()
+    {
+        return static::$_async;
+    }
+
+
+    /**
+     * Get browser name
+     * @return string
+     */
+    public static function browser()
+    {
+        return static::$_browser;
+    }
+
+
+    /**
+     * Is mobile
+     * @return bool
+     */
+    public static function mobile()
+    {
+        return static::$_mobile;
+    }
+
+
+    /**
+     * Get elapsed time
+     * @return float
+     */
+    public static function elasped()
+    {
+        $now = microtime(true);
+        return number_format($now - static::$_time, 4);
     }
 
 
@@ -92,7 +246,7 @@ class Mog
      * Kupo !
      * @return string
      */
-    public function __toString()
+    public static function kupo()
     {
         $dialog = [
             'Kupo ?!',

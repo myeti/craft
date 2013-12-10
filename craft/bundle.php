@@ -58,6 +58,7 @@ craft\data\Session::init();
 craft\data\Flash::init();
 craft\data\Auth::init();
 craft\data\Env::init();
+craft\data\Mog::init();
 
 
 /**

@@ -61,10 +61,7 @@ function debug()
  */
 function post($key = null, $fallback = null)
 {
-    if(!$key)
-        return $_POST;
-
-    return isset($_POST[$key]) ? $_POST[$key] : $fallback;
+    return craft\data\Mog::post($key, $fallback);
 }
 
 
@@ -79,21 +76,6 @@ function hydrate(&$object, array $data, $force = false)
     foreach($data as $field => $value)
         if($force or (!$force and property_exists($object, $field)))
             $object->{$field} = $value;
-}
-
-
-/**
- * Read-only Mog
- * @return \craft\data\Mog
- */
-function mog()
-{
-    static $mog;
-    if(!$mog){
-        $mog = new craft\data\Mog();
-    }
-
-    return $mog;
 }
 
 
