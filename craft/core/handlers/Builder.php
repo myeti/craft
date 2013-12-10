@@ -14,6 +14,7 @@ use craft\core\Context;
 use craft\core\data\Build;
 use craft\box\Annotation;
 use craft\data\Auth;
+use craft\meta\EventException;
 
 /**
  * Class Builder
@@ -36,7 +37,7 @@ class Builder implements Handler
 
         // firewall
         if(isset($build->metadata['auth']) and Auth::rank() < (int)$build->metadata['auth']) {
-            throw new \RuntimeException('User not allowed on this action', 403);
+            throw new EventException(403);
         }
 
         return $context;

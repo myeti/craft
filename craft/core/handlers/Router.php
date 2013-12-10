@@ -13,6 +13,7 @@ use craft\core\Handler;
 use craft\core\Context;
 use craft\core\data\Route;
 use craft\data\Env;
+use craft\meta\EventException;
 
 /**
  * Class Router
@@ -51,7 +52,7 @@ class Router implements Handler
 
         // 404
         if(!$route){
-            throw new \RuntimeException('Route "' . $context->query . '" not found.', 404);
+            throw new EventException(404);
         }
 
         // env data

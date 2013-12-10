@@ -10,6 +10,7 @@
 namespace craft\core;
 
 use craft\meta\Events;
+use craft\meta\EventException;
 
 class Dispatcher
 {
@@ -77,18 +78,17 @@ class Dispatcher
                 $this->fire($name . '.start', ['context' => &$context]);
                 $context = $handler->handle($context);
             }
+            catch(EventException $e) {
+
+                // fire inner event
+                $this->fire($e->name, array_merge(['context' => &$context], $e->args));
+                break;
+
+            }
             catch(\Exception $e) {
 
-                // code as event
-                if($e->getCode() > 0) {
-                    $this->fire($e->getCode(), ['context' => &$context]);
-                }
                 // forward exception
-                else {
-                    throw $e;
-                }
-
-                // any case : halt
+                throw $e;
                 break;
 
             }
