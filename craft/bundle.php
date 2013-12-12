@@ -24,6 +24,7 @@ craft\core\Loader::vendors([
 
 craft\core\Loader::aliases([
     'craft\Loader'      => 'craft\core\Loader',
+    'craft\View'        => 'craft\core\data\View',
     'craft\Context'     => 'craft\core\data\Context',
     'craft\Session'     => 'craft\data\Session',
     'craft\Flash'       => 'craft\data\Flash',
@@ -40,7 +41,7 @@ craft\core\Loader::aliases([
  * Define base url
  */
 
-define('APP_URL', dirname($_SERVER['SCRIPT_NAME']) . '/');
+define('APP_URL', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/');
 
 
 /*
