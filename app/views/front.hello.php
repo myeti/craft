@@ -1,4 +1,4 @@
-<?php self::layout('views/layout'); ?>
+<?php self::extend('views/layout'); ?>
 
 <header>
     <h1>Welcome !</h1>

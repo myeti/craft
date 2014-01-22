@@ -1,10 +1,11 @@
+<?php use craft\view\html; ?>
 <!doctype html>
 <html>
 <head>
     <title>Your App</title>
-    <?= self::meta(); ?>
-    <?= self::css('public/css/layout'); ?>
-    <?= self::css('public/css/content'); ?>
+    <?= html::meta(); ?>
+    <?= html::css('public/css/layout'); ?>
+    <?= html::css('public/css/content'); ?>
 </head>
 <body>
 
