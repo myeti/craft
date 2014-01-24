@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app\process;
+namespace craft\kit\web\process;
 
 use craft\box\meta\Action;
-use craft\kit\app\Context;
-use craft\kit\app\context\Action as ContextAction;
-use craft\kit\app\ContextHandler;
+use craft\kit\web\Context;
+use craft\kit\web\context\Action as ContextAction;
+use craft\kit\web\ContextHandler;
 
 /**
  * Class Builder

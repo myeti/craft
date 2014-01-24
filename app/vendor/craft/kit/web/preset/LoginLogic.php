@@ -1,10 +1,10 @@
 <?php
 
-namespace craft\preset\logic;
+namespace craft\kit\web\preset;
 
-use craft\kit\context\Auth;
+use craft\box\env\Auth;
 
-trait LoginController
+trait LoginLogic
 {
 
     /**

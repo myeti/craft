@@ -1,19 +1,22 @@
 <?php
 
-namespace craft\preset\app;
+namespace craft\kit\web\preset;
 
-use craft\kit\webapp\Context;
-use craft\kit\webapp\App;
-use craft\kit\webapp\DispatchException;
+use craft\kit\web\App;
+use craft\kit\web\NeedContext;
+use craft\kit\dispatcher\DispatchException;
 
 class StaticApp extends App
 {
 
+    use NeedContext;
+
     /** @var string */
     protected $_dir;
 
+
     /**
-     * Setup static app
+     * Setup static web
      * @param array $dir
      */
     public function __construct($dir)
@@ -32,7 +35,7 @@ class StaticApp extends App
 
         // 404
         $this->on(404, function(){
-            $this->dispatch('/404');
+            $this->plug('/404');
         });
     }
 
@@ -46,12 +49,9 @@ class StaticApp extends App
         // make path
         $page = $this->_dir . $page . '.php';
 
-        // check if view exists in dir
+        // inject render metadata
         if(file_exists($page)) {
-
-            // update env env
-            Context::get()->build->metadata['render'] = $page;
-
+            $this->context->action->metadata['render'] = $page;
         }
         else {
             throw new DispatchException(404, 'Template "' . $page . '" does not exist.');

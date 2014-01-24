@@ -45,12 +45,17 @@ class HandlerChain
      */
     public function run(Material $material, array $skip = [])
     {
-        // make handler list
-        $handlers = array_diff_key($this->_handlers, array_flip($skip));
-
         // start chaining
-        foreach($handlers as $handler) {
+        foreach($this->_handlers as $handler) {
+
+            // skip this one
+            if(in_array($handler->name(), $skip)) {
+                continue;
+            }
+
+            // give to handler
             $material = $this->give($material, $handler);
+
         }
 
         return $material;

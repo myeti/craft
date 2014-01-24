@@ -12,15 +12,31 @@ namespace craft\box\text;
 abstract class String
 {
 
+    /** Position in string */
+    const LEFT = 0x1;
+    const RIGHT = 0x2;
+    const BOUNDS = 0x3;
+    const ANYWHERE = 0x4;
+
+
     /**
      * Truncate a string
      * @param $string
      * @param $length
+     * @param int $where
      * @return string
      */
-    public static function cut($string, $length)
+    public static function cut($string, $length, $where = String::RIGHT)
     {
-        return substr($string, 0, $length);
+        if($where & String::LEFT) {
+            $string = substr($string, $length);
+        }
+
+        if($where & String::RIGHT) {
+            $string = substr($string, 0, $length);
+        }
+
+        return $string;
     }
 
 
@@ -55,27 +71,6 @@ abstract class String
 
 
     /**
-     * Remove a specified segment in string
-     * @param $string
-     * @param string|array $segment
-     * @return mixed
-     */
-    public static function remove($string, $segment)
-    {
-        // multi removing
-        if(is_array($segment)) {
-            foreach($segment as $substring) {
-                $string = static::remove($string, $substring);
-            }
-
-            return $string;
-        }
-
-        return str_replace($segment, '', $string);
-    }
-
-
-    /**
      * Replace substring
      * @param $string
      * @param $search
@@ -92,53 +87,59 @@ abstract class String
      * Check if segment exists in string
      * @param $string
      * @param $segment
-     * @param bool $case_sensitive
+     * @param int $where
      * @return bool
      */
-    public static function has($string, $segment, $case_sensitive = true)
+    public static function has($string, $segment, $where = String::ANYWHERE)
     {
-        if(!$case_sensitive) {
-            $string = strtolower($string);
-            $segment = strtolower($segment);
+        $has = true;
+
+        if($where & String::ANYWHERE) {
+            $has &= (strpos($string, $segment) === false);
+        }
+        else {
+
+            if($where & String::LEFT) {
+                $has &= (substr($string, 0, strlen($segment)) == $segment);
+            }
+
+            if($where & String::RIGHT) {
+                $has &= (substr($string, -strlen($segment)) == $segment);
+            }
+
         }
 
-        return strpos($string, $segment) === false ? false : true;
+        return $has;
     }
 
 
     /**
-     * Check if string starts with segment
+     * Remove segment in string
      * @param $string
      * @param $segment
-     * @param bool $case_sensitive
+     * @param int $where
      * @return bool
      */
-    public static function lhas($string, $segment, $case_sensitive = true)
+    public static function chop($string, $segment, $where = String::ANYWHERE)
     {
-        if(!$case_sensitive) {
-            $string = strtolower($string);
-            $segment = strtolower($segment);
+        if($where & String::ANYWHERE) {
+            $string = str_replace($segment, '', $string);
+        }
+        else {
+
+            $length = strlen($segment);
+
+            if($where & String::LEFT and substr($string, 0, $length) == $segment) {
+                $string = substr($string, strlen($segment));
+            }
+
+            if($where & String::RIGHT and substr($string, $length) == $segment) {
+                $string = substr($string, 0, -$length);
+            }
+
         }
 
-        return substr($string, 0, strlen($segment)) == $segment;
-    }
-
-
-    /**
-     * Check if string ends with segment
-     * @param $string
-     * @param $segment
-     * @param bool $case_sensitive
-     * @return bool
-     */
-    public static function rhas($string, $segment, $case_sensitive = true)
-    {
-        if(!$case_sensitive) {
-            $string = strtolower($string);
-            $segment = strtolower($segment);
-        }
-
-        return substr($string, -strlen($segment)) == $segment;
+        return $string;
     }
 
 
@@ -155,62 +156,22 @@ abstract class String
 
 
     /**
-     * Remove segment on both left and right
+     * Remove and/or add segment on left
      * @param $string
      * @param $segment
-     * @param bool $case_sensitive
+     * @param int $where
      * @return string
      */
-    public static function trim($string, $segment, $case_sensitive = true)
+    public static function ensure($string, $segment, $where = String::RIGHT)
     {
-        if(!$case_sensitive) {
-            $string = strtolower($string);
-            $segment = strtolower($segment);
+        $string = static::chop($string, $segment, $where);
+
+        if($where & String::LEFT) {
+            $string = $segment . $string;
         }
 
-        $string = static::ltrim($string, $segment);
-        return static::rtrim($string, $segment);
-    }
-
-
-    /**
-     * Remove segment on left
-     * @param $string
-     * @param $segment
-     * @param bool $case_sensitive
-     * @return string
-     */
-    public static function ltrim($string, $segment, $case_sensitive = true)
-    {
-        if(!$case_sensitive) {
-            $string = strtolower($string);
-            $segment = strtolower($segment);
-        }
-
-        if(static::lhas($string, $segment)) {
-            $string = substr($string, strlen($segment));
-        }
-
-        return $string;
-    }
-
-
-    /**
-     * Remove segment on right
-     * @param $string
-     * @param $segment
-     * @param bool $case_sensitive
-     * @return string
-     */
-    public static function rtrim($string, $segment, $case_sensitive = true)
-    {
-        if(!$case_sensitive) {
-            $string = strtolower($string);
-            $segment = strtolower($segment);
-        }
-
-        if(static::rhas($string, $segment)) {
-            $string = substr($string, 0, -strlen($segment));
+        if($where & String::RIGHT) {
+            $string .= $segment;
         }
 
         return $string;
@@ -287,6 +248,28 @@ abstract class String
         }
 
         return $string;
+    }
+
+
+    /**
+     * Escape string
+     * @param $string
+     * @return string
+     */
+    public static function escape($string)
+    {
+        return htmlspecialchars($string);
+    }
+
+
+    /**
+     * Alias of escape
+     * @param $string
+     * @return string
+     */
+    public static function e($string)
+    {
+        return static::escape($string);
     }
 
 }

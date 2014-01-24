@@ -7,13 +7,13 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app\process;
+namespace craft\kit\web\process;
 
 use craft\box\text\String;
 use craft\box\data\Validator;
-use craft\kit\app\Context;
+use craft\kit\web\Context;
 use craft\box\env\Auth;
-use craft\kit\app\ContextHandler;
+use craft\kit\web\ContextHandler;
 use craft\kit\dispatcher\DispatchException;
 
 class FirewallHandler extends ContextHandler

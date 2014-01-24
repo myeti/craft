@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app\process;
+namespace craft\kit\web\process;
 
-use craft\kit\app\ContextHandler;
+use craft\kit\web\ContextHandler;
 use craft\kit\view\Template;
-use craft\kit\app\context\View;
-use craft\kit\app\Context;
+use craft\kit\web\context\View;
+use craft\kit\web\Context;
 
 class PresenterHandler extends ContextHandler
 {
@@ -39,7 +39,7 @@ class PresenterHandler extends ContextHandler
 
             // create view
             $view = new View();
-            $view->template = $context->action->metadata['render'] . '.php';
+            $view->template = $context->action->metadata['render'];
             $view->data = is_array($context->action->data) ? $context->action->data : [];
 
             // compile content

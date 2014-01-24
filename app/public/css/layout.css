@@ -1,10 +1,24 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+/**
+ * Fonts
+ */
+@import url(http://fonts.googleapis.com/css?family=Montserrat:400);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600);
+
+
+/**
+ * General
+ */
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
 
 html, body {
     padding: 0;
     margin: 0;
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
+    color: #444;
 }
 
 a {
@@ -12,7 +26,25 @@ a {
     text-decoration: none;
 }
 
-* {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+}
+
+p {
+    line-height: 21px;
+}
+
+
+/**
+ * Layout
+ */
+body > header {
+
+}
+body > #content {
+
+}
+body > footer {
+
 }

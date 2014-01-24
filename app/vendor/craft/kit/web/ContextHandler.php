@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\kit\app;
+namespace craft\kit\web;
 
 use craft\box\pattern\chain\Handler;
 use craft\box\pattern\chain\Material;
@@ -23,7 +23,7 @@ abstract class ContextHandler implements Handler
     }
 
     /**
-     * Handle app context
+     * Handle web context
      * @param Context $context
      * @return Context
      */

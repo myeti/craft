@@ -10,6 +10,7 @@
 namespace craft\kit\view;
 
 use craft\box\error\FileNotFoundException;
+use craft\box\storage\File;
 use craft\box\text\String;
 
 abstract class Sandbox
@@ -38,7 +39,7 @@ abstract class Sandbox
     public function __construct($template, array $data = [], array $slots = [])
     {
         // php view
-        $template = String::rtrim($template, '.php') . '.php';
+        $template = String::ensure($template, '.php');
 
         // setup sandbox
         $this->_template = $template;
@@ -109,6 +110,51 @@ abstract class Sandbox
     protected function content()
     {
         return $this->hook('__content');
+    }
+
+
+    /**
+     * Meta markup
+     * @return string
+     */
+    protected static function meta()
+    {
+        $meta = "\n\t" . '<meta charset="UTF-8">';
+        $meta .= "\n\t" . '<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1" />';
+
+        return $meta . "\n";
+    }
+
+
+    /**
+     * CSS markup
+     * @return string
+     */
+    protected static function css()
+    {
+        $str = '';
+        foreach(func_get_args() as $file) {
+            $file = String::ensure($file, '.css');
+            $str .= "\n\t" . '<link type="text/css" media="screen" href="' . url($file) . '" rel="stylesheet" />';
+        }
+
+        return $str . "\n";
+    }
+
+
+    /**
+     * JS markup
+     * @return string
+     */
+    protected static function js()
+    {
+        $str = '';
+        foreach(func_get_args() as $file) {
+            $file = String::ensure($file, '.js');
+            $str .= "\n\t" . '<script type="text/javascript" src="' . url($file) . '"></script>';
+        }
+
+        return $str . "\n";
     }
 
 }

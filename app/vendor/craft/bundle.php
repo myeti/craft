@@ -25,9 +25,11 @@ craft\Loader::aliases([
     'craft\Cookie'          => 'craft\box\env\Cookie',
     'craft\Bag'             => 'craft\box\env\Bag',
 
-    # kit app
-    'craft\web\App'         => 'craft\kit\app\App',
-    'craft\web\Context'     => 'craft\kit\app\Context',
+    # kit web
+    'craft\web\App'         => 'craft\kit\web\App',
+    'craft\web\Context'     => 'craft\kit\web\Context',
+    'craft\web\StaticApp'   => 'craft\kit\web\preset\StaticApp',
+    'craft\web\RestApp'     => 'craft\kit\web\preset\RestApp',
 
     # kit cli
     'craft\cli\Console'     => 'craft\kit\cli\Console',
@@ -36,7 +38,6 @@ craft\Loader::aliases([
 
     # kit view
     'craft\view\Template'   => 'craft\kit\view\Template',
-    'craft\view\Html'       => 'craft\kit\view\helper\Html',
 
     # kit logger
     'craft\dev\Logger'      => 'craft\kit\logger\Logger',

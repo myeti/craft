@@ -7,18 +7,18 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app;
+namespace craft\kit\web;
 
 use craft\box\env\Mog;
 use craft\box\env\Bag;
 use craft\kit\event\Event;
 use craft\kit\dispatcher\Dispatcher;
 use craft\kit\router\Route;
-use craft\kit\app\process\RouterHandler;
-use craft\kit\app\process\ResolverHandler;
-use craft\kit\app\process\FirewallHandler;
-use craft\kit\app\process\CallerHandler;
-use craft\kit\app\process\PresenterHandler;
+use craft\kit\web\process\RouterHandler;
+use craft\kit\web\process\ResolverHandler;
+use craft\kit\web\process\FirewallHandler;
+use craft\kit\web\process\CallerHandler;
+use craft\kit\web\process\PresenterHandler;
 
 class App extends Dispatcher
 {
@@ -26,26 +26,20 @@ class App extends Dispatcher
     /**
      * Setup router & handlers
      * @param array $routes
-     * @param array $handlers
      */
-    public function __construct(array $routes, array $handlers = [])
+    public function __construct(array $routes)
     {
         // define handlers
-        $handlers = array_merge([
-            'router'        => new RouterHandler($routes),
-            'resolver'      => new ResolverHandler(),
-            'firewall'      => new FirewallHandler(),
-            'caller'        => new CallerHandler(),
-            'presenter'     => new PresenterHandler()
-        ], $handlers);
+        $handlers = [
+            new RouterHandler($routes),
+            new ResolverHandler(),
+            new FirewallHandler(),
+            new CallerHandler(),
+            new PresenterHandler()
+        ];
 
         // setup dispatcher
         parent::__construct($handlers);
-
-        // put env in ze bag
-        $this->on('start', function(Event $e){
-            Bag::set('env', $e['input']);
-        });
     }
 
 

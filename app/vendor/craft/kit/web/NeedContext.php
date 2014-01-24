@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\kit\app;
+namespace craft\kit\web;
 
 /**
  * This trait will tell the handler that

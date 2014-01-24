@@ -25,8 +25,12 @@ namespace craft {
 }
 
 namespace craft\web {
-    class App extends \craft\kit\app\App {}
-    class Context extends \craft\kit\app\Context {}
+    class App extends \craft\kit\web\App {}
+    class Context extends \craft\kit\web\Context {}
+    class StaticApp extends \craft\kit\web\preset\StaticApp {}
+    class RestApp extends \craft\kit\web\preset\RestApp {}
+    trait CrudLogic { use \craft\kit\web\preset\CrudLogic; }
+    trait LoginLogic { use \craft\kit\web\preset\LoginLogic; }
 }
 
 namespace craft\cli {
@@ -38,6 +42,11 @@ namespace craft\cli {
 namespace craft\view{
     class Template extends \craft\kit\view\Template {}
     class Html extends \craft\kit\view\helper\Html {}
+}
+
+namespace craft\remote {
+    class Request extends \craft\kit\remote\Request {}
+    class HttpContext extends \craft\kit\remote\context\HttpContext {}
 }
 
 namespace craft\dev {

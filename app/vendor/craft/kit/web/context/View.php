@@ -7,9 +7,18 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\frame\app\skeleton;
+namespace craft\kit\web\context;
 
-class Skeleton
+class View
 {
 
-} 
+    /** @var string */
+    public $template;
+
+    /** @var array */
+    public $data = [];
+
+    /** @var string */
+    public $content;
+
+}

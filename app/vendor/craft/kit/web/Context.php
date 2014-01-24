@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app;
+namespace craft\kit\web;
 
 use craft\box\pattern\chain\Material;
 use craft\kit\router\Route;
-use craft\kit\app\context\View;
-use craft\kit\app\context\Action;
+use craft\kit\web\context\View;
+use craft\kit\web\context\Action;
 
 class Context implements Material
 {

@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app\context;
+namespace craft\kit\web\context;
 
 class Action
 {

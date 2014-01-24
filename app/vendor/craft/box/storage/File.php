@@ -19,7 +19,7 @@ abstract class File
 	 * @param  string $filename
 	 * @return bool
 	 */
-	protected static function exists($filename)
+	public static function exists($filename)
 	{
 		return file_exists($filename);
 	}

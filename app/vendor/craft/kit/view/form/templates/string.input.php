@@ -1,0 +1,1 @@
+<input type="text" id="<?= $field->id ?>" name="<?= $field->name ?>" placholder="<?= $field->placeholder ?>" value="<?= $field->value ?>" />

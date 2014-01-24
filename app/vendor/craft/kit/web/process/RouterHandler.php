@@ -7,10 +7,10 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app\process;
+namespace craft\kit\web\process;
 
-use craft\kit\app\Context;
-use craft\kit\app\ContextHandler;
+use craft\kit\web\Context;
+use craft\kit\web\ContextHandler;
 use craft\kit\dispatcher\DispatchException;
 use craft\kit\router\Router;
 use craft\box\env\Env;

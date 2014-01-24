@@ -2,11 +2,12 @@
 
 require 'vendor/craft/bundle.php';
 
-// create app
+// create web
 $app = new craft\web\App([
     '/'         => 'my\logic\Front::hello',
     '/lost'     => 'my\logic\Error::lost',
-    '/sorry'    => 'my\logic\Error::sorry'
+    '/sorry'    => 'my\logic\Error::sorry',
+    '/docs'     => 'my\logic\Front::docs',
 ]);
 
 // listen 404 event

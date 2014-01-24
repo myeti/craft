@@ -9,6 +9,8 @@
  */
 namespace craft\kit\view;
 
+use craft\box\text\String;
+
 class Template extends Sandbox
 {
 

@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\kit\app\process;
+namespace craft\kit\web\process;
 
 use craft\box\meta\Action;
 use craft\box\meta\Object;
-use craft\kit\app\Context;
-use craft\kit\app\ContextHandler;
+use craft\kit\web\Context;
+use craft\kit\web\ContextHandler;
 
 class CallerHandler extends ContextHandler
 {
@@ -38,7 +38,7 @@ class CallerHandler extends ContextHandler
         if($context->action->callable instanceof \Closure) {
 
             // context wiring
-            if($context->action->type == 'class_method' and Object::hasTrait($context->action->callable[0], 'craft\kit\app\NeedContext')) {
+            if($context->action->type == 'class_method' and Object::hasTrait($context->action->callable[0], 'craft\kit\web\NeedContext')) {
                 $context->action->callable[0]->context = &$context;
             }
 
