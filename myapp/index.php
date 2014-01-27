@@ -80,7 +80,7 @@ $app = new craft\web\App([
  * - page/action not allowed (403)
  *
  * In order to take control of these errors,
- * just intercept them and replug your app
+ * just intercept them and replug your myapp
  * on a specified url.
  */
 $app->on(404, function() use($app) {
@@ -94,7 +94,7 @@ $app->on(403, function() use($app) {
 
 /**
  * Well, everything is ready, it's time to plug
- * your app on the current url.
+ * your myapp on the current url.
  *
  * Thanks for using Craft ;)
  */

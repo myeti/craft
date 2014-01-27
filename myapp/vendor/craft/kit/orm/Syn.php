@@ -40,10 +40,10 @@ abstract class Syn
 
     /**
      * Helper : init mysql
-     * @param $dbname
+     * @param string $dbname
      * @param array $config
      */
-    public static function mysql($dbname, array $config)
+    public static function mysql($dbname, array $config = [])
     {
         // merge config with defaults
         $defaults = [
