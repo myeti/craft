@@ -41,7 +41,6 @@ namespace craft\cli {
 
 namespace craft\view{
     class Template extends \craft\kit\view\Template {}
-    class Html extends \craft\kit\view\helper\Html {}
 }
 
 namespace craft\remote {

@@ -29,6 +29,17 @@ trait Model
 
 
     /**
+     * Count entities
+     * @param  array $where
+     * @return array
+     */
+    public static function count(array $where = [])
+    {
+        return Syn::count(static::model(), $where);
+    }
+
+
+    /**
      * Paginate a collection
      * @param $size
      * @param $page

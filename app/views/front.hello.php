@@ -1,5 +1,5 @@
-<?= self::extend('views/layout'); ?>
-<?= self::css('public/css/craft'); ?>
+<?= self::extend('views/layout'); // set the layout ?>
+<?= self::css('public/css/craft'); // add css file ?>
 
 <div id="craft-welcome">
 

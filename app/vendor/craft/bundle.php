@@ -34,7 +34,7 @@ craft\Loader::aliases([
     # kit cli
     'craft\cli\Console'     => 'craft\kit\cli\Console',
     'craft\cli\In'          => 'craft\kit\cli\In',
-    'craft\cli\Out'         => 'craft\kit\cli\In',
+    'craft\cli\Out'         => 'craft\kit\cli\Out',
 
     # kit view
     'craft\view\Template'   => 'craft\kit\view\Template',

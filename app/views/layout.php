@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <?= self::content(); ?>
+    <?= self::content(); // display here the template's content ?>
 
 </body>
 </html>
