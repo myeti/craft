@@ -5,7 +5,7 @@ namespace craft\box\pattern\chain;
 class HandlerChain
 {
 
-    /** @var array */
+    /** @var Handler[] */
     protected $_handlers = [];
 
 

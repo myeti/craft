@@ -12,7 +12,7 @@ namespace craft\kit\tracker;
 class Tracker
 {
 
-    /** @var array */
+    /** @var Task[] */
     public $tasks = [];
 
 

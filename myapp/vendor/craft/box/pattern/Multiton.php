@@ -12,7 +12,7 @@ namespace craft\box\pattern;
 trait Multiton
 {
 
-    /** @var Singleton */
+    /** @var self[] */
     protected static $_instances = [];
 
 

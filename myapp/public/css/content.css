@@ -1,3 +1,19 @@
 /**
- * Let's play with the styles !
+ * Welcome styles, delete it...
+ */
+#craft-welcome {
+    width: 400px;
+    margin: auto;
+    margin-top: 400px;
+    text-align: center;
+}
+#craft-welcome h1 {
+    font-size: 90px;
+}
+#craft-welcome p {
+    line-height: 28px;
+}
+
+/**
+ * And make your sexy styles here !
  */

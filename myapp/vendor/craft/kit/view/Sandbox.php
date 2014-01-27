@@ -75,7 +75,7 @@ abstract class Sandbox
      * Set upper layout
      * @param $resource
      */
-    protected function extend($resource)
+    protected function layout($resource)
     {
         $this->_extend = $resource;
     }

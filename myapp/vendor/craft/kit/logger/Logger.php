@@ -12,7 +12,7 @@ namespace craft\kit\logger;
 abstract class Logger
 {
 
-	/** @var array */
+	/** @var Log[] */
 	protected static $_logs = [];
 
 	/** @var \SplFileObject */
@@ -25,6 +25,7 @@ abstract class Logger
 	const LEVEL_WARNING = 'warning';
 	const LEVEL_ERROR = 'error';
 
+
 	/**
 	 * Select logs directory
 	 * @param  string $dirname
@@ -35,6 +36,7 @@ abstract class Logger
 		static::$_file = new \SplFileObject($filename, 'w+');
 	}
 
+
 	/**
 	 * Return all logs
 	 * @return array
@@ -43,6 +45,7 @@ abstract class Logger
 	{
 		return static::$_logs;
 	}
+
 
 	/**
 	 * Default log
@@ -53,6 +56,7 @@ abstract class Logger
 		static::write($message, self::LEVEL_DEFAULT);
 	}
 
+
 	/**
 	 * Info log
 	 * @param  string $message
@@ -61,6 +65,7 @@ abstract class Logger
 	{
 		static::write($message, self::LEVEL_INFO);
 	}
+
 
 	/**
 	 * Debug log
@@ -71,6 +76,7 @@ abstract class Logger
 		static::write($message, self::LEVEL_DEBUG);
 	}
 
+
 	/**
 	 * Warning log
 	 * @param  string $message
@@ -80,6 +86,7 @@ abstract class Logger
 		static::write($message, self::LEVEL_WARNING);
 	}
 
+
 	/**
 	 * Error log
 	 * @param  string $message
@@ -88,6 +95,7 @@ abstract class Logger
 	{
 		static::write($message, self::LEVEL_ERROR);
 	}
+
 
 	/**
 	 * Write log

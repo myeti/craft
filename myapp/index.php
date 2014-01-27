@@ -13,7 +13,8 @@ require 'vendor/craft/bundle.php';
 /**
  * If you need to use third-party libraries, then add them to the class loader.
  * As an advise, you should put all your libraries under the `vendor` directory.
- */
+ *//*
+
 craft\Loader::vendor('lib', 'vendor/MyLib');
 
 
@@ -26,7 +27,8 @@ craft\Loader::vendor('lib', 'vendor/MyLib');
  * You can setup MySQL, SQLite, or your own mapper (@see Syn::mapper()).
  *
  * If you don't setup Syn, it will provide fake data based on Lipsum.
- */
+ *//*
+
 craft\orm\Syn::mysql('my_db', [
     'host'   => '127.0.0.1',
     'user'   => 'root',
@@ -44,7 +46,8 @@ craft\orm\Syn::mysql('my_db', [
  *
  * And if you want Syn to build your database from your models,
  * just ask the `merge()` method !
- */
+ *//*
+
 craft\orm\Syn::map([
     'user'  => 'my\models\User'
 ]);
