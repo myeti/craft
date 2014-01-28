@@ -24,9 +24,11 @@ abstract class Field
     /**
      * Set unique field id
      */
-    public function __construct()
+    public function __construct($name, $value = null)
     {
         $this->id = uniqid();
+        $this->name = $name;
+        $this->value = $value;
     }
 
     /**

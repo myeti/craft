@@ -1,9 +1,13 @@
-<form action="<?= $action ?>" method="post">
+<form action="<?= $form->action ?>" method="post">
 
-    <?php foreach($fields as $field): ?>
+    <?php foreach($form as $field): ?>
     <div class="line">
         <?= $field->html(); ?>
     </div>
     <?php endforeach; ?>
+
+    <div class="line">
+        <button type="submit">Submit</button>
+    </div>
 
 </form>

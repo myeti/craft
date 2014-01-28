@@ -36,6 +36,6 @@ class User
     public $email;
 
     /** @var int */
-    public $rank;
+    public $rank = 1;
 
 } 

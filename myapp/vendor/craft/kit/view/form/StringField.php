@@ -4,7 +4,7 @@ namespace craft\kit\view\form;
 
 use craft\kit\view\Template;
 
-class String extends Field
+class StringField extends Field
 {
 
     /** @var string */
@@ -25,6 +25,7 @@ class String extends Field
      */
     public function label()
     {
+        if(!$this->label) return null;
         return Template::forge(__DIR__ . '/templates/string.label.php', ['field' => $this]);
     }
 
@@ -34,6 +35,7 @@ class String extends Field
      */
     public function helper()
     {
+        if(!$this->helper) return null;
         return Template::forge(__DIR__ . '/templates/string.helper.php', ['field' => $this]);
     }
 
