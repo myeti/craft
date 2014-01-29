@@ -19,7 +19,7 @@ $files = [
 ];
 
 $cli = new Console(function(){
-    Out::say('Welcome to the Craft Wizard :)');
+    Out::say('Welcome to the Craft Wizard ~');
 });
 
 $cli->command(['auth', 'auth :alias'], function($alias = null){

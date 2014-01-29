@@ -1,4 +1,4 @@
-<form action="<?= $form->action ?>" method="post">
+<form action="<?= $form->action ?>" method="<?= $form->method ?>">
 
     <?php foreach($form as $field): ?>
     <div class="line">

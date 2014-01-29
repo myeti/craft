@@ -2,8 +2,6 @@
 
 namespace craft\kit\view\form;
 
-use craft\kit\view\Template;
-
 class StringField extends Field
 {
 
@@ -11,41 +9,17 @@ class StringField extends Field
     public $placeholder;
 
     /**
-     * Render html input
-     * @return string
+     * Define templates
+     * @return array
      */
-    public function html()
+    public function templates()
     {
-        return Template::forge(__DIR__ . '/templates/string.php', ['field' => $this]);
-    }
-
-    /**
-     * Render label only
-     * @return string
-     */
-    public function label()
-    {
-        if(!$this->label) return null;
-        return Template::forge(__DIR__ . '/templates/string.label.php', ['field' => $this]);
-    }
-
-    /**
-     * Render helper only
-     * @return string
-     */
-    public function helper()
-    {
-        if(!$this->helper) return null;
-        return Template::forge(__DIR__ . '/templates/string.helper.php', ['field' => $this]);
-    }
-
-    /**
-     * Render input only
-     * @return string
-     */
-    public function input()
-    {
-        return Template::forge(__DIR__ . '/templates/string.input.php', ['field' => $this]);
+        return [
+            'label'     => __DIR__ . '/templates/string.label',
+            'input'     => __DIR__ . '/templates/string.input',
+            'helper'    => __DIR__ . '/templates/string.helper',
+            'field'     => __DIR__ . '/templates/string',
+        ];
     }
 
 }

@@ -2,18 +2,18 @@
 
 namespace craft\kit\view\form;
 
-use craft\kit\view\Template;
-
 class TextField extends StringField
 {
 
     /**
-     * Render input only
-     * @return string
+     * Define templates
+     * @return array
      */
-    public function input()
+    public function templates()
     {
-        return Template::forge(__DIR__ . '/templates/text.input.php', ['field' => $this]);
+        return [
+            'input' => __DIR__ . '/templates/text.input'
+        ] + parent::templates();
     }
 
 }

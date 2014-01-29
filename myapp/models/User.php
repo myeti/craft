@@ -32,7 +32,7 @@ class User
     /** @var string */
     public $password;
 
-    /** @var string */
+    /** @var string email */
     public $email;
 
     /** @var int */

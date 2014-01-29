@@ -285,8 +285,10 @@ class PdoMapper extends Mapper
                 switch($prop) {
                     case 'int' : $type = 'int'; break;
                     case 'string' : $type = 'varchar(255)'; break;
+                    case 'string email' : $type = 'varchar(255)'; break;
                     case 'string text' : $type = 'text'; break;
-                    case 'string date' : $type = 'datetime';  break;
+                    case 'string date' : $type = 'date';  break;
+                    case 'string datetime' : $type = 'datetime';  break;
                     default: $type = 'varchar(255)'; break;
                 }
 
@@ -317,8 +319,10 @@ class PdoMapper extends Mapper
                 switch($prop) {
                     case 'int' : $type = 'int'; break;
                     case 'string' : $type = 'varchar(255)'; break;
+                    case 'string email' : $type = 'varchar(255)'; break;
                     case 'string text' : $type = 'text'; break;
-                    case 'string date' : $type = 'datetime';  break;
+                    case 'string date' : $type = 'date';  break;
+                    case 'string datetime' : $type = 'datetime';  break;
                     default: $type = 'varchar(255)'; break;
                 }
 

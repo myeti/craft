@@ -2,53 +2,78 @@
 
 namespace craft\kit\view;
 
+use craft\box\data\Repository;
 use craft\box\meta\Annotation;
-use craft\kit\view\form\StringField;
-use craft\kit\view\form\TextField;
+use craft\kit\view\form\Field;
+use craft\kit\web\Gear;
 
 class Form extends \ArrayObject
 {
 
-    /** @var string */
-    public $action;
+    /** @var array */
+    public $types = [
+        'string'    => 'craft\kit\view\form\StringField',
+        'text'      => 'craft\kit\view\form\TextField',
+        'email'     => 'craft\kit\view\form\EmailField',
+        'date'      => 'craft\kit\view\form\DateField',
+        'datetime'  => 'craft\kit\view\form\DateTimeField',
+        'default'   => 'craft\kit\view\form\StringField',
+    ];
+
+    /** @var array */
+    public $config = [];
+
 
     /**
      * Load entity
      * @param object $entity
-     * @param string $action
+     * @param array $override
      */
-    public function __construct($entity, $action = '#')
+    public function __construct($entity = null, array $override = [])
     {
-        // set action
-        $this->action = $action;
+        // default config
+        $this->config = $override + [
+            'form.url'      => '#',
+            'form.method'   => 'post',
+            'form.template' => __DIR__ . '/form/templates/form'
+        ];
 
         // parse properties
-        foreach($entity as $prop => $value) {
+        if($entity and is_object($entity)) {
+            foreach($entity as $prop => $value) {
 
-            // get type
-            $type = Annotation::property($entity, $prop, 'var');
+                // set type
+                $type = isset($this->config[$prop . '.type'])
+                    ? $this->config[$prop . '.type']
+                    : Annotation::property($entity, $prop, 'var');
 
-            // create field
-            if($type == 'string text') {
-                $field = new TextField($prop, $value);
+                // create field
+                $fieldType = isset($this->types[$type]) ? $this->types[$type] : $this->types['default'];
+                $field = new $fieldType($prop, $value);
+
+                // override
+                foreach(['name', 'value', 'label', 'placeholder'] as $item) {
+                    if(isset($this->config[$prop . '.value'])) {
+                        $field->{$item} = $this->config[$prop . '.value'];
+                    }
+                }
+
+                // bind to form
+                $this[$prop] = $field;
+
             }
-            else {
-                $field = new StringField($prop, $value);
-            }
-
-            // bind to form
-            $this[$prop] = $field;
-
         }
+
     }
 
 
     /**
-     * Render html form
+     * Return template to use
+     * @return string
      */
     public function html()
     {
-        return Template::forge(__DIR__ . '/templates/form.php', ['form' => $this]);
+        return Template::forge($this->template, ['form' => $this]);
     }
 
-} 
+}

@@ -47,6 +47,15 @@ abstract class Collection
     }
 
 
+    public static function random($array, $num = 1)
+    {
+        if($num == 1) {
+            $key = array_rand($array);
+            return $key;
+        }
+    }
+
+
     /**
      * Sort array by column names and directions
      * Ex : $sorted = Collection::sort($array, ['name' => SORT_DESC]);

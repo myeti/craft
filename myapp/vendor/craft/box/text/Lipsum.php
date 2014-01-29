@@ -10,10 +10,7 @@
 namespace craft\box\text;
 
 /**
- * Class Lipsum
- * @package craft\text
- *
- * Generate fake text based on lorem or cake ipsum.
+ * Generate fake text based on lorem, cake or pokemon ipsum.
  *
  * Usage :
  * - change source : Lipsum::source('cake')
@@ -34,32 +31,49 @@ abstract class Lipsum
 {
 
     /** @var array */
-    protected static $lorem = [
-        'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit', 'curabitur', 'vel', 'hendrerit', 'libero',
-        'eleifend', 'blandit', 'nunc', 'ornare', 'odio', 'ut', 'orci', 'gravida', 'imperdiet', 'nullam', 'purus', 'lacinia', 'a',
-        'pretium', 'quis', 'congue', 'praesent', 'sagittis', 'laoreet', 'auctor', 'mauris', 'non', 'velit', 'eros', 'dictum',
-        'proin', 'accumsan', 'sapien', 'nec', 'massa', 'volutpat', 'venenatis', 'sed', 'eu', 'molestie', 'lacus', 'quisque',
-        'porttitor', 'ligula', 'dui', 'mollis', 'tempus', 'at', 'magna', 'vestibulum', 'turpis', 'ac', 'diam', 'tincidunt', 'id',
-        'condimentum', 'enim', 'sodales', 'in', 'hac', 'habitasse', 'platea', 'dictumst', 'aenean', 'neque', 'fusce', 'augue',
-        'leo', 'eget', 'semper', 'mattis', 'tortor', 'scelerisque', 'nulla', 'interdum', 'tellus', 'malesuada', 'rhoncus', 'porta',
-        'sem', 'aliquet', 'et', 'nam', 'suspendisse', 'potenti', 'vivamus', 'luctus', 'fringilla', 'erat', 'donec', 'justo',
-        'vehicula', 'ultricies', 'varius', 'ante', 'primis', 'faucibus', 'ultrices', 'posuere', 'cubilia', 'curae', 'etiam',
-        'cursus', 'aliquam', 'quam', 'dapibus', 'nisl', 'feugiat', 'egestas', 'class', 'aptent', 'taciti', 'sociosqu', 'ad',
-        'litora', 'torquent', 'per', 'conubia', 'nostra', 'inceptos', 'himenaeos', 'phasellus', 'nibh', 'pulvinar', 'vitae',
-        'urna', 'iaculis', 'lobortis', 'nisi', 'viverra', 'arcu', 'morbi', 'pellentesque', 'metus', 'commodo', 'ut', 'facilisis',
-        'felis', 'tristique', 'ullamcorper', 'placerat', 'aenean', 'convallis', 'sollicitudin', 'integer', 'rutrum', 'duis',
-        'est', 'etiam', 'bibendum', 'donec', 'pharetra', 'vulputate', 'maecenas', 'mi', 'fermentum', 'consequat', 'suscipit',
-        'aliquam', 'habitant', 'senectus', 'netus', 'fames', 'quisque', 'euismod', 'curabitur', 'lectus', 'elementum', 'tempor'
-    ];
-
-    /** @var array */
-    protected static $cake = ['cupcake', 'ipsum', 'dolor', 'sit', 'amet', 'pudding', 'donut', 'muffin', 'gingerbread', 'sweet',
-        'roll', 'topping', 'marshmallow', 'sugar', 'plum', 'brownie', 'jelly', 'beans', 'toffee', 'cheesecake', 'candy', 'halvah',
-        'oat', 'cake', 'cotton', 'ice', 'cream', 'wafer', 'tootsie', 'dragée', 'icing', 'macaroon', 'unerdwearcom', 'apple', 'pie',
-        'lemon', 'drops', 'dessert', 'powder', 'pastry', 'liquorice', 'jujubes', 'gummies', 'fruitcake', 'bonbon', 'chocolate',
-        'bar', 'danish', 'gummi', 'bears', 'lollipop', 'applicake', 'caramels', 'croissant', 'tiramisu', 'carrot', 'tart', 'bear',
-        'claw', 'marzipan', 'lemon', 'cookie', 'canes', 'chupa', 'chups', 'soufflé', 'biscuit', 'jelly-o', 'marzipan', 'cotton',
-        'marzipan', 'sesame', 'snaps', 'fruitcake', 'cupcake', 'fruitcake', 'cookie'
+    protected static $sources = [
+        'default' => 'cake',
+        'lorem' => [
+            'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit', 'curabitur', 'vel', 'hendrerit', 'libero',
+            'eleifend', 'blandit', 'nunc', 'ornare', 'odio', 'ut', 'orci', 'gravida', 'imperdiet', 'nullam', 'purus', 'lacinia', 'a',
+            'pretium', 'quis', 'congue', 'praesent', 'sagittis', 'laoreet', 'auctor', 'mauris', 'non', 'velit', 'eros', 'dictum',
+            'proin', 'accumsan', 'sapien', 'nec', 'massa', 'volutpat', 'venenatis', 'sed', 'eu', 'molestie', 'lacus', 'quisque',
+            'porttitor', 'ligula', 'dui', 'mollis', 'tempus', 'at', 'magna', 'vestibulum', 'turpis', 'ac', 'diam', 'tincidunt', 'id',
+            'condimentum', 'enim', 'sodales', 'in', 'hac', 'habitasse', 'platea', 'dictumst', 'aenean', 'neque', 'fusce', 'augue',
+            'leo', 'eget', 'semper', 'mattis', 'tortor', 'scelerisque', 'nulla', 'interdum', 'tellus', 'malesuada', 'rhoncus', 'porta',
+            'sem', 'aliquet', 'et', 'nam', 'suspendisse', 'potenti', 'vivamus', 'luctus', 'fringilla', 'erat', 'donec', 'justo',
+            'vehicula', 'ultricies', 'varius', 'ante', 'primis', 'faucibus', 'ultrices', 'posuere', 'cubilia', 'curae', 'etiam',
+            'cursus', 'aliquam', 'quam', 'dapibus', 'nisl', 'feugiat', 'egestas', 'class', 'aptent', 'taciti', 'sociosqu', 'ad',
+            'litora', 'torquent', 'per', 'conubia', 'nostra', 'inceptos', 'himenaeos', 'phasellus', 'nibh', 'pulvinar', 'vitae',
+            'urna', 'iaculis', 'lobortis', 'nisi', 'viverra', 'arcu', 'morbi', 'pellentesque', 'metus', 'commodo', 'ut', 'facilisis',
+            'felis', 'tristique', 'ullamcorper', 'placerat', 'aenean', 'convallis', 'sollicitudin', 'integer', 'rutrum', 'duis',
+            'est', 'etiam', 'bibendum', 'donec', 'pharetra', 'vulputate', 'maecenas', 'mi', 'fermentum', 'consequat', 'suscipit',
+            'aliquam', 'habitant', 'senectus', 'netus', 'fames', 'quisque', 'euismod', 'curabitur', 'lectus', 'elementum', 'tempor'
+        ],
+        'cake' => ['cupcake', 'ipsum', 'dolor', 'sit', 'amet', 'pudding', 'donut', 'muffin', 'gingerbread', 'sweet',
+            'roll', 'topping', 'marshmallow', 'sugar', 'plum', 'brownie', 'jelly', 'beans', 'toffee', 'cheesecake', 'candy', 'halvah',
+            'oat', 'cake', 'cotton', 'ice', 'cream', 'wafer', 'tootsie', 'dragée', 'icing', 'macaroon', 'unerdwearcom', 'apple', 'pie',
+            'lemon', 'drops', 'dessert', 'powder', 'pastry', 'liquorice', 'jujubes', 'gummies', 'fruitcake', 'bonbon', 'chocolate',
+            'bar', 'danish', 'gummi', 'bears', 'lollipop', 'applicake', 'caramels', 'croissant', 'tiramisu', 'carrot', 'tart', 'bear',
+            'claw', 'marzipan', 'lemon', 'cookie', 'canes', 'chupa', 'chups', 'soufflé', 'biscuit', 'jelly-o', 'marzipan', 'cotton',
+            'marzipan', 'sesame', 'snaps', 'fruitcake', 'cupcake', 'fruitcake', 'cookie'
+        ],
+        'pokemon' => ['pokemon', 'ipsum', 'dolor', 'sit', 'amet', 'bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon',
+            'charizard', 'squirtle', 'wartortle', 'blastoise', 'caterpie', 'metapod', 'butterfree', 'weedle', 'kakuna', 'beedrill',
+            'pidgey', 'pidgeotto', 'pidgeot', 'rattata', 'raticate', 'spearow', 'fearow', 'ekans', 'arbok', 'pikachu', 'raichu',
+            'sandshrew', 'sandslash', 'nidoran', 'nidorina', 'nidoqueen', 'nidoran', 'nidorino', 'nidoking', 'clefairy', 'clefable',
+            'vulpix', 'ninetales', 'jigglypuff', 'wigglytuff', 'zubat', 'golbat', 'oddish', 'gloom', 'vileplume', 'paras', 'parasect',
+            'venonat', 'venomoth', 'diglett', 'dugtrio', 'meowth', 'persian', 'psyduck', 'golduck', 'mankey', 'primeape', 'growlithe',
+            'arcanine', 'poliwag', 'poliwhirl', 'poliwrath', 'abra', 'kadabra', 'alakazam', 'machop', 'machoke', 'machamp', 'bellsprout',
+            'weepinbell', 'victreebel', 'tentacool', 'tentacruel', 'geodude', 'graveler', 'golem', 'ponyta', 'rapidash', 'slowpoke',
+            'slowbro', 'magnemite', 'magneton', 'farfetch?d', 'doduo', 'dodrio', 'seel', 'dewgong', 'grimer', 'muk', 'shellder',
+            'cloyster', 'gastly', 'haunter', 'gengar', 'onix', 'drowzee', 'hypno', 'krabby', 'kingler', 'voltorb', 'electrode',
+            'exeggcute', 'exeggutor', 'cubone', 'marowak', 'hitmonlee', 'hitmonchan', 'lickitung', 'koffing', 'weezing', 'rhyhorn',
+            'rhydon', 'chansey', 'tangela', 'kangaskhan', 'horsea', 'seadra', 'goldeen', 'seaking', 'staryu', 'starmie', 'mr. mime',
+            'scyther', 'jynx', 'electabuzz', 'magmar', 'pinsir', 'tauros', 'magikarp', 'gyarados', 'lapras', 'ditto', 'eevee',
+            'vaporeon', 'jolteon', 'flareon', 'porygon', 'omanyte', 'omastar', 'kabuto', 'kabutops', 'aerodactyl', 'snorlax',
+            'articuno', 'zapdos', 'moltres', 'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew'
+        ]
     ];
 
     /** @var array */
@@ -69,6 +83,7 @@ abstract class Lipsum
     /**
      * Get or set source
      * @param null $name
+     * @throws \InvalidArgumentException
      * @return array
      */
     public static function source($name = null)
@@ -79,11 +94,16 @@ abstract class Lipsum
             $source = $name;
         }
         elseif(!$source) {
-            $source = 'lorem';
+            $source = 'default';
+        }
+
+        // source not found
+        if(!isset(static::$sources[$source])) {
+            throw new \InvalidArgumentException('Unknown source "' . $source . '".');
         }
 
         // get source array
-        return array_flip(static::$$source);
+        return array_flip(static::$sources[$source]);
     }
 
 
