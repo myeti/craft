@@ -227,4 +227,30 @@ class Repository extends \ArrayObject implements Provider
         return $value;
     }
 
+
+    /**
+     * Fill with data when key does not exists
+     * @param array $with
+     */
+    public function fill(array $with)
+    {
+        foreach($with as $key => $value) {
+            if(!$this->has($key)) {
+                $this->set($key, $value);
+            }
+        }
+    }
+
+
+    /**
+     * Replace data with many values
+     * @param array $with
+     */
+    public function override(array $with)
+    {
+        foreach($with as $key => $value) {
+            $this->set($key, $value);
+        }
+    }
+
 }

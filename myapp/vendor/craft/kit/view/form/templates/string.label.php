@@ -1,1 +1,0 @@
-<label for="<?= $field->id ?>"><?= $field->label ?></label>

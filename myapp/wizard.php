@@ -15,7 +15,7 @@ $files = [
     'crud.logic'            => 'crud/logic',
     'crud.view.all'         => 'crud/view.all',
     'crud.view.one'         => 'crud/view.one',
-    'crud.view.form'        => 'crud/view.form'
+    'crud.view.field'        => 'crud/view.field'
 ];
 
 $cli = new Console(function(){

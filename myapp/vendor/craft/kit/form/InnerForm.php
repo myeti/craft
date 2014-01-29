@@ -21,7 +21,7 @@ class InnerForm extends Form
     public function __construct($name, $entity = null)
     {
         $this->name = $name;
-        $this->template = __DIR__ . '/templates/form.inner';
+        $this->template = __DIR__ . '/templates/field.inner';
 
         parent::__construct($entity);
 
