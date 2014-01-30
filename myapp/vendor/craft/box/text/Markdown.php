@@ -7,13 +7,13 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\box\text;
+namespace Craft\Box\Text;
 
 class Markdown
 {
 
     /** @var array */
-    protected $_items = [];
+    protected $items = [];
 
     /**
      * Setup basic items
@@ -229,7 +229,7 @@ class Markdown
      */
     public function set($name, \Closure $callback)
     {
-        $this->_items[$name] = $callback;
+        $this->items[$name] = $callback;
     }
 
 
@@ -246,7 +246,7 @@ class Markdown
             }
         }
 
-        unset($this->_items[$name]);
+        unset($this->items[$name]);
     }
 
 
@@ -262,7 +262,7 @@ class Markdown
         $text = trim($text);
 
         // apply all rules
-        foreach($this->_items as $name => $item) {
+        foreach($this->items as $name => $item) {
 
             // skip ?
             if(in_array($name, $skip)) {
@@ -283,8 +283,8 @@ class Markdown
      */
     public function apply($name, $text)
     {
-        if(isset($this->_items[$name])) {
-            return call_user_func($this->_items[$name], $text);
+        if(isset($this->items[$name])) {
+            return call_user_func($this->items[$name], $text);
         }
 
         return $text;

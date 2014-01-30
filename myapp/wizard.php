@@ -1,11 +1,10 @@
 <?php
 
 // load craft package
-require 'vendor/craft/package.php';
+require 'vendor/Craft/Bundle/autoload.php';
 
-use craft\kit\cli\Console;
-use craft\kit\cli\Out;
-use craft\kit\cli\In;
+use Craft\Console;
+use Craft\Console\Out;
 
 // template files
 $files = [
@@ -22,7 +21,7 @@ $cli = new Console(function(){
     Out::say('Welcome to the Craft Wizard ~');
 });
 
-$cli->command(['auth', 'auth :alias'], function($alias = null){
+$cli->command(['auth :alias'], function($alias){
     Out::say('Create auth controller');
 });
 
@@ -32,6 +31,10 @@ $cli->command('crud :alias', function($alias){
 
 $cli->command('logic :name', function($name){
     Out::say('Create controller "' . $name . '"');
+});
+
+$cli->command('fuck off', function($name){
+    Out::say('You too.');
 });
 
 $cli->plug();

@@ -7,15 +7,15 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\box\data;
+namespace Craft\Box\Data;
 
-use craft\box\meta\Action;
+use Craft\Box\Meta\Resolver;
 
 class Validator
 {
 
     /** @var array */
-    protected $_rules = [];
+    protected $rules = [];
 
 
     /**
@@ -25,7 +25,7 @@ class Validator
      */
     public function has($rule)
     {
-        return isset($this->_rules[$rule]);
+        return isset($this->rules[$rule]);
     }
 
 
@@ -37,7 +37,7 @@ class Validator
      */
     public function set($rule, $validator)
     {
-        $this->_rules[$rule] = $validator;
+        $this->rules[$rule] = $validator;
     }
 
 
@@ -48,7 +48,7 @@ class Validator
      */
     public function drop($rule)
     {
-        unset($this->_rules[$rule]);
+        unset($this->rules[$rule]);
     }
 
 
@@ -64,10 +64,10 @@ class Validator
         $valid = true;
 
         // apply all rules
-        foreach($this->_rules as $rule) {
+        foreach($this->rules as $rule) {
 
             // apply rule
-            $data = Action::call($rule, [$input], true);
+            $data = Resolver::call($rule, [$input], true);
 
             // error
             if($data !== true) {

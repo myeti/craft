@@ -1,6 +1,6 @@
 <?php
 
-namespace my\logic;
+namespace My\Logic;
 
 class Error
 {

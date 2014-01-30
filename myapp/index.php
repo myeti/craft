@@ -7,7 +7,7 @@
  * First, you need to load the craft bundle allowing you
  * to use libraries and components.
  */
-require 'vendor/craft/bundle.php';
+require 'vendor/Craft/Bundle/autoload.php';
 
 
 /**
@@ -15,7 +15,8 @@ require 'vendor/craft/bundle.php';
  * As an advise, you should put all your libraries under the `vendor` directory.
  *//*
 
-craft\Loader::vendor('lib', 'vendor/MyLib');
+$loader = Craft\Service::loader();
+$loader->vendor('lib', 'vendor/MyLib');
 
 
 /**
@@ -29,7 +30,7 @@ craft\Loader::vendor('lib', 'vendor/MyLib');
  * If you don't setup Syn, it will provide fake data based on Lipsum.
  *//*
 
-craft\orm\Syn::mysql('my_db', [
+Craft\Syn::mysql('my_db', [
     'host'   => '127.0.0.1',
     'user'   => 'root',
     'pass'   => null,
@@ -48,11 +49,11 @@ craft\orm\Syn::mysql('my_db', [
  * just ask the `merge()` method !
  *//*
 
-craft\orm\Syn::map([
-    'user'  => 'my\models\User'
+Craft\Syn::map([
+    'user'  => 'My\Model\User'
 ]);
 
-craft\orm\Syn::merge();
+Craft\Syn::merge();
 
 
 /**
@@ -70,10 +71,10 @@ craft\orm\Syn::merge();
  *
  * @see `my\logic\Front` to know how to build a controller.
  */
-$app = new craft\web\App([
-    '/'         => 'my\logic\Front::hello',
-    '/lost'     => 'my\logic\Error::lost',
-    '/sorry'    => 'my\logic\Error::sorry'
+$app = new Craft\App([
+    '/'         => 'My\Logic\Front::hello',
+    '/lost'     => 'My\Logic\Error::lost',
+    '/sorry'    => 'My\Logic\Error::sorry'
 ]);
 
 
@@ -98,7 +99,21 @@ $app->on(403, function() use($app) {
 /**
  * Well, everything is ready, it's time to plug
  * your myapp on the current url.
- *
- * Thanks for using Craft ;)
  */
 $app->plug();
+
+
+/**
+ * In case of you want to track your app performance,
+ * retrieve the tracker service from the bag
+ *//*
+$tracker = Craft\Service::tracker();
+$tracker->stop('craft.app');
+
+list($time, $memory) = $tracker->report('craft.app');
+echo $time, ' / ', $memory;
+
+
+/**
+ * Thanks for playing with Craft :)
+ */

@@ -7,13 +7,13 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\box\text;
+namespace Craft\Box\Text;
 
 abstract class I18n
 {
 
 	/** @var array */
-	protected static $_data = [];
+	protected static $data = [];
 
 
 	/**
@@ -24,7 +24,7 @@ abstract class I18n
 	{
 		// create hash
 		foreach($data as $key => $value) {
-			static::$_data[md5($key)] = $value;
+			static::$data[md5($key)] = $value;
 		}
 	}
 
@@ -41,8 +41,8 @@ abstract class I18n
 		$text = trim($text);
 
 		// get table
-		if(isset(static::$_data[md5($text)])) {
-			$text = static::$_data[md5($text)];
+		if(isset(static::$data[md5($text)])) {
+			$text = static::$data[md5($text)];
 		}
 
 		// compile cloze

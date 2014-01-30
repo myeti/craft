@@ -7,250 +7,152 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\box\data;
+namespace Craft\Box\Data;
 
-use craft\box\data\provider\Provider;
+use Craft\Box\Data\Provider;
 
 class Repository extends \ArrayObject implements Provider
 {
 
+    /** @var string */
+    protected $separator;
+
+
     /**
-     * Create repository from array and/or base key
-     * @param array $array
-     * @param null $key
+     * Setup array and separator
+     * @param array $input
+     * @param string $separator
      */
-    public function __construct(array &$array = [], $key = null)
+    public function __construct(array $input = [], $separator = '.')
     {
-        // has base key
-        if($key) {
-
-            // create base key
-            if(!isset($array[$key])) {
-                $array[$key] = [];
-            }
-
-            $array = $array[$key];
-        }
-
-        parent::__construct($array);
+        $this->separator = $separator;
+        parent::__construct($input);
     }
 
 
     /**
-     * Check if a dot key exists
+     * Check if element exists
      * @param $key
      * @return bool
      */
-	public function has($key)
-	{
-        // init
-        $array = $this;
-        $keys = explode('.', $key);
-
-        // walk to the end
-        while(count($keys) > 1) {
-
-            // current segment
-            $key = array_shift($keys);
-
-            // has not
-            if(!isset($array[$key]) or !is_array($array[$key])) {
-                return false;
-            }
-
-            // next
-            $array = $array[$key];
-        }
-
-        // has ?
-        $key = array_shift($keys);
-        if(!isset($array[$key])) {
-            return false;
-        }
-
-        return true;
-	}
+    public function has($key)
+    {
+        $array = $this->resolve($key);
+        return (bool)$array;
+    }
 
 
     /**
-     * Retrieve a value using dot syntax
+     * Get element by key, fallback on error
      * @param $key
      * @param null $fallback
      * @return mixed
      */
-	public function get($key, $fallback = null)
-	{
-        // init
-        $array = $this;
-        $keys = explode('.', $key);
-
-        // walk to the end
-        while(count($keys) > 1) {
-
-            // current segment
-            $key = array_shift($keys);
-
-            // undefined cursor, break
-            if(!isset($array[$key]) or !is_array($array[$key])) {
-                return $fallback;
-            }
-
-            // next
-            $array = $array[$key];
-        }
-
-        // get
-        $key = array_shift($keys);
-        return $array[$key];
-	}
-
-
-    /**
-     * Store a value using dot syntax
-     * @param $key
-     * @param mixed $value
-     * @return $this
-     */
-	public function set($key, $value)
-	{
-        // init
-        $array = &$this;
-        $keys = explode('.', $key);
-
-        // walk to the end
-        while(count($keys) > 1) {
-
-            // current segment
-            $key = array_shift($keys);
-
-            // undefined cursor, break
-            if(!isset($array[$key])) {
-                $array[$key] = null;
-            }
-
-            // next
-            $array = &$array[$key];
-        }
-
-        // set
-        $key = array_shift($keys);
-        $array[$key] = $value;
-
-        return $this;
-	}
-
-
-    /**
-     * Push a value using dot syntax
-     * @param $key
-     * @param mixed $value
-     * @return $this
-     */
-    public function push($key, $value)
+    public function get($key, $fallback = null)
     {
-        // init
-        $array = &$this;
-        $keys = explode('.', $key);
-
-        // walk to the end
-        while(count($keys) > 1) {
-
-            // current segment
-            $key = array_shift($keys);
-
-            // undefined cursor, break
-            if(!isset($array[$key])) {
-                $array[$key] = null;
-            }
-
-            // next
-            $array = &$array[$key];
-        }
-
-        // force array
-        $key = array_shift($keys);
-        if(!is_array($array[$key])) {
-            $array[$key] = [];
-        }
-
-        // push
-        $array[$key][] = $value;
-
-        return $this;
+        $array = $this->resolve($key);
+        $key = $this->parse($key);
+        return $array ? $array[$key] : $fallback;
     }
 
 
     /**
-     * Remove value using dot syntax
+     * Set element by key with value
      * @param $key
-     * @return $this
+     * @param $value
+     * @return bool
      */
-	public function drop($key)
-	{
-        // init
-        $array = &$this;
-        $keys = explode('.', $key);
-
-        // walk to the end
-        while(count($keys) > 1) {
-
-            // current segment
-            $key = array_shift($keys);
-
-            // undefined cursor, break
-            if(!isset($array[$key]) or !is_array($array[$key])) {
-                return $this;
-            }
-
-            // next
-            $array = &$array[$key];
-        }
-
-        // remove
-        $key = array_shift($keys);
-        unset($array[$key]);
-
-		return $this;
-	}
+    public function set($key, $value)
+    {
+        $array = &$this->resolve($key);
+        $key = $this->parse($key);
+        $array[$key] = $value;
+    }
 
 
     /**
-     * Retrieve value using dot syntax and drop key
+     * Drop element by key
      * @param $key
+     * @return bool
+     */
+    public function drop($key)
+    {
+        $array = &$this->resolve($key);
+        $key = $this->parse($key);
+        if($array) {
+            unset($array[$key]);
+        }
+    }
+
+
+    /**
+     * Resolve path to value
+     * @param $namespace
+     * @param bool $dig
+     * @return array
+     */
+    protected function &resolve($namespace, $dig = false)
+    {
+        // parse info
+        $array = &$this;
+        $namespace = trim($namespace, $this->separator);
+
+        // empty namespace
+        if(!$namespace) {
+            return $array;
+        }
+
+        $segments = explode($this->separator, $namespace);
+        if(count($segments) < 2) {
+
+            if(!$dig) {
+                return $array;
+            }
+
+            $array[$segments[0]] = [];
+
+            return $array;
+        }
+
+        unset($segments[count($segments)-1]);
+
+        foreach($segments as $segment) {
+            if(null !== $array and !array_key_exists($segment, $array)) {
+                $array[$segment] = $dig ? [] : null;
+            }
+
+            $array = &$array[$segment];
+        }
+
+        return $array;
+    }
+
+
+    /**
+     * Parse key
+     * @param $namespace
      * @return mixed
      */
-    public function pull($key)
+    protected function parse($namespace)
     {
-        $value = $this->get($key);
-        $this->drop($key);
-
-        return $value;
+        $segments = explode($this->separator, $namespace);
+        return end($segments);
     }
 
 
     /**
-     * Fill with data when key does not exists
-     * @param array $with
+     * Create Repository from array
+     * @param array $array
+     * @param $baseKey
+     * @return Repository
      */
-    public function fill(array $with)
+    public static function from(array &$array, $baseKey)
     {
-        foreach($with as $key => $value) {
-            if(!$this->has($key)) {
-                $this->set($key, $value);
-            }
+        if(!isset($array[$baseKey])) {
+            $array[$baseKey] = [];
         }
-    }
 
-
-    /**
-     * Replace data with many values
-     * @param array $with
-     */
-    public function override(array $with)
-    {
-        foreach($with as $key => $value) {
-            $this->set($key, $value);
-        }
+        return new self($array[$baseKey]);
     }
 
 }

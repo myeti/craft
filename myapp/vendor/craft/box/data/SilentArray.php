@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\box\data;
+namespace Craft\Box\Data;
 
 class SilentArray extends \ArrayObject
 {
@@ -8,7 +8,7 @@ class SilentArray extends \ArrayObject
     /**
      * Silent get : does not throw error
      * @param mixed $index
-     * @return mixed|null
+     * @return mixed
      */
     public function offsetGet($index)
     {

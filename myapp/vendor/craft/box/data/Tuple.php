@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\box\data;
+namespace Craft\Box\Data;
 
 class Tuple extends \ArrayObject
 {

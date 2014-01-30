@@ -6,7 +6,7 @@
  * Time: 12:02
  */
 
-namespace craft\box\data\provider;
+namespace Craft\Box\Data\Provider;
 
 
 interface WriteProvider

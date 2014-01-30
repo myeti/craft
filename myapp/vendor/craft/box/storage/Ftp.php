@@ -1,12 +1,12 @@
 <?php
 
-namespace craft\box\storage;
+namespace Craft\Box\Storage;
 
 class Ftp
 {
 
     /** @var resource */
-    protected $_remote;
+    protected $remote;
 
 
     /**
@@ -16,7 +16,7 @@ class Ftp
      */
     public function __construct($url, $secure = false)
     {
-        $this->_remote = $secure ? ftp_ssl_connect($url) : ftp_connect($url);
+        $this->remote = $secure ? ftp_ssl_connect($url) : ftp_connect($url);
     }
 
 
@@ -28,7 +28,7 @@ class Ftp
      */
     public function login($username, $password)
     {
-        return ftp_login($this->_remote, $username, $password);
+        return ftp_login($this->remote, $username, $password);
     }
 
 
@@ -38,7 +38,7 @@ class Ftp
      */
     public function current()
     {
-        return ftp_pwd($this->_remote);
+        return ftp_pwd($this->remote);
     }
 
 
@@ -49,7 +49,7 @@ class Ftp
      */
     public function listing($of = '.')
     {
-        return ftp_nlist($this->_remote, $of);
+        return ftp_nlist($this->remote, $of);
     }
 
 
@@ -63,7 +63,7 @@ class Ftp
         $moved = true;
         $dirs = explode('/', trim($to, '/'));
         foreach($dirs as $dir) {
-            $moved &= ftp_chdir($this->_remote, $dir);
+            $moved &= ftp_chdir($this->remote, $dir);
         }
 
         return $moved;
@@ -77,7 +77,7 @@ class Ftp
      */
     public function delete($file)
     {
-        return ftp_delete($this->_remote, $file) ?: ftp_rmdir($this->_remote, $file);
+        return ftp_delete($this->remote, $file) ?: ftp_rmdir($this->remote, $file);
     }
 
 
@@ -90,9 +90,9 @@ class Ftp
      */
     public function create($directory, $mode = null)
     {
-        $created = ftp_mkdir($this->_remote, $directory);
+        $created = ftp_mkdir($this->remote, $directory);
         if($mode) {
-            ftp_chmod($this->_remote, $mode, $directory);
+            ftp_chmod($this->remote, $mode, $directory);
         }
 
         return $created;
@@ -107,7 +107,7 @@ class Ftp
      */
     public function rename($old, $new)
     {
-        return ftp_rename($this->_remote, $old, $new);
+        return ftp_rename($this->remote, $old, $new);
     }
 
 
@@ -121,7 +121,7 @@ class Ftp
     {
         $filename = pathinfo($what, PATHINFO_BASENAME);
         $to .= '/' . $filename;
-        return ftp_rename($this->_remote, $filename, $to);
+        return ftp_rename($this->remote, $filename, $to);
     }
 
 
@@ -133,7 +133,7 @@ class Ftp
      */
     public function download($filename, $to)
     {
-        return ftp_get($this->_remote, $to, $filename, FTP_BINARY);
+        return ftp_get($this->remote, $to, $filename, FTP_BINARY);
     }
 
 
@@ -145,7 +145,7 @@ class Ftp
      */
     public function upload($filename, $to = null)
     {
-        return ftp_put($this->_remote, $to, $filename, FTP_BINARY);
+        return ftp_put($this->remote, $to, $filename, FTP_BINARY);
     }
 
 
@@ -154,7 +154,7 @@ class Ftp
      */
     public function __destruct()
     {
-        ftp_close($this->_remote);
+        ftp_close($this->remote);
     }
 
 } 

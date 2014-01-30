@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace craft\box\meta;
+namespace Craft\Box\Meta;
 
 abstract class Object
 {

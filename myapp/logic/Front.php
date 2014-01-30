@@ -4,14 +4,14 @@
  * This is a controller, a class that contains many actions.
  * Use it to write all your business layer !
  */
-namespace my\logic;
+namespace My\Logic;
 
-use craft\Auth;
-use craft\Env;
-use craft\Flash;
-use craft\Mog;
-use craft\Session;
-use my\models\User;
+use Craft\Context\Auth;
+use Craft\Context\Env;
+use Craft\Context\Flash;
+use Craft\Context\Mog;
+use Craft\Context\Session;
+use My\Model\User;
 
 /**
  * You can already define some metadata that will be applied
