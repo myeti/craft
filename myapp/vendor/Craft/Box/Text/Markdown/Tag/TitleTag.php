@@ -4,7 +4,7 @@ namespace Craft\Box\Text\Markdown\Tag;
 
 use Craft\Box\Text\Markdown\Tag;
 
-class TitleTag implements Tag
+class TitleTag extends Tag
 {
 
     /**

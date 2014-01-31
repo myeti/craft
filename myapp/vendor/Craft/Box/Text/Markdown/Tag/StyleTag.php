@@ -4,7 +4,7 @@ namespace Craft\Box\Text\Markdown\Tag;
 
 use Craft\Box\Text\Markdown\Tag;
 
-class StyleTag implements Tag
+class StyleTag extends Tag
 {
 
     /**

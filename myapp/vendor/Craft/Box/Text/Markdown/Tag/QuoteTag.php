@@ -4,7 +4,7 @@ namespace Craft\Box\Text\Markdown\Tag;
 
 use Craft\Box\Text\Markdown\Tag;
 
-class QuoteTag implements Tag
+class QuoteTag extends Tag
 {
 
     /**
@@ -26,7 +26,7 @@ class QuoteTag implements Tag
 
             // re process
             $quote = "<blockquote>\n\n" . implode("\n\n", $tab) . "\n<blockquote>";
-//            $quote = $this->transform($quote);
+            $quote = $this->md->perform($quote, ['quote']); // recursive perform
 
             return "\n" . $quote;
 

@@ -4,7 +4,7 @@ namespace Craft\Box\Text\Markdown\Tag;
 
 use Craft\Box\Text\Markdown\Tag;
 
-class ImageTag extends Tag
+class LinkTag extends Tag
 {
 
     /**
@@ -14,8 +14,8 @@ class ImageTag extends Tag
      */
     public function transform($text)
     {
-        $text = preg_replace('/!\[(.+)\]\((.+) "(.+)"\)/', '<img src="$2" alt="$1" title="$3" />', $text);
-        return preg_replace('/!\[(.+)\]\((.+)\)/', '<img src="$2" alt="$1" />', $text);
+        $text = preg_replace('/([^!])\[(.+)\]\((.+) "(.+)"\)/', '$1<a href="$3" title="$4">$2</a>', $text);
+        return preg_replace('/([^!])\[(.+)\]\((.+)\)/', '$1<a href="$3">$2</a>', $text);
     }
 
 }

@@ -9,14 +9,6 @@
  */
 namespace Craft\Box\Text;
 
-use Craft\Box\Text\Markdown\Tag\CodeTag;
-use Craft\Box\Text\Markdown\Tag\ImageTag;
-use Craft\Box\Text\Markdown\Tag\LinkTag;
-use Craft\Box\Text\Markdown\Tag\ListTag;
-use Craft\Box\Text\Markdown\Tag\ParagraphTag;
-use Craft\Box\Text\Markdown\Tag\QuoteTag;
-use Craft\Box\Text\Markdown\Tag\StyleTag;
-use Craft\Box\Text\Markdown\Tag\TitleTag;
 use Craft\Box\Text\Markdown\Tag;
 
 class Markdown
@@ -32,14 +24,14 @@ class Markdown
     public function __construct()
     {
         $this->tags = [
-            'title'     => new TitleTag(),
-            'list'      => new ListTag(),
-            'code'      => new CodeTag(),
-            'quote'     => new QuoteTag(),
-            'paragraph' => new ParagraphTag(),
-            'link'      => new LinkTag(),
-            'image'     => new ImageTag(),
-            'style'     => new StyleTag(),
+            'title'     => new Tag\TitleTag($this),
+            'list'      => new Tag\ListTag($this),
+            'code'      => new Tag\CodeTag($this),
+            'quote'     => new Tag\QuoteTag($this),
+            'paragraph' => new Tag\ParagraphTag($this),
+            'link'      => new Tag\LinkTag($this),
+            'image'     => new Tag\ImageTag($this),
+            'style'     => new Tag\StyleTag($this),
         ];
     }
 
