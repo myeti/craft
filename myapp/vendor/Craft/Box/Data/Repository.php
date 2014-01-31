@@ -9,8 +9,6 @@
  */
 namespace Craft\Box\Data;
 
-use Craft\Box\Data\Provider;
-
 class Repository extends \ArrayObject implements Provider
 {
 
