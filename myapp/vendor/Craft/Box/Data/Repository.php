@@ -38,7 +38,8 @@ class Repository extends \ArrayObject implements Provider
     public function has($key)
     {
         $array = $this->resolve($key);
-        return (bool)$array;
+        $key = $this->parse($key);
+        return isset($array[$key]);
     }
 
 
@@ -52,7 +53,7 @@ class Repository extends \ArrayObject implements Provider
     {
         $array = $this->resolve($key);
         $key = $this->parse($key);
-        return $array ? $array[$key] : $fallback;
+        return isset($array[$key]) ? $array[$key] : $fallback;
     }
 
 
@@ -79,7 +80,7 @@ class Repository extends \ArrayObject implements Provider
     {
         $array = &$this->resolve($key);
         $key = $this->parse($key);
-        if($array) {
+        if(isset($array[$key])) {
             unset($array[$key]);
         }
     }
@@ -87,7 +88,7 @@ class Repository extends \ArrayObject implements Provider
 
     /**
      * Resolve path to value
-     * @param $namespace
+     * @param string $namespace
      * @param bool $dig
      * @return array
      */
@@ -96,32 +97,30 @@ class Repository extends \ArrayObject implements Provider
         // parse info
         $array = &$this;
         $namespace = trim($namespace, $this->separator);
-
-        // empty namespace
-        if(!$namespace) {
-            return $array;
-        }
-
         $segments = explode($this->separator, $namespace);
-        if(count($segments) < 2) {
+        end($segments);
+        $last = key($segments);
 
-            if(!$dig) {
-                return $array;
+        // one does not simply walk into Mordor
+        foreach($segments as $i => $segment) {
+
+            // namespace does not exist
+            if(!isset($array[$segment])) {
+
+                // stop here
+                if(!$dig) {
+                    break;
+                }
+
+                $array[$segment] = [];
+
             }
 
-            $array[$segments[0]] = [];
-
-            return $array;
-        }
-
-        unset($segments[count($segments)-1]);
-
-        foreach($segments as $segment) {
-            if(null !== $array and !array_key_exists($segment, $array)) {
-                $array[$segment] = $dig ? [] : null;
+            // next segment
+            if($i < $last) {
+                $array = &$array[$segment];
             }
 
-            $array = &$array[$segment];
         }
 
         return $array;

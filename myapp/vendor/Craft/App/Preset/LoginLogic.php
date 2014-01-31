@@ -2,7 +2,7 @@
 
 namespace Craft\App\Preset;
 
-use Craft\Context\Auth;
+use Craft\Data\Auth;
 
 trait LoginLogic
 {

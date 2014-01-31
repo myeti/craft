@@ -10,11 +10,10 @@
 namespace Craft\App\Handler;
 
 use Craft\App\Handler;
+use Craft\App\Handler\Firewall\AuthRule;
 use Craft\App\Roadmap;
 use Craft\Box\Error\SomethingIsWrongException;
-use Craft\Box\Text\String;
-use Craft\Box\Data\Validator;
-use Craft\Context\Auth;
+use Craft\Pattern\Specification\Validator;
 
 class Firewall extends Handler
 {
@@ -29,25 +28,7 @@ class Firewall extends Handler
     public function __construct()
     {
         $this->validator = new Validator();
-
-        // add auth rule
-        if(!$this->validator->has('firewall.auth')) {
-            $this->validator->set('firewall.auth', function(Roadmap $roadmap) {
-
-                if(isset($roadmap->draft->metadata['auth']) and Auth::rank() < (int)$roadmap->draft->metadata['auth']) {
-
-                    // format message
-                    return String::compose('Action ":target" forbidden : user(:rank) < action(:auth).', [
-                        'target'    => $roadmap->route->target,
-                        'rank'      => Auth::rank(),
-                        'auth'      => $roadmap->draft->metadata['auth']
-                    ]);
-
-                }
-
-                return true;
-            });
-        }
+        $this->validator->set('firewall.auth', new AuthRule());
     }
 
 
@@ -70,12 +51,12 @@ class Firewall extends Handler
     public function handleRoadmap(Roadmap $roadmap)
     {
         // apply checking
-        $valid = $this->validator->valid($roadmap);
+        $report = $this->validator->apply($roadmap);
 
         // error 403
-        if(!$valid->valid) {
+        if(!$report->pass) {
             $roadmap->error = 403;
-            throw new SomethingIsWrongException(implode(' ', $valid->errors), 403);
+            throw new SomethingIsWrongException(implode(' ', $report->errors), 403);
         }
 
         return $roadmap;

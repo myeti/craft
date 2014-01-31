@@ -2,8 +2,8 @@
 
 namespace My\Logic;
 
-use Craft\Context\Auth;
-use Craft\Context\Flash;
+use Craft\Data\Auth;
+use Craft\Data\Flash;
 use :model;
 
 class AuthUser

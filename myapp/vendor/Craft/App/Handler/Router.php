@@ -12,7 +12,7 @@ namespace Craft\App\Handler;
 use Craft\App\Handler;
 use Craft\App\Roadmap;
 use Craft\App\Router as AppRouter;
-use Craft\Context\Env;
+use Craft\Data\Env;
 use Craft\Box\Error\SomethingIsWrongException;
 
 /**

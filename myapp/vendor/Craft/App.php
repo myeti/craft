@@ -17,7 +17,7 @@ use Craft\App\Handler\Firewall;
 use Craft\App\Handler\Presenter;
 use Craft\App\Handler\Resolver;
 use Craft\App\Handler\Router;
-use Craft\Context\Mog;
+use Craft\Data\Mog;
 
 class App extends Dispatcher
 {

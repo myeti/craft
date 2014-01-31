@@ -7,21 +7,20 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Context;
+namespace Craft\Data;
 
 use Craft\Box\Data\StaticProvider;
-use Craft\Box\Data\SerializedRepository;
 
 abstract class Auth extends StaticProvider
 {
 
     /**
-     * Start auth
-     * @return array;
+     * Create provider instance
+     * @return SessionRepository
      */
     protected static function createInstance()
     {
-        return SerializedRepository::from($_SESSION, 'craft.auth');
+        return new SessionRepository('craft.auth', true);
     }
 
     /**
@@ -40,6 +39,17 @@ abstract class Auth extends StaticProvider
     public static function rank()
     {
         return (int)static::get('rank');
+    }
+
+
+    /**
+     * Check if rank is granted
+     * @param $rank
+     * @return bool
+     */
+    public static function allowed($rank)
+    {
+        return (static::rank() >= $rank);
     }
 
     /**

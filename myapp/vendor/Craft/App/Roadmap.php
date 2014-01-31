@@ -13,8 +13,9 @@ use Craft\App\Roadmap\Draft;
 use Craft\App\Roadmap\Sketch;
 use Craft\App\Router\Route;
 use Craft\Pattern\Chain\Material;
+use Craft\Pattern\Specification\Item;
 
-class Roadmap implements Material
+class Roadmap implements Material, Item
 {
 
     /** @var string */

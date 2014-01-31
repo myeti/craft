@@ -30,7 +30,7 @@ function path()
 function url()
 {
     $segments = func_get_args();
-    return rtrim(Craft\Context\Mog::base(), '/') . '/' . ltrim(implode('/', $segments), '/');
+    return rtrim(Craft\Data\Mog::base(), '/') . '/' . ltrim(implode('/', $segments), '/');
 }
 
 
@@ -62,7 +62,7 @@ function debug()
  */
 function post($key = null, $fallback = null)
 {
-    return Craft\Context\Mog::post($key, $fallback);
+    return Craft\Data\Mog::post($key, $fallback);
 }
 
 
@@ -73,9 +73,9 @@ function post($key = null, $fallback = null)
 function auth()
 {
     return (object)[
-        'logged'    => Craft\Context\Auth::logged(),
-        'rank'      => Craft\Context\Auth::rank(),
-        'user'      => Craft\Context\Auth::user()
+        'logged'    => Craft\Data\Auth::logged(),
+        'rank'      => Craft\Data\Auth::rank(),
+        'user'      => Craft\Data\Auth::user()
     ];
 }
 
@@ -87,7 +87,7 @@ function auth()
  */
 function flash($key)
 {
-    return Craft\Context\Flash::pull($key);
+    return Craft\Data\Flash::pull($key);
 }
 
 

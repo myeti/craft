@@ -6,11 +6,11 @@
  */
 namespace My\Logic;
 
-use Craft\Context\Auth;
-use Craft\Context\Env;
-use Craft\Context\Flash;
-use Craft\Context\Mog;
-use Craft\Context\Session;
+use Craft\Data\Auth;
+use Craft\Data\Env;
+use Craft\Data\Flash;
+use Craft\Data\Mog;
+use Craft\Data\Session;
 use My\Model\User;
 
 /**

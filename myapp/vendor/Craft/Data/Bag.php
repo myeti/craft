@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Context;
+namespace Craft\Data;
 
 use Craft\Box\Data\ArrayProvider;
 use Craft\Box\Data\StaticProvider;

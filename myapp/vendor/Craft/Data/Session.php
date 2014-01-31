@@ -7,9 +7,8 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Context;
+namespace Craft\Data;
 
-use Craft\Box\Data\Repository;
 use Craft\Box\Data\StaticProvider;
 
 abstract class Session extends StaticProvider
@@ -17,11 +16,11 @@ abstract class Session extends StaticProvider
 
     /**
      * Create provider instance
-     * @return Repository
+     * @return SessionRepository
      */
     protected static function createInstance()
     {
-        return Repository::from($_SESSION, 'craft.session');
+        return new SessionRepository('craft.session');
     }
 
 } 
