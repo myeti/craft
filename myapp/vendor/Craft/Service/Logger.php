@@ -9,7 +9,7 @@
  */
 namespace Craft\Service;
 
-use Craft\Dev\Logger\Log;
+use Craft\Service\Logger\Log;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 
@@ -144,7 +144,7 @@ class Logger extends AbstractLogger
      */
     public function log($level, $message, array $context = [])
 	{
-		$this->logs[] = new Log($level, $message);;
+		$this->logs[] = new Log($level, $message);
 	}
 
 
@@ -155,6 +155,17 @@ class Logger extends AbstractLogger
     public function logs()
     {
         return $this->logs;
+    }
+
+
+    /**
+     * Make log report
+     * @param string $separator
+     * @return string
+     */
+    public function report($separator = '<br/>')
+    {
+        return implode($separator, $this->logs);
     }
 
 }

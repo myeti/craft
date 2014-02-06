@@ -2,7 +2,7 @@
 
 namespace Craft\Pattern;
 
-use Craft\Box\Error\NotImplementedException;
+use Craft\Error\NotImplementedException;
 
 trait StaticSingleton
 {

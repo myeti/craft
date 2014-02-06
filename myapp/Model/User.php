@@ -12,7 +12,7 @@ namespace My\Model;
  * use the `@var` metadata on each property and add the type
  * (int => integer, string => varchar, string text => text, string date => datetime)
  */
-use Craft\Syn\Model;
+use Craft\Orm\Model;
 
 class User
 {

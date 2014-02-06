@@ -47,14 +47,14 @@ trait Subject
      */
     public function fire($name, array $params = [])
     {
-        // no listeners
-        if(empty($this->events[$name])) {
-            return;
-        }
-
         // fire * event
         if($name != '*') {
             $this->fire('*', ['name' => $name, 'params' => $params]);
+        }
+
+        // no listeners
+        if(empty($this->events[$name])) {
+            return;
         }
 
         // trigger all listeners

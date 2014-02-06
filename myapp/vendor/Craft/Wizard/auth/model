@@ -2,7 +2,7 @@
 
 namespace My\Model;
 
-use Craft\Syn\Model;
+use Craft\Orm\Model;
 
 class User
 {

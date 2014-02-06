@@ -2,7 +2,7 @@
 
 namespace Craft\Pattern\Specification;
 
-use Craft\Box\Data\Provider;
+use Craft\Data\Provider;
 
 class Validator extends Rule
 {

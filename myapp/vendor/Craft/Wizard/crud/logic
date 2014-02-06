@@ -3,8 +3,8 @@
 namespace My\Logic;
 
 use :model;
-use Craft\Data\Flash;
-use Craft\Box\Error\SomethingIsWrongException;
+use Craft\Env\Flash;
+use Craft\Error\SomethingIsWrongException;
 
 class Crud:class
 {

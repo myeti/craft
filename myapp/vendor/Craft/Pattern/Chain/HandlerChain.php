@@ -16,7 +16,7 @@ class HandlerChain
      */
     public function handler(Handler $handler)
     {
-        $this->handlers[] = $handler;
+        $this->handlers[$handler->name()] = $handler;
 
         return $this;
     }
@@ -46,10 +46,10 @@ class HandlerChain
     public function run(Material $material, array $skip = [])
     {
         // start chaining
-        foreach($this->handlers as $handler) {
+        foreach($this->handlers as $name => $handler) {
 
             // skip this one
-            if(in_array($handler->name(), $skip)) {
+            if(in_array($name, $skip)) {
                 continue;
             }
 

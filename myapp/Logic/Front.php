@@ -6,11 +6,11 @@
  */
 namespace My\Logic;
 
-use Craft\Data\Auth;
-use Craft\Data\Env;
-use Craft\Data\Flash;
-use Craft\Data\Mog;
-use Craft\Data\Session;
+use Craft\Env\Auth;
+use Craft\Env\Config;
+use Craft\Env\Flash;
+use Craft\Env\Mog;
+use Craft\Env\Session;
 use My\Model\User;
 
 /**
@@ -138,7 +138,7 @@ class Front
      */
     public function env()
     {
-        Env::set('config.app', 'dev');
+        Config::set('app.env', 'dev');
     }
 
 
@@ -147,7 +147,7 @@ class Front
      * Mog is a read-only helper and provide you data
      * from $_POST, $_GET, $_SERVER, headers and many more.
      *
-     * @see craft\box\env\Mog for all methods !
+     * @see craft\env\Mog for all methods !
      */
     public function mog()
     {

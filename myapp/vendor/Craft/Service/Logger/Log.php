@@ -9,8 +9,6 @@
  */
 namespace Craft\Service\Logger;
 
-use Craft\Box\Text\String;
-
 class Log
 {
 
@@ -30,7 +28,7 @@ class Log
      */
     public function __construct($level, $content)
     {
-        $this->time = date('Y-m-d H:i:s');
+        $this->time = microtime(true);
         $this->level = $level;
         $this->content = $content;
     }
@@ -41,11 +39,9 @@ class Log
      */
     public function __toString()
     {
-        return String::compose('[:system] :level - :content', [
-            'system'      => $this->time,
-            'level'     => $this->level,
-            'content'   => $this->content,
-        ]);
+        list($time, $micro) = explode('.', $this->time);
+        $date = date('Y-m-d H:i:s.', $time) . str_pad($micro, 4, 0);
+        return '[' . $date . '] ' . $this->level . ' - ' . $this->content;
     }
 
 } 

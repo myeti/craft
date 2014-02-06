@@ -7,7 +7,7 @@
  * First, you need to load the craft bundle allowing you
  * to use libraries and components.
  */
-require 'vendor/Craft/Bundle/autoload.php';
+require 'vendor/autoload.php';
 
 
 /**
@@ -30,7 +30,7 @@ $loader->vendor('lib', 'vendor/MyLib');
  * If you don't setup Syn, it will provide fake data based on Lipsum.
  *//*
 
-Craft\Syn::mysql('my_db', [
+Craft\Orm\Syn::mysql('my_db', [
     'host'   => '127.0.0.1',
     'user'   => 'root',
     'pass'   => null,
@@ -49,11 +49,11 @@ Craft\Syn::mysql('my_db', [
  * just ask the `merge()` method !
  *//*
 
-Craft\Syn::map([
+Craft\Orm\Syn::map([
     'user'  => 'My\Model\User'
 ]);
 
-Craft\Syn::merge();
+Craft\Orm\Syn::merge();
 
 
 /**
@@ -71,7 +71,7 @@ Craft\Syn::merge();
  *
  * @see `my\logic\Front` to know how to build a controller.
  */
-$app = new Craft\App([
+$app = new Craft\Kernel\App([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'
@@ -101,17 +101,6 @@ $app->on(403, function() use($app) {
  * your myapp on the current url.
  */
 $app->plug();
-
-
-/**
- * In case of you want to track your app performance,
- * retrieve the tracker service from the bag
- *//*
-$tracker = Craft\Service::tracker();
-$tracker->stop('craft.app');
-
-list($time, $memory) = $tracker->report('craft.app');
-echo $time, ' / ', $memory;
 
 
 /**

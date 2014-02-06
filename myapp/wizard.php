@@ -1,10 +1,10 @@
 <?php
 
 // load craft package
-require 'vendor/Craft/Bundle/autoload.php';
+require 'vendor/autoload.php';
 
-use Craft\Console;
-use Craft\Console\Out;
+use Craft\Cli\Console;
+use Craft\Cli\Out;
 
 // template files
 $files = [
