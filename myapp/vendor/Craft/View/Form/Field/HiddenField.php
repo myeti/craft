@@ -19,7 +19,7 @@ class HiddenField extends Field
      */
     public function input()
     {
-        return $this->render(__DIR__ . '/../templates/hidden.input');
+        return $this->render('hidden.input');
     }
 
     /**

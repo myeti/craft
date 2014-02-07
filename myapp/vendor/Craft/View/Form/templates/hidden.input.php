@@ -1,1 +1,1 @@
-<input type="hidden" name="<?= $field->name() ?>" value="<?= $field['value'] ?>" />
+<input type="hidden" name="<?= $field->name() ?>" value="<?= $field->value ?>" />

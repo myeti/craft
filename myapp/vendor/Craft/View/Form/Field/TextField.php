@@ -13,7 +13,7 @@ class TextField extends Field
      */
     public function input()
     {
-        return $this->render(__DIR__ . '/../templates/text.input');
+        return $this->render('text.input');
     }
 
 }

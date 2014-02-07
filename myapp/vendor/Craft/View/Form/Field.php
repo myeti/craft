@@ -2,53 +2,63 @@
 
 namespace Craft\View\Form;
 
-use Craft\Data\SilentArray;
 use Craft\View\Engine;
 use Craft\View\Template;
 
-abstract class Field extends SilentArray
+abstract class Field implements Element
 {
+
+    /** @var string */
+    public $id;
+
+    /** @var string */
+    public $name;
+
+    /** @var string */
+    public $value;
+
+    /** @var string */
+    public $label;
+
+    /** @var string */
+    public $placeholder;
+
+    /** @var string */
+    public $helper;
+
+    /** @var string */
+    public $parent;
 
     /**
      * Set unique field id
      * & setup field data
      */
-    public function __construct($name, array $config = [])
+    public function __construct($name, $value = null, array $other = [])
     {
-        // default config
-        $config = $config + [
-            'id'        => $name. '_' . uniqid(),
-            'name'      => $name,
-            'value'     => null,
-            'label'     => null,
-            'helper'    => null,
-            'parent'    => null
+        $this->id = $name . '_' . uniqid();
+        $this->name = $name;
+        $this->value = $value;
+
+        $other = $other + [
+            'label'         => null,
+            'helper'        => null,
+            'placeholder'   => null,
+            'parent'        => null
         ];
 
-        parent::__construct($config);
+        $this->label = $other['label'];
+        $this->helper = $other['helper'];
+        $this->placeholder = $other['placeholder'];
     }
 
 
     /**
-     * Get formatted name
+     * Get inner name
      * @return string
      */
     public function name()
     {
-        return $this['parent'] ? $this['parent'] . '[' . $this['name'] . ']' : $this['name'];
-    }
-
-
-    /**
-     * Render template
-     * @param $template
-     * @param array $data
-     * @return string
-     */
-    protected function render($template, array $data = [])
-    {
-        $engine = new Engine();
-        return Template::forge($engine, $template, $data + ['field' => $this]);
+        return $this->parent ? $this->parent . '[' . $this->name . ']' : $this->name;
     }
 
 
@@ -58,7 +68,7 @@ abstract class Field extends SilentArray
      */
     public function label()
     {
-        return $this->render(__DIR__ . '/templates/field.label');
+        return $this->render('field.label');
     }
 
 
@@ -75,7 +85,7 @@ abstract class Field extends SilentArray
      */
     public function helper()
     {
-        return $this->render(__DIR__ . '/templates/field.helper');
+        return $this->render('field.helper');
     }
 
 
@@ -83,13 +93,21 @@ abstract class Field extends SilentArray
      * Render label, input and helper
      * @return string
      */
-    /**
-     * Render label, input and helper
-     * @return string
-     */
     public function html()
     {
-        return $this->render(__DIR__ . '/templates/field');
+        return $this->render('field');
+    }
+
+
+    /**
+     * Render template
+     * @param $template
+     * @return string
+     */
+    protected function render($template)
+    {
+        $engine = new Engine(__DIR__ . '/templates/', 'php');
+        return Template::forge($engine, $template, ['field' => $this]);
     }
 
 } 

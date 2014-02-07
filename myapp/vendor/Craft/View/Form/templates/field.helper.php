@@ -1,1 +1,1 @@
-<span class="helper"><?= $field['helper'] ?></span>
+<span class="helper"><?= $field->helper ?></span>

@@ -13,7 +13,7 @@ class EmailField extends Field
      */
     public function input()
     {
-        return $this->render(__DIR__ . '/../templates/email.input');
+        return $this->render('email.input');
     }
 
 }

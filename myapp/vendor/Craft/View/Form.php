@@ -2,86 +2,77 @@
 
 namespace Craft\View;
 
-use craft\data\Repository;
-use craft\data\SilentArray;
-use craft\meta\Annotation;
-use craft\kit\view\Template;
+use Craft\View\Form\Element;
+use Craft\View\Form\Field;
 
-class Form extends SilentArray
+class Form extends \ArrayObject implements Element
 {
 
-    /** @var array */
-    public $config = [];
+    /** @var string */
+    public $name;
 
     /** @var string */
-    public $url;
+    public $url = '#';
 
     /** @var string */
-    public $method;
+    public $method = 'post';
+
+    /** @var string */
+    public $parent;
+
+    /** @var string */
+    public $template = 'form';
 
 
     /**
-     * Load entity
-     * @param array $config
+     * Setup form
+     * @param string $name
+     * @param string $url
+     * @param string $method
+     * @param string $parent
      */
-    public function __construct(array $config = [])
+    public function __construct($name, $url = '#', $method = 'post', $parent = null)
     {
-        // default config
-        $defaults = [
-            'form' => [
-                'url'      => '#',
-                'method'   => 'post',
-                'template' => __DIR__ . '/templates/form',
-                'entity'   => null,
-                'types'    => [
-                    'hidden'           => 'craft\kit\form\fields\HiddenField',
-                    'int'              => 'craft\kit\form\fields\StringField',
-                    'string'           => 'craft\kit\form\fields\StringField',
-                    'string text'      => 'craft\kit\form\fields\TextField',
-                    'string email'     => 'craft\kit\form\fields\EmailField',
-                    'string date'      => 'craft\kit\form\fields\StringField',
-                    'string datetime'  => 'craft\kit\form\fields\StringField',
-                    'default'          => 'craft\kit\form\fields\StringField',
-                ]
-            ]
-        ];
+        $this->name = $name;
+        $this->url = $url;
+        $this->method = $method;
+        $this->parent = $parent;
 
-        // create repo
-        $this->config = new Repository($defaults);
+        parent::__construct();
+    }
 
-        // parse entity
-        if(isset($config['form.entity']) and is_object($config['form.entity'])) {
-            foreach($config['form.entity'] as $prop => $value) {
-                $this->config->set($prop, [
-                    'value' => $value,
-                    'type' => Annotation::property($config['form.entity'], $prop, 'var'),
-                ]);
-            }
-        }
 
-        // override
-        $this->config->override($config);
+    /**
+     * Get inner name
+     * @return string
+     */
+    public function name()
+    {
+        return $this->parent ? $this->parent . '[' . $this->name . ']' : $this->name;
+    }
 
-        // hydrate with fields
-        $fields = clone $this->config;
-        unset($fields['form']);
-        foreach($fields as $name => $info) {
 
-            // get field type + fallback
-            $fieldType = $this->config->get('form.types.' . trim($info['type']),
-                $this->config->get('form.types.default')
-            );
+    /**
+     * Add field
+     * @param Form\Element $element
+     * @return Element
+     */
+    public function &add(Element $element)
+    {
+        $element->parent = $this->name();
+        parent::offsetSet($element->name, $element);
+        return $element;
+    }
 
-            // create field
-            $field = new $fieldType($name, $info);
-            $this[$name] = $field;
 
-        }
-
-        // set params
-        $this->url = $this->config->get('form.url');
-        $this->method = $this->config->get('form.method');
-
+    /**
+     * Nope !
+     * @param mixed $a
+     * @param mixed $b
+     */
+    public function offsetSet($a, $b)
+    {
+        // nope
     }
 
 
@@ -91,7 +82,12 @@ class Form extends SilentArray
      */
     public function html()
     {
-        return Template::forge($this->config->get('form.template'), ['form' => $this]);
+        if($this->parent) {
+            $this->template .= '.sub';
+        }
+
+        $engine = new Engine(__DIR__ . '/Form/templates/', 'php');
+        return Template::forge($engine, $this->template, ['form' => $this]);
     }
 
 }
