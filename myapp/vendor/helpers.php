@@ -85,7 +85,7 @@ function auth()
  */
 function flash($key)
 {
-    return Craft\Env\Flash::pull($key);
+    return Craft\Env\Flash::get($key);
 }
 
 
@@ -109,7 +109,7 @@ function __($text, array $vars = [])
  */
 function hydrate($object, array $data)
 {
-    return Craft\Meta\Object::hydrate($object, $data);
+    return Craft\Reflect\Object::hydrate($object, $data);
 }
 
 
@@ -120,7 +120,7 @@ function hydrate($object, array $data)
  */
 function with($object)
 {
-    return Craft\Meta\Object::with($object);
+    return Craft\Reflect\Object::with($object);
 }
 
 

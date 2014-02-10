@@ -16,7 +16,7 @@ class Rest extends App
     /**
      * Render data as json
      */
-    protected function view()
+    protected function createView()
     {
         return new Json($this->config['json.wrapper']);
     }

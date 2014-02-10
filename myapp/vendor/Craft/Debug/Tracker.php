@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Service;
+namespace Craft\Debug;
 
-use Craft\Service\Tracker\Task;
+use Craft\Debug\Tracker\Task;
 
 class Tracker
 {

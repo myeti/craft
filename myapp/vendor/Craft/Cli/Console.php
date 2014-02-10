@@ -15,17 +15,36 @@ use Craft\Router\RouteProvider;
 class Console
 {
 
+    /** @var In */
+    protected $in;
+
+    /** @var Out */
+    protected $out;
+
 	/** @var array */
 	protected $commands = [];
 
 
     /**
-     * Register landing command
-     * @param  \Closure $callback
+     * Define i&o
+     * @param Out $out
+     * @param In $in
      */
-    public function __construct(\Closure $callback)
+    public function __construct(Out $out = null, In $in = null)
     {
-        static::command(null, $callback);
+        // define i&o
+        $this->in = $in ?: new In();
+        $this->out = $out ?: new Out();
+
+        // default welcome
+        $this->command('cli.welcome', function(){
+            $this->out->say('Welcome :)')->nl();
+        });
+
+        // default not found
+        $this->command('cli.notfound', function($command){
+            $this->out->say('Command [' . $command . '] not found.')->nl();
+        });
     }
 
 
@@ -51,16 +70,21 @@ class Console
 		array_shift($query);
         $query = implode(' ', $query);
 
+        // welcome
+        if(empty($query)) {
+            call_user_func($this->commands['cli.welcome'], $query);
+            exit;
+        }
+
         // setup router
-        $router = new RouteProvider($this->commands);
-        $matcher = new UrlMatcher($router);
+        $matcher = new UrlMatcher(new RouteProvider($this->commands));
 
         // look up command
         $route = $matcher->find($query);
 
         // error
         if(!$route) {
-            Out::say('Unknown command "' . $query . '"');
+            call_user_func($this->commands['cli.notfound'], $query);
             exit;
         }
 

@@ -9,9 +9,11 @@
  */
 namespace Craft\Kernel;
 
+use Craft\Debug\Tracker;
 use Craft\Env\Auth;
 use Craft\Pattern\Event\Subject;
 use Craft\Reflect\Action;
+use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
 use Craft\View\Viewable;
 
@@ -19,6 +21,19 @@ class Dispatcher
 {
 
     use Subject;
+
+    /** @var Injector */
+    protected $injector;
+
+
+    /**
+     * Setup injector
+     * @param Injector $injector
+     */
+    public function __construct(Injector $injector = null)
+    {
+        $this->injector = $injector ?: new Injector();
+    }
 
 
     /**
@@ -36,7 +51,7 @@ class Dispatcher
 
         // resolve
         $this->fire('dispatcher.resolve', [&$query]);
-        $action = $this->resolve($query);
+        $action = $this->resolve($query, $args);
 
         // firewall
         $this->fire('dispatcher.firewall', [&$action]);
@@ -69,7 +84,7 @@ class Dispatcher
      */
     protected function resolve($query, array $args = [])
     {
-        $action = Resolver::apply($query);
+        $action = Resolver::resolve($query, $this->injector);
         if(!$action) {
             throw new \BadMethodCallException('This action is not a valid callable.');
         }

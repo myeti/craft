@@ -12,7 +12,7 @@ class Bubble extends App
     /** @var string */
     protected $dir;
 
-    /** @var  */
+    /** @var string */
     protected $ext;
 
 

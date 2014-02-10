@@ -9,59 +9,57 @@
  */
 namespace Craft\Cli;
 
-abstract class Out
+class Out
 {
 
     /**
      * Write message and skip line
      * @param $message
+     * @return $this
      */
-    public static function say($message)
+    public function say($message)
     {
-        static::write($message);
+        $this->write($message);
+        return $this;
     }
 
 
     /**
-     * Skip a line
+     * New line
+     * @return $this
      */
-    public static function jump()
+    public function nl()
     {
-        static::write(null, true);
+        $this->write("\n");
+        return $this;
     }
 
 
     /**
-     * Write one the same line
-     * @param $message
+     * Go back on same line
+     * @return $this
      */
-    public static function refresh($message)
+    public function back()
     {
-        static::write("\r" . $message);
+        $this->write("\r");
+        return $this;
     }
 
 
     /**
      * Write message
      * @param $message
-     * @param bool $break
      */
-    protected static function write($message, $break = false)
+    protected function write($message)
     {
         // many lines
         if(is_array($message)) {
             foreach($message as $line) {
-                static::write($line, $break);
+                $this->write($line);
             }
-            return;
         }
-
-        // display message
-        echo $message;
-
-        // new line
-        if($break) {
-            echo "\n";
+        else {
+            echo $message;
         }
     }
 

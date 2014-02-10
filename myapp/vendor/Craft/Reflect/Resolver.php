@@ -9,77 +9,174 @@
  */
 namespace Craft\Reflect;
 
-use Craft\Reflect\Resolver\ClassMethodResolver;
-use Craft\Reflect\Resolver\FunctionResolver;
-use Craft\Reflect\Resolver\StaticMethodResolver;
-use Craft\Reflect\Resolver\TypeResolver;
-
-class Resolver
+abstract class Resolver
 {
 
-    /** @var TypeResolver[] */
-    protected $resolvers = [];
-
-
     /**
-     * Set default resolvers
-     * @param array $resolvers
+     * Resolve input
+     * @param $input
+     * @param Injector $injector
+     * @return bool|Action
      */
-    public function __construct(array $resolvers = [])
+    public static function resolve($input, Injector $injector = null)
     {
-        $this->resolvers = $resolvers + [
-            'function'      => new FunctionResolver(),
-            'static_method' => new StaticMethodResolver(),
-            'class_method'  => new ClassMethodResolver()
-        ];
+        return static::resolveFunction($input)
+            ?: static::resolveStaticMethod($input)
+            ?: static::resolveInvokeMethod($input, $injector)
+            ?: static::resolveClassMethod($input, $injector);
     }
 
 
     /**
-     * Check if input is callable action
-     * @param $input
-     * @return bool
+     * Resolve function callable
+     * @param mixed $input
+     * @return bool|Action
      */
-    public function isAction($input)
+    public static function resolveFunction($input)
     {
-        foreach($this->resolvers as $type => $resolver) {
-            if($resolver->is($input)) {
-                return $type;
-            }
+        // check
+        if(!function_exists($input) and !($input instanceof \Closure)) {
+            return false;
         }
 
-        return false;
+        // resolve
+        $function = new \ReflectionFunction($input);
+        $metadata = Annotation::get($function);
+
+        // make action
+        $action = new Action($input, $metadata);
+        $action->type = 'function';
+
+        return $action;
     }
 
 
     /**
-     * Resolve input to action
+     * Resolve static method callable
      * @param $input
      * @return bool|Action
      */
-    public function resolve($input)
+    public static function resolveStaticMethod($input)
     {
-        foreach($this->resolvers as $type => $resolver) {
-            if($resolver->is($input)) {
-                $action = $resolver->resolve($input);
-                $action->type = $type;
-                return $action;
-            }
+        // parse string
+        if(is_string($input) and strpos($input, '::') !== false) {
+            $input = explode('::', $input);
         }
 
-        return false;
+        // check
+        if(is_callable($input) and is_array($input) and count($input) == 2) {
+            $method = new \ReflectionMethod($input[0], $input[1]);
+            if(!$method->isPublic() or !$method->isStatic()) {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+
+        // reflect class
+        $class = new \ReflectionClass($input[0]);
+
+        // get metadata
+        $metadata = array_merge(
+            Annotation::get($class),
+            Annotation::get($method)
+        );
+
+        // make action
+        $action = new Action($input, $metadata);
+        $action->type = 'static-method';
+
+        return $action;
     }
 
 
     /**
-     * Quick alias
-     * @param $input
+     * Resolve invoke method callable
+     * @param mixed $input
+     * @param Injector $injector
      * @return bool|Action
      */
-    public static function apply($input)
+    public static function resolveInvokeMethod($input, Injector $injector = null)
     {
-        $self = new self();
-        return $self->resolve($input);
+        // check
+        if(!method_exists($input, '__invoke')) {
+            return false;
+        }
+
+        // reflect class
+        $class = new \ReflectionClass($input);
+
+        // create object
+        if(is_object($input)) {
+            $object = $input;
+        }
+        else {
+            $object = $injector ? $injector->make($input) : $class->newInstance();
+        }
+
+        // reflect method
+        $method = new \ReflectionMethod($object, '__invoke');
+
+        // get metadata
+        $metadata = array_merge(
+            Annotation::get($class),
+            Annotation::get($method)
+        );
+
+        // set callable
+        $callable = [$object, '__invoke'];
+
+        // make action
+        $action = new Action($callable, $metadata);
+        $action->type = 'invoke-method';
+
+        return $action;
+    }
+
+
+    /**
+     * Resolve class method callable
+     * @param $input
+     * @param Injector $injector
+     * @return bool|Action
+     */
+    public static function resolveClassMethod($input, Injector $injector = null)
+    {
+        // parse string
+        if(is_string($input) and strpos($input, '::') !== false) {
+            $input = explode('::', $input);
+        }
+
+        // reflect tuple
+        if(is_callable($input) and is_array($input) and count($input) == 2) {
+            $method = new \ReflectionMethod($input[0], $input[1]);
+            if(!$method->isPublic() and ($method->isStatic() or $method->isAbstract())) {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+
+        // reflect class
+        $class = new \ReflectionClass($input[0]);
+        $object = $injector ? $injector->make($input[0]) : $class->newInstance();
+
+        // get metadata
+        $metadata = array_merge(
+            Annotation::get($class),
+            Annotation::get($method)
+        );
+
+        // set callable
+        $callable = [$object, $input[1]];
+
+        // make action
+        $action = new Action($callable, $metadata);
+        $action->type = 'class-method';
+
+        return $action;
     }
 
 } 

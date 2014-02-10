@@ -23,7 +23,7 @@ abstract class Matcher
      * Get router
      * @return RouteProvider
      */
-    public function router()
+    public function &router()
     {
         return $this->router;
     }

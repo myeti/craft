@@ -4,9 +4,9 @@
  * Setup autoloader
  */
 
-require __DIR__ . '/Craft/Service/Loader.php';
+require __DIR__ . '/Craft/Reflect/ClassLoader.php';
 
-$loader = new Craft\Service\Loader();
+$loader = new Craft\Reflect\ClassLoader();
 $loader->register();
 $loader->vendors([
     'Craft' => __DIR__ . '/Craft',
@@ -19,8 +19,8 @@ $loader->vendors([
  * Setup dev tools
  */
 
-$logger = new Craft\Service\Logger();
-$tracker = new Craft\Service\Tracker();
+$logger = new Craft\Debug\Logger();
+$tracker = new Craft\Debug\Tracker();
 $tracker->start('craft.app');
 
 

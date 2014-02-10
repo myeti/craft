@@ -12,26 +12,27 @@ namespace Craft\Cli;
 class In
 {
 
-    /**
-     * Init scanner
-     */
-    protected static function scanner()
-    {
-        static $instance;
-        if(!$instance) {
-            $instance = fopen('php://stdin', 'r');
-        }
+    /** @var resource */
+    protected $scanner;
 
-        return $instance;
+
+    /**
+     * Setup input scanner
+     * @param resource $resource
+     */
+    public function __construct($resource = null)
+    {
+        $this->scanner = $resource ?: fopen('php://stdin', 'r');
     }
+
 
     /**
      * Get user input
      * @return string
      */
-    public static function read()
+    public function read()
     {
-        $input = fgets(static::scanner());
+        $input = fgets($this->scanner);
         return trim($input);
     }
 
@@ -40,10 +41,10 @@ class In
      * @param $message
      * @return string
      */
-    public static function ask($message)
+    public function ask($message)
     {
-        Out::say($message);
-        return static::read();
+        echo $message;
+        return $this->read();
     }
 
 }

@@ -2,76 +2,67 @@
 
 namespace Craft\Router\Matcher;
 
-use Craft\Router\Matcher;
-use Craft\Router\Route;
-
-class UrlMatcher extends Matcher
+class UrlMatcher extends RegexMatcher
 {
-
-    /** @var array */
-    public $elements = [
-        'args'  => ':$1',
-        'env'   => '+$1'
-    ];
 
     /**
      * Find route
      * @param string $query
      * @param array $context
      * @param mixed $fallback
-     * @return Route
+     * @return \Craft\Router\Route
      */
     public function find($query, array $context = [], $fallback = false)
     {
-        // clean query
+        // leading slash
         $query = '/' . ltrim($query, '/');
+        return parent::find($query, $context, $fallback);
+    }
 
-        foreach($this->router->all() as $route)
-        {
-            // make pattern
-            $pattern = '/' . ltrim($route->path, '/');
-            $pattern = str_replace('/', '\/', $pattern);
-            foreach($this->elements as $label => $element) {
-                $segment = str_replace('\\$1', '([a-z_]+)', preg_quote($element));
-                $pattern = preg_replace('/' . $segment . '/', '(?<' . $label . '__${1}>[^\/]+)', $pattern);
-            }
-            $pattern = '/^' . $pattern . '$/';
 
-            // compare
-            if(preg_match($pattern, $query, $out)){
+    /**
+     * Compile path into regex
+     * @param $path
+     * @return mixed|string
+     */
+    protected function compile($path)
+    {
+        // leading slash
+        $pattern = '/' . ltrim($path, '/');
 
-                // check context
-                $valid = true;
-                foreach($context as $key => $value) {
-                    if(!isset($route->context[$key]) or $route->context[$key] != $value) {
-                        $valid = false;
-                    }
-                }
+        // compile pattern
+        $pattern = str_replace('/', '\/', $pattern);
+        $pattern = preg_replace('#\:(\w+)#', '(?P<arg__$1>[^\/]+)', $pattern);
+        $pattern = preg_replace('#\+(\w+)#', '(?P<env__$1>[^\/]+)', $pattern);
+        $pattern = '#^' . $pattern . '$#';
 
-                // not valid
-                if(!$valid) {
-                    continue;
-                }
+        return $pattern;
+    }
 
-                // clean data
-                $data = [];
-                unset($out[0]);
-                foreach($out as $key => $value) {
-                    foreach($this->elements as $label => $element) {
-                        $innerlabel = $label . '__';
-                        if(substr($key, 0, strlen($innerlabel)) == $innerlabel) {
-                            $cleankey = str_replace($innerlabel, '', $key);
-                            $data[$label][$cleankey] = $value;
-                        }
-                    }
-                }
 
-                $route->data = $data;
-                return $route;
+    /**
+     * Parse results
+     * @param array $results
+     * @return array
+     */
+    protected function parse(array $results)
+    {
+        // default values
+        $data = [
+            'args' => [],
+            'envs' => []
+        ];
+
+        // parse
+        foreach($results as $key => $value) {
+            if(substr($key, 0, 5) == 'arg__' or substr($key, 0, 5) == 'env__') {
+                $group = substr($key, 0, 3) . 's';
+                $label = substr($key, 5);
+                $data[$group][$label] = $value;
             }
         }
 
-        return $fallback;
+        return $data;
     }
 
 

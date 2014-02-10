@@ -9,6 +9,7 @@
  */
 namespace Craft\Kernel;
 
+use Craft\Env\Config;
 use Craft\Env\Mog;
 use Craft\Pattern\Event\Subject;
 use Craft\Router\Matcher;
@@ -43,16 +44,21 @@ class App extends Dispatcher
     public function __construct(array $routes, array $config = [])
     {
         // init router
-        $routes = new RouteProvider($routes);
-        $this->router = new UrlMatcher($routes);
+        $this->router = new UrlMatcher(new RouteProvider($routes));
 
         // set config
-        $this->config['template.dir'] = dirname($_SERVER['SCRIPT_FILENAME']);
-        $this->config['template.helpers'][] = new Asset(Mog::base());
-        $this->config['template.helpers'][] = new Html();
-        $this->config = $config + $this->config;
-    }
+        $this->config = $config + [
+            'injector'         => null,
+            'template.ext'     => 'php',
+            'template.dir'     => dirname($_SERVER['SCRIPT_FILENAME']),
+            'template.helpers' => [
+                new Asset(Mog::base()),
+                new Html()
+            ]
+        ];
 
+        parent::__construct($this->config['injector']);
+    }
 
     /**
      * Main process
@@ -66,11 +72,11 @@ class App extends Dispatcher
         $this->fire('app.start', [&$query, &$service]);
 
         // resolve protocol query
-        $query = $this->query($query);
+        $query = $this->resolveQuery($query);
 
         // run router
         $this->fire('app.route', [&$query]);
-        $route = $this->route($query);
+        $route = $this->findRoute($query);
 
         // 404
         if(!$route) {
@@ -78,8 +84,13 @@ class App extends Dispatcher
             return false;
         }
 
+        // set env data
+        foreach($route->data['envs'] as $key => $value) {
+            Config::set($key, $value);
+        }
+
         // init view
-        $view = !$service ? $this->view() : null;
+        $view = !$service ? $this->createView() : null;
 
         // run dispatcher
         $data = $this->dispatch($route, $view);
@@ -95,7 +106,7 @@ class App extends Dispatcher
      * @param $query
      * @return mixed|string
      */
-    protected function query($query)
+    protected function resolveQuery($query)
     {
         if(!$query) {
             $query = Mog::url();
@@ -112,7 +123,7 @@ class App extends Dispatcher
      * @param $query
      * @return \Craft\Router\Route
      */
-    protected function route($query)
+    protected function findRoute($query)
     {
         $route = $this->router->find($query);
 
@@ -124,7 +135,7 @@ class App extends Dispatcher
      * Prepare view with config
      * @return \Craft\View\Template
      */
-    protected function view()
+    protected function createView()
     {
         $engine = new Engine($this->config['template.dir'], $this->config['template.ext']);
         foreach($this->config['template.helpers'] as $helper) {

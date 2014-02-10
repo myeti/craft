@@ -15,7 +15,6 @@ require 'vendor/autoload.php';
  * As an advise, you should put all your libraries under the `vendor` directory.
  *//*
 
-$loader = Craft\Service::loader();
 $loader->vendor('lib', 'vendor/MyLib');
 
 
