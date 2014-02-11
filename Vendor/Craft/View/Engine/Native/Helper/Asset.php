@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Helper;
+namespace Craft\View\Engine\Native\Helper;
 
-use Craft\View\Helper;
+use Craft\View\Engine\Native\Helper;
 
-class Asset implements Helper
+class Asset extends Helper
 {
 
     /** @var string */
@@ -25,20 +25,6 @@ class Asset implements Helper
     public function __construct($base = '/')
     {
         $this->base = rtrim($base, '/') . '/';
-    }
-
-
-    /**
-     * Register helper functions
-     * @return mixed
-     */
-    public function register()
-    {
-        return [
-            'asset' => [$this, 'asset'],
-            'css'   => [$this, 'css'],
-            'js'    => [$this, 'js'],
-        ];
     }
 
 

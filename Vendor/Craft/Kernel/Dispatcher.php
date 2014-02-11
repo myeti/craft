@@ -16,6 +16,7 @@ use Craft\Reflect\Action;
 use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
 use Craft\View\Viewable;
+use Craft\View\Engine;
 
 class Dispatcher
 {
@@ -40,34 +41,33 @@ class Dispatcher
      * Run action & render template
      * @param $query
      * @param array $args
-     * @param \Craft\View\Viewable $view
-     * @throws \BadMethodCallException
+     * @param \Craft\View\Engine $engine
      * @return mixed
      */
-    public function perform($query, array $args = [], Viewable $view = null)
+    public function perform($query, array $args = [], Engine $engine = null)
     {
         // start
         $this->fire('dispatcher.start', [&$query, &$args]);
 
         // resolve
-        $this->fire('dispatcher.resolve', [&$query]);
+        $this->fire('dispatcher.resolve', [&$query, &$args]);
         $action = $this->resolve($query, $args);
 
         // firewall
-        $this->fire('dispatcher.firewall', [&$action]);
+        $this->fire('dispatcher.firewall', [&$query, &$args, &$action]);
         if(!$this->firewall($action)) {
             $this->fire(403);
             return false;
         }
 
         // call
-        $this->fire('dispatcher.call', [&$action]);
+        $this->fire('dispatcher.call', [&$query, &$args, &$action]);
         $this->call($action);
 
         // render
-        $this->fire('dispatcher.render', [&$view, &$action]);
-        if($view) {
-            $this->render($view, $action);
+        $this->fire('dispatcher.render', [&$engine, &$action]);
+        if($engine) {
+            $this->render($engine, $action);
         }
 
         $this->fire('dispatcher.stop', [&$action]);
@@ -123,13 +123,13 @@ class Dispatcher
 
     /**
      * Render view
-     * @param Viewable $view
+     * @param \Craft\View\Engine $engine
      * @param Action $action
      */
-    protected function render(Viewable $view, Action $action)
+    protected function render(Engine $engine, Action $action)
     {
         $data = isset($action->data) ? $action->data : [];
-        echo $view->render($action->metadata['render'], $data);
+        echo $engine->render($action->metadata['render'], $data);
     }
 
 }

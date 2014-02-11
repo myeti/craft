@@ -12,15 +12,14 @@ namespace Craft\Kernel;
 use Craft\Env\Config;
 use Craft\Env\Mog;
 use Craft\Pattern\Event\Subject;
+use Craft\Reflect\Injector;
 use Craft\Router\Matcher;
 use Craft\Router\Matcher\UrlMatcher;
 use Craft\Router\Route;
 use Craft\Router\RouteProvider;
 use Craft\View\Engine;
-use Craft\View\Helper\Asset;
-use Craft\View\Helper\Html;
-use Craft\View\Template;
-use Craft\View\Viewable;
+use Craft\View\Engine\Native;
+use Craft\View\Engine\Native\Helper\Asset;
 
 class App extends Dispatcher
 {
@@ -28,55 +27,49 @@ class App extends Dispatcher
     /** @var Matcher */
     protected $router;
 
-    /** @var array */
-    protected $config = [
-        'template.dir'  => '/',
-        'template.ext'  => 'php',
-        'template.helpers' => []
-    ];
+    /** @var Engine */
+    protected $engine;
 
 
     /**
      * Setup router
      * @param array $routes
-     * @param array $config
+     * @param Injector $injector
+     * @param Engine $engine
      */
-    public function __construct(array $routes, array $config = [])
+    public function __construct(array $routes, Injector $injector = null, Engine $engine = null)
     {
         // init router
         $this->router = new UrlMatcher(new RouteProvider($routes));
 
-        // set config
-        $this->config = $config + [
-            'injector'         => null,
-            'template.ext'     => 'php',
-            'template.dir'     => dirname($_SERVER['SCRIPT_FILENAME']),
-            'template.helpers' => [
-                new Asset(Mog::base()),
-                new Html()
-            ]
-        ];
+        // init engine
+        if(!$engine) {
+            $engine = new Native(dirname($_SERVER['SCRIPT_FILENAME']), 'php', []);
+            $engine->mount(new Asset(Mog::base()));
+        }
+        $this->engine = $engine;
 
-        parent::__construct($this->config['injector']);
+        // init dispatcher
+        parent::__construct($injector);
     }
+
 
     /**
      * Main process
      * @param string $query
-     * @param bool $service
      * @return mixed
      */
-    public function plug($query = null, $service = false)
+    public function plug($query = null)
     {
         // start
-        $this->fire('app.start', [&$query, &$service]);
+        $this->fire('app.start', [&$query]);
 
         // resolve protocol query
-        $query = $this->resolveQuery($query);
+        $query = $query ?: $this->query();
 
         // run router
         $this->fire('app.route', [&$query]);
-        $route = $this->findRoute($query);
+        $route = $this->route($query);
 
         // 404
         if(!$route) {
@@ -89,86 +82,59 @@ class App extends Dispatcher
             Config::set($key, $value);
         }
 
-        // init view
-        $view = !$service ? $this->createView() : null;
-
         // run dispatcher
-        $data = $this->dispatch($route, $view);
+        $data = $this->dispatch($route, $this->engine);
 
         // stop
-        $this->fire('app.stop', []);
+        $this->fire('app.stop', [&$query, &$route, &$data]);
         return $data;
     }
 
 
     /**
-     * Resolve default input query
-     * @param $query
-     * @return mixed|string
+     * Get request query
+     * @return string
      */
-    protected function resolveQuery($query)
+    protected function query()
     {
-        if(!$query) {
-            $query = Mog::url();
-            $query = substr($query, strlen(Mog::base()));
-            $query = parse_url($query, PHP_URL_PATH);
-        }
-
-        return $query;
+        $query = Mog::url();
+        $query = substr($query, strlen(Mog::base()));
+        return parse_url($query, PHP_URL_PATH);
     }
 
 
     /**
      * Find route with query
      * @param $query
-     * @return \Craft\Router\Route
+     * @return Route
      */
-    protected function findRoute($query)
+    protected function route($query)
     {
-        $route = $this->router->find($query);
-
-        return $route;
-    }
-
-
-    /**
-     * Prepare view with config
-     * @return \Craft\View\Template
-     */
-    protected function createView()
-    {
-        $engine = new Engine($this->config['template.dir'], $this->config['template.ext']);
-        foreach($this->config['template.helpers'] as $helper) {
-            $helper = is_string($helper) ? new $helper() : $helper;
-            $engine->mount($helper);
-        }
-
-        return new Template($engine);
+        return $this->router->find($query);
     }
 
 
     /**
      * Run dispatcher
      * @param Route $route
-     * @param Viewable $view
+     * @param Engine $engine
      * @return mixed
      */
-    protected function dispatch(Route $route, Viewable $view = null)
+    protected function dispatch(Route $route, Engine $engine = null)
     {
         $args = isset($route->data['args']) ? $route->data['args'] : [];
-        return $this->perform($route->target, $args, $view);
+        return $this->perform($route->target, $args, $engine);
     }
 
 
     /**
      * App as a service
      * @param string $query
-     * @param bool $service
      * @return mixed
      */
-    public function __invoke($query = null, $service = false)
+    public function __invoke($query = null)
     {
-        return $this->plug($query, $service);
+        return $this->plug($query);
     }
 
 }

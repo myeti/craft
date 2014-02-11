@@ -7,13 +7,10 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View;
+namespace Craft\View\Engine\Native;
 
-abstract class Sandbox implements Viewable
+abstract class Sandbox
 {
-
-    /** @var Engine */
-    private $engine;
 
     /** @var string */
     private $template;
@@ -30,25 +27,36 @@ abstract class Sandbox implements Viewable
     /** @var string */
     private $section;
 
+    /** @var array */
+    private $helpers = [];
+
     /** @var bool */
     private $rendering = false;
 
 
     /**
-     * Setup template with engine
-     * @param Engine $engine
+     * Init template
+     * @param string $template
+     * @param array $data
+     * @param array $sections
+     * @param array $helpers
      */
-    public function __construct(Engine $engine)
+    public function __construct($template, array $data = [], array $sections = [], array $helpers = [])
     {
-        $this->engine = $engine;
+        $this->template = $template;
+        $this->data = $data;
+        $this->sections = $sections;
+        $this->helpers = $helpers;
     }
 
 
     /**
+     * Set layout
      * @param $template
      * @param array $data
+     * @return string
      */
-    protected function layout($template, array $data = [])
+    public function layout($template, array $data = [])
     {
         $this->layout = [$template, $data];
     }
@@ -97,45 +105,29 @@ abstract class Sandbox implements Viewable
 
 
     /**
-     * Render partial template
-     * @param $template
-     * @param array $data
-     * @param array $sections
-     * @return string
-     */
-    protected function partial($template, array $data = [], array $sections = [])
-    {
-        return Template::forge($this->engine, $template, $data, $sections);
-    }
-
-
-    /**
      * Call helper
-     * @param $helper
+     * @param string $helper
      * @param array $args
+     * @throws \LogicException
      * @return mixed
      */
     public function __call($helper, array $args = [])
     {
-        return $this->engine->helper($helper, $args);
+        if(isset($this->helpers[$helper])) {
+            return call_user_func_array($this->helpers[$helper], $args);
+        }
+
+        throw new \LogicException('Unknown helper "' . $helper . '".');
     }
 
 
     /**
      * Render template
-     * @param $template
-     * @param array $data
-     * @param array $sections
      * @throws \LogicException
      * @return string
      */
-    public function render($template, array $data = [], array $sections = [])
+    public function compile()
     {
-        // init
-        $this->template = $template;
-        $this->data = $data + $this->data;
-        $this->sections = $sections + $this->sections;
-
         // start rendering
         if($this->rendering) {
             throw new \LogicException('Template is already rendering.');
@@ -143,27 +135,33 @@ abstract class Sandbox implements Viewable
         $this->rendering = true;
 
         // compile
-        extract($this->engine->data($this->data));
+        extract($this->data);
         ob_start();
-        require $this->engine->path($this->template);
+        require $this->template;
         $content = ob_get_clean();
 
-        // layout
+        // update layout
         if($this->layout) {
-            list($layout, $data) = $this->layout;
-            $sections = array_merge($this->sections, ['__content__' => $content]);
-            $content = Template::forge($this->engine, $layout, $data, $sections);
+            $this->layout[] = array_merge(
+                $this->sections,
+                ['__content__' => $content]
+            );
         }
 
-        // clear
-        $this->template = null;
-        $this->data = null;
-        $this->sections = null;
-        $this->section = null;
-        $this->layout = null;
+        // end
         $this->rendering = false;
 
         return $content;
+    }
+
+
+    /**
+     * Get parent layout
+     * @return array
+     */
+    public function parent()
+    {
+        return $this->layout;
     }
 
 } 

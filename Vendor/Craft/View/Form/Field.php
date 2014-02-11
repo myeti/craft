@@ -10,7 +10,7 @@
 namespace Craft\View\Form;
 
 use Craft\View\Engine;
-use Craft\View\Template;
+use Craft\View\Engine\Native;
 
 abstract class Field implements Element
 {
@@ -113,8 +113,8 @@ abstract class Field implements Element
      */
     protected function render($template)
     {
-        $engine = new Engine(__DIR__ . '/templates/', 'php');
-        return Template::forge($engine, $template, ['field' => $this]);
+        $engine = new Native(__DIR__ . '/templates/', 'php');
+        return $engine->render($template, ['field' => $this]);
     }
 
 } 

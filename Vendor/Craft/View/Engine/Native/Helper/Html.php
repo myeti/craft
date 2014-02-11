@@ -7,25 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Helper;
+namespace Craft\View\Engine\Native\Helper;
 
-use Craft\View\Helper;
+use Craft\View\Engine\Native\Helper;
 
-class Html implements Helper
+class Html extends Helper
 {
-
-    /**
-     * Register helper functions
-     * @return mixed
-     */
-    public function register()
-    {
-        return [
-            'meta'  => [$this, 'meta'],
-            'e'     => [$this, 'e']
-        ];
-    }
-
 
     /**
      * Basic meta
