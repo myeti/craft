@@ -46,12 +46,11 @@ class Action
 
     /**
      * Execute action
-     * @param array $args
      * @return mixed
      */
-    public function __invoke(array $args = [])
+    public function __invoke()
     {
-        $args = $args ?: $this->args; // args take over
+        $args = func_get_args() ?: $this->args; // args take over
         return $this->data = call_user_func_array($this->callable, $args);
     }
 
