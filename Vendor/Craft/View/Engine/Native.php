@@ -30,6 +30,7 @@ class Native extends \ArrayObject implements Engine
         // default helpers
         $this->mount(new Native\Helper\Asset());
         $this->mount(new Native\Helper\Html());
+        $this->helper('partial', [$this, 'render']);
 
         parent::__construct();
     }
