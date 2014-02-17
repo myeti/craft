@@ -1,10 +1,10 @@
 <?php
 
-namespace My\Logic;
+namespace My\Logic\Preset;
 
 use Craft\Env\Auth;
 use Craft\Env\Flash;
-use :model;
+use My\Model\User;
 
 class AuthUser
 {
@@ -12,32 +12,40 @@ class AuthUser
     /**
      * Attempt login
      * @render views/auth.login
+     * @return mixed
      */
     public function login()
     {
         // login submitted
         if(post())
         {
-            // get ids
+            // extract env
             $username = post('username');
-            $password = post('password');
+            $password = post('username');
 
             // find user
-            $user = :class::one([
+            $user = User::one([
                 'username' => $username,
                 'password' => sha1($password)
             ]);
 
-            // login
+            // user exists
             if($user) {
-                Auth::login($user->rank, $user);
-                Flash::set('login.success', 'Welcome, ' . $username . '.');
+
+                // remove password for security
+                $user->password = null;
+
+                // login
+                Auth::login(1, $user);
+                Flash::set('login.success', 'Welcome ' . $username . ' !');
                 go('/');
+
             }
             else {
-                Flash::set('login.failed', 'Authentication has failed, please check your login.');
+                Flash::set('login.fail', 'Bad user data.');
             }
         }
+
     }
 
 
@@ -59,7 +67,7 @@ class AuthUser
     public function register()
     {
         // create user
-        $user = new :class();
+        $user = new User();
 
         // register attempt
         if($data = post()) {
@@ -68,7 +76,7 @@ class AuthUser
             unset($data['rank']);
 
             // find user
-            $exists = :class::one([
+            $exists = User::one([
                 'username' => post('username')
             ]);
 
@@ -77,10 +85,12 @@ class AuthUser
 
             // check if user already exists
             if($exists) {
-                Flash::set('register.failed', 'User already exists, please find another username.');
+                Flash::set('register.failed', 'Username already exists.');
             }
+            // create + autologin
             else {
                 User::save($user);
+                Auth::login(1, $user);
                 Flash::set('register.success', 'Welcome, ' . $user->username . '.');
                 go('/');
             }
