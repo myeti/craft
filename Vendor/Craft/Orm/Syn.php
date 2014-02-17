@@ -46,16 +46,19 @@ abstract class Syn
     public static function mysql($dbname, array $config = [])
     {
         // merge config with defaults
-        $defaults = [
-            'host' => '127.0.0.1',
-            'user' => 'root',
-            'pass' => '',
-            'prefix' => ''
-        ];
-        $config = array_merge($defaults, $config);
+        $config = $config + [
+                'host' => '127.0.0.1',
+                'user' => 'root',
+                'pass' => '',
+                'prefix' => '',
+                'create' => true
+            ];
 
-        // init pdo & mapper
-        $pdo = new MySQL($config['host'], $config['user'], $config['pass'], $dbname);
+        // init pdo
+        $pdo = new MySQL($config['host'], $config['user'], $config['pass']);
+        $pdo->open($dbname, $config['create']);
+
+        // init mapper
         $mapper = new PdoMapper($pdo, $config['prefix']);
 
         static::mapper($mapper);
