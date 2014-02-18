@@ -17,7 +17,7 @@ use Craft\Router\Matcher\UrlMatcher;
 use Craft\Router\Route;
 use Craft\Router\Map;
 use Craft\View\Engine;
-use Craft\View\Engine\Native;
+use Craft\View\Engine\NativeEngine;
 use Craft\View\Engine\Native\Helper\Asset;
 
 class App extends Dispatcher
@@ -43,7 +43,7 @@ class App extends Dispatcher
 
         // init engine
         if(!$engine) {
-            $engine = new Native(dirname(Mog::server('SCRIPT_FILENAME')), 'php', []);
+            $engine = new NativeEngine(dirname(Mog::server('SCRIPT_FILENAME')), 'php', []);
             $engine->mount(new Asset(Mog::base()));
         }
         $this->engine = $engine;

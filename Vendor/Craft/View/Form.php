@@ -9,7 +9,7 @@
  */
 namespace Craft\View;
 
-use Craft\View\Engine\Native;
+use Craft\View\Engine\NativeEngine;
 use Craft\View\Form\Element;
 use Craft\View\Form\Field;
 
@@ -94,7 +94,7 @@ class Form extends \ArrayObject implements Element
             $this->template .= '.sub';
         }
 
-        $engine = new Native(__DIR__ . '/Form/templates/', 'php');
+        $engine = new NativeEngine(__DIR__ . '/Form/templates/', 'php');
         return $engine->render($this->template, ['form' => $this]);
     }
 

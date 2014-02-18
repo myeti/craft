@@ -9,8 +9,14 @@
  */
 namespace Craft\View\Engine\Native;
 
+use Craft\View\Engine\Native;
+use Craft\View\Engine\NativeEngine;
+
 abstract class Sandbox
 {
+
+    /** @var NativeEngine */
+    private $engine;
 
     /** @var string */
     private $template;
@@ -36,13 +42,15 @@ abstract class Sandbox
 
     /**
      * Init template
+     * @param NativeEngine $engine
      * @param string $template
      * @param array $data
      * @param array $sections
      * @param array $helpers
      */
-    public function __construct($template, array $data = [], array $sections = [], array $helpers = [])
+    public function __construct(NativeEngine $engine, $template, array $data = [], array $sections = [], array $helpers = [])
     {
+        $this->engine = $engine;
         $this->template = $template;
         $this->data = $data;
         $this->sections = $sections;
@@ -56,7 +64,7 @@ abstract class Sandbox
      * @param array $data
      * @return string
      */
-    public function layout($template, array $data = [])
+    protected function layout($template, array $data = [])
     {
         $this->layout = [$template, $data];
     }
@@ -101,6 +109,19 @@ abstract class Sandbox
     protected function content()
     {
         return $this->block('__content__');
+    }
+
+
+    /**
+     * Load partial
+     * @param $template
+     * @param array $data
+     * @param array $sections
+     * @return string
+     */
+    protected function load($template, array $data = [], array $sections = [])
+    {
+        return $this->engine->render($template, $data, $sections);
     }
 
 

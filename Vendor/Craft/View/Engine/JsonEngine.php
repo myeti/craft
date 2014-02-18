@@ -4,7 +4,7 @@ namespace Craft\View\Engine;
 
 use Craft\View\Engine;
 
-class Json implements Engine
+class JsonEngine implements Engine
 {
 
     /** @var \Closure */

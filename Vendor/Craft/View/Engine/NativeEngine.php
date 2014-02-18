@@ -4,7 +4,7 @@ namespace Craft\View\Engine;
 
 use Craft\View\Engine;
 
-class Native extends \ArrayObject implements Engine
+class NativeEngine extends \ArrayObject implements Engine
 {
 
     /** @var string */
@@ -77,7 +77,7 @@ class Native extends \ArrayObject implements Engine
         $data = array_merge((array)$this, $data);
 
         // create template
-        $template = new Native\Template($template, $data, $sections, $this->helpers);
+        $template = new Native\Template($this, $template, $data, $sections, $this->helpers);
 
         // compile
         $content = $template->compile();

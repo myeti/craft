@@ -78,7 +78,7 @@ $app = new Craft\Kernel\App([
 
 
 /**
- * An usual webapp might return 2 errors :
+ * An usual webapp might throws 2 errors :
  * - page/action not found (404)
  * - page/action not allowed (403)
  *
@@ -105,8 +105,7 @@ $app->plug();
 /**
  * You want some data about elapsed time or used memory ?
  * Then, the tracker tool is here for you !
- */
-
+ *//*
 echo $tracker->over('craft.app');
 
 
