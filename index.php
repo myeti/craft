@@ -83,7 +83,7 @@ $app = new Craft\Kernel\App([
  * - page/action not allowed (403)
  *
  * In order to take control of these errors,
- * just intercept them and replug your myapp
+ * just intercept them and replug your app
  * on a specified url.
  */
 $app->on(404, function() use($app) {
@@ -97,9 +97,17 @@ $app->on(403, function() use($app) {
 
 /**
  * Well, everything is ready, it's time to plug
- * your myapp on the current url.
+ * your app on the current url.
  */
 $app->plug();
+
+
+/**
+ * You want some data about elapsed time or used memory ?
+ * Then, the tracker tool is here for you !
+ */
+
+echo $tracker->over('craft.app');
 
 
 /**

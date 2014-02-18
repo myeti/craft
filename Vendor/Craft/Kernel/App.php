@@ -11,12 +11,11 @@ namespace Craft\Kernel;
 
 use Craft\Env\Config;
 use Craft\Env\Mog;
-use Craft\Pattern\Event\Subject;
 use Craft\Reflect\Injector;
 use Craft\Router\Matcher;
 use Craft\Router\Matcher\UrlMatcher;
 use Craft\Router\Route;
-use Craft\Router\RouteProvider;
+use Craft\Router\Map;
 use Craft\View\Engine;
 use Craft\View\Engine\Native;
 use Craft\View\Engine\Native\Helper\Asset;
@@ -40,11 +39,11 @@ class App extends Dispatcher
     public function __construct(array $routes, Injector $injector = null, Engine $engine = null)
     {
         // init router
-        $this->router = new UrlMatcher(new RouteProvider($routes));
+        $this->router = new UrlMatcher(new Map($routes));
 
         // init engine
         if(!$engine) {
-            $engine = new Native(dirname($_SERVER['SCRIPT_FILENAME']), 'php', []);
+            $engine = new Native(dirname(Mog::server('SCRIPT_FILENAME')), 'php', []);
             $engine->mount(new Asset(Mog::base()));
         }
         $this->engine = $engine;
@@ -55,39 +54,57 @@ class App extends Dispatcher
 
 
     /**
-     * Main process
+     * Resolve and perform query
      * @param string $query
      * @return mixed
      */
     public function plug($query = null)
     {
-        // start
-        $this->fire('app.start', [&$query]);
-
-        // resolve protocol query
+        // resolve query
         $query = $query ?: $this->query();
 
+        // create request
+        $request = new Request($query);
+
+        // create context
+        $context = new Context($request);
+
+        // perform
+        return $this->handle($context);
+    }
+
+
+    /**
+     * Main process
+     * @param Context $context
+     * @return mixed
+     */
+    public function handle(Context $context)
+    {
+        // start
+        $this->fire('app.start', [&$context]);
+
         // run router
-        $this->fire('app.route', [&$query]);
-        $route = $this->route($query);
+        $this->fire('app.route', [&$context]);
+        $context->route = $this->route($context);
 
         // 404
-        if(!$route) {
-            $this->fire(404, ['message' => 'Route "' . $query . '" not found.']);
+        if(!$context->route) {
+            $this->fire(404, ['message' => 'Route for query "' . $context->request->query . '" not found.']);
             return false;
         }
 
         // set env data
-        foreach($route->data['envs'] as $key => $value) {
+        foreach($context->route->data['envs'] as $key => $value) {
             Config::set($key, $value);
         }
 
         // run dispatcher
-        $data = $this->dispatch($route, $this->engine);
+        $context = $this->dispatch($context, $this->engine);
 
         // stop
-        $this->fire('app.stop', [&$query, &$route, &$data]);
-        return $data;
+        $this->fire('app.stop', [&$context]);
+        return $context;
     }
 
 
@@ -105,25 +122,29 @@ class App extends Dispatcher
 
     /**
      * Find route with query
-     * @param $query
+     * @param Context $context
      * @return Route
      */
-    protected function route($query)
+    protected function route(Context $context)
     {
-        return $this->router->find($query);
+        return $this->router->find($context->request->query);
     }
 
 
     /**
      * Run dispatcher
-     * @param Route $route
+     * @param Context $context
      * @param Engine $engine
-     * @return mixed
+     * @return Context
      */
-    protected function dispatch(Route $route, Engine $engine = null)
+    protected function dispatch(Context $context, Engine $engine = null)
     {
-        $args = isset($route->data['args']) ? $route->data['args'] : [];
-        return $this->perform($route->target, $args, $engine);
+        // resolve args
+        $context->route->data = isset($context->route->data['args'])
+            ? $context->route->data['args']
+            : [];
+
+        return parent::handle($context, $engine);
     }
 
 

@@ -9,18 +9,18 @@
  */
 namespace Craft\Env;
 
-use Craft\Data\StaticProvider;
+use Craft\Env\Adapter\NativeSession;
 
-abstract class Session extends StaticProvider
+abstract class Session extends Adapter
 {
 
     /**
      * Create provider instance
-     * @return SessionRepository
+     * @return NativeSession
      */
-    protected static function createInstance()
+    protected static function defaultInstance()
     {
-        return new SessionRepository('_craft.session');
+        return new NativeSession('_craft.session');
     }
 
 } 

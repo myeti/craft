@@ -7,17 +7,19 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Debug;
+namespace Craft\Trace;
 
-use Craft\Debug\Logger\Log;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 
-class Logger extends AbstractLogger
+class Tracker extends AbstractLogger
 {
 
-	/** @var Log[] */
-	protected $logs = [];
+    /** @var Log[] */
+    protected $logs = [];
+
+    /** @var Task[] */
+    protected $tasks = [];
 
     /**
      * System is unusable.
@@ -143,9 +145,9 @@ class Logger extends AbstractLogger
      * @return null
      */
     public function log($level, $message, array $context = [])
-	{
-		$this->logs[] = new Log($level, $message);
-	}
+    {
+        $this->logs[] = new Log($level, $message);
+    }
 
 
     /**
@@ -159,13 +161,38 @@ class Logger extends AbstractLogger
 
 
     /**
-     * Make log report
-     * @param string $separator
-     * @return string
+     * Start tracking
+     * @param $process
      */
-    public function report($separator = '<br/>')
+    public function monitor($process)
     {
-        return implode($separator, $this->logs);
+        $this->tasks[$process] = new Task($process);
+    }
+
+
+    /**
+     * Stop tracking
+     * @param $process
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public function over($process)
+    {
+        if(!isset($this->tasks[$process])) {
+            throw new \InvalidArgumentException('Unknown process "' . $process . '".');
+        }
+
+        return $this->tasks[$process]->over();
+    }
+
+
+    /**
+     * Get all tasks
+     * @return Task[]
+     */
+    public function tasks()
+    {
+        return $this->tasks;
     }
 
 }

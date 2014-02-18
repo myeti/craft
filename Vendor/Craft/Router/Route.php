@@ -16,31 +16,26 @@ class Route
     public $name;
 
     /** @var string */
-    public $path;
+    public $from;
 
     /** @var mixed */
-    public $target;
+    public $to;
 
     /** @var array */
-    public $context = [];
+    public $customs = [];
 
     /** @var array */
     public $data = [];
 
-
     /**
-     * Setup route
-     * @param string $name
-     * @param string $path
-     * @param mixed $target
-     * @param array $context
+     * Define route
+     * @param $from
+     * @param $to
      */
-    public function __construct($name, $path, $target, array $context = [])
+    public function __construct($from, $to)
     {
-        $this->name = $name;
-        $this->path = $path;
-        $this->target = $target;
-        $this->context = $context;
+        $this->from = $from;
+        $this->to = $to;
     }
 
 } 

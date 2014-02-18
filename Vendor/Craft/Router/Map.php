@@ -11,7 +11,7 @@ namespace Craft\Router;
 
 use Craft\Data\Provider;
 
-class RouteProvider implements Provider
+class Map implements Provider
 {
 
     /** @var Route[] */
@@ -66,20 +66,17 @@ class RouteProvider implements Provider
 
     /**
      * Set element by key with value
-     * @param $name
-     * @param $route
-     * @param array $context
+     * @param string $name
+     * @param mixed $route
+     * @param array $customs
      * @return bool
      */
-    public function set($name, $route, array $context = [])
+    public function set($name, $route, array $customs = [])
     {
-        if(is_array($name)) {
-            foreach($name as $subname) {
-                $this->set($subname, $route, $context);
-            }
-        }
-        elseif(!$route instanceof Route) {
-            $route = new Route($name, $name, $route, $context);
+        if(!$route instanceof Route) {
+            $route = new Route($name, $route);
+            $route->name = $name;
+            $route->customs = $customs;
         }
 
         $this->setRoute($name, $route);
@@ -99,7 +96,7 @@ class RouteProvider implements Provider
 
     /**
      * Get all routes
-     * @return array
+     * @return Route[]
      */
     public function all()
     {

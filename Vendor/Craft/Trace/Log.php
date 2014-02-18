@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Debug\Logger;
+namespace Craft\Trace;
 
 class Log
 {
 
-    /** @var string */
+    /** @var float */
     public $time;
 
     /** @var string */

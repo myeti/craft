@@ -9,26 +9,25 @@
  */
 namespace Craft\Kernel;
 
-use Craft\Debug\Tracker;
 use Craft\Env\Auth;
-use Craft\Pattern\Event\Subject;
+use Craft\Router\Route;
+use Craft\View\Engine;
+use Craft\Reflect\Event;
 use Craft\Reflect\Action;
 use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
-use Craft\View\Viewable;
-use Craft\View\Engine;
 
-class Dispatcher
+class Dispatcher implements Handler
 {
 
-    use Subject;
+    use Event;
 
     /** @var Injector */
     protected $injector;
 
 
     /**
-     * Setup injector
+     * Setup dispatcher with dependency injector
      * @param Injector $injector
      */
     public function __construct(Injector $injector = null)
@@ -38,58 +37,81 @@ class Dispatcher
 
 
     /**
-     * Run action & render template
+     * Resolve query and handle
      * @param $query
      * @param array $args
-     * @param \Craft\View\Engine $engine
+     * @param Engine $engine
      * @return mixed
      */
     public function perform($query, array $args = [], Engine $engine = null)
     {
+        // create request
+        $request = new Request($query);
+        $request->args = $args;
+
+        // create route based on request
+        $route = new Route($query, $query);
+        $route->data = $args;
+
+        // create context
+        $context = new Context($request, $route);
+
+        return $this->handle($context, $engine);
+    }
+
+
+    /**
+     * Run action & render template
+     * @param Context $context
+     * @param Engine $engine
+     * @return mixed
+     */
+    public function handle(Context $context, Engine $engine = null)
+    {
         // start
-        $this->fire('dispatcher.start', [&$query, &$args]);
+        $this->fire('dispatcher.start', [&$context]);
 
         // resolve
-        $this->fire('dispatcher.resolve', [&$query, &$args]);
-        $action = $this->resolve($query, $args);
+        $this->fire('dispatcher.resolve', [&$context]);
+        $context->action = $this->resolve($context);
 
         // firewall
-        $this->fire('dispatcher.firewall', [&$query, &$args, &$action]);
-        if(!$this->firewall($action)) {
-            $this->fire(403);
+        $this->fire('dispatcher.firewall', [&$context]);
+        if(!$this->firewall($context)) {
+            $this->fire(403, [&$context]);
             return false;
         }
 
         // call
-        $this->fire('dispatcher.call', [&$query, &$args, &$action]);
-        $this->call($action);
+        $this->fire('dispatcher.call', [&$context]);
+        $this->call($context);
 
         // render
-        $this->fire('dispatcher.render', [&$engine, &$action]);
+        $this->fire('dispatcher.render', [&$context, &$engine]);
         if($engine) {
-            $this->render($engine, $action);
+            $this->render($context, $engine);
         }
 
-        $this->fire('dispatcher.stop', [&$action]);
-        return $action->data;
+        // stop
+        $this->fire('dispatcher.stop', [&$context]);
+        return $context;
     }
 
 
     /**
      * Resolve and prepare action
-     * @param $query
-     * @param array $args
-     * @return bool|\Craft\Reflect\Action
+     * @param Context $context
      * @throws \BadMethodCallException
+     * @return Action
      */
-    protected function resolve($query, array $args = [])
+    protected function resolve(Context $context)
     {
-        $action = Resolver::resolve($query, $this->injector);
+        $action = Resolver::resolve($context->route->to, $this->injector);
         if(!$action) {
             throw new \BadMethodCallException('This action is not a valid callable.');
         }
 
-        $action->args = $args;
+        $action->args = $context->route->data;
         $action->metadata += [
             'render' => null,
             'auth'   => 0
@@ -101,35 +123,41 @@ class Dispatcher
 
     /**
      * Gate keeper : check auth
-     * @param Action $action
+     * @param Context $context
      * @return bool
      */
-    protected function firewall(Action $action)
+    protected function firewall(Context $context)
     {
-        return Auth::allowed($action->metadata['auth']);
+        return Auth::allowed($context->action->metadata['auth']);
     }
 
 
     /**
      * Execute action
-     * @param Action $action
+     * @param Context $context
      * @return mixed
      */
-    protected function call(Action $action)
+    protected function call(Context $context)
     {
-        return call_user_func_array($action, $action->args);
+        // resolve args
+        $args = $context->action->args;
+        $args[] = &$context;
+
+        return call_user_func_array($context->action, $args);
     }
 
 
     /**
      * Render view
-     * @param \Craft\View\Engine $engine
-     * @param Action $action
+     * @param Engine $engine
+     * @param Context $context
      */
-    protected function render(Engine $engine, Action $action)
+    protected function render(Context $context, Engine $engine)
     {
-        $data = isset($action->data) ? $action->data : [];
-        echo $engine->render($action->metadata['render'], $data);
+        // resolve data
+        $data = isset($context->action->data) ? $context->action->data : [];
+
+        echo $engine->render($context->action->metadata['render'], $data);
     }
 
 }

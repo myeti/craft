@@ -24,8 +24,8 @@ class NativeMatcher extends Matcher
      */
     public function find($query, array $context = [], $fallback = false)
     {
-        foreach($this->router->all() as $route) {
-            if($query == $route->path) {
+        foreach($this->map->all() as $route) {
+            if($query == $route->from) {
                 return $route;
             }
         }

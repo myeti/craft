@@ -15,15 +15,11 @@ class UrlMatcher extends RegexMatcher
     /**
      * Find route
      * @param string $query
-     * @param array $context
-     * @param mixed $fallback
      * @return \Craft\Router\Route
      */
-    public function find($query, array $context = [], $fallback = false)
+    public function prepare($query)
     {
-        // leading slash
-        $query = '/' . ltrim($query, '/');
-        return parent::find($query, $context, $fallback);
+        return '/' . ltrim($query, '/');
     }
 
 

@@ -22,13 +22,16 @@ abstract class RegexMatcher extends Matcher
      * @param mixed $fallback
      * @return Route
      */
-    public function find($query, array $context = [], $fallback = false)
+    public function find($query, array $customs = [], $fallback = false)
     {
+        // prepare query
+        $query = $this->prepare($query);
+
         // search in all routes
-        foreach($this->router->all() as $route)
+        foreach($this->map->all() as $route)
         {
             // compile pattern
-            $pattern = $this->compile($route->path);
+            $pattern = $this->compile($route->from);
 
             // compare
             if(preg_match($pattern, $query, $out)){
@@ -37,7 +40,7 @@ abstract class RegexMatcher extends Matcher
                 unset($out[0]);
 
                 // check context
-                if(array_intersect_assoc($context, $route->context) != $route->context) {
+                if(array_intersect_assoc($customs, $route->customs) != $route->customs) {
                     continue;
                 }
 
@@ -50,6 +53,17 @@ abstract class RegexMatcher extends Matcher
         }
 
         return $fallback;
+    }
+
+
+    /**
+     * Prepare query
+     * @param $query
+     * @return string
+     */
+    protected function prepare($query)
+    {
+        return trim($query);
     }
 
 

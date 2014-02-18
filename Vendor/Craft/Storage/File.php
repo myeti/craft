@@ -112,16 +112,16 @@ abstract class File
 	public static function upload($name, $to)
 	{
 		// error
-		if(!isset($FILES[$name])) {
+		if(!isset($_FILES[$name])) {
 			throw new \InvalidArgumentException('No uploaded file named "' . $name . '".');
 		}
 
 		// resolve path
 		if(is_dir($to)) {
-			$to .= DIRECTORY_SEPARATOR . $FILES[$name]['name'];
+			$to .= DIRECTORY_SEPARATOR . $_FILES[$name]['name'];
 		}
 
-		return move_uploaded_file($FILES[$name]['tmp_name'], $to);
+		return move_uploaded_file($_FILES[$name]['tmp_name'], $to);
 	}
 
     /**

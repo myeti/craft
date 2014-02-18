@@ -16,24 +16,11 @@ $loader->vendors([
 
 
 /**
- * Setup dev tools
+ * Setup tracker
  */
 
-$logger = new Craft\Debug\Logger();
-$tracker = new Craft\Debug\Tracker();
-$tracker->start('craft.app');
-
-
-/**
- * Setup session
- */
-
-ini_set('session.use_trans_sid', 0);
-ini_set('session.use_only_cookies', 1);
-ini_set("session.cookie_lifetime", 604800);
-ini_set("session.gc_maxlifetime", 604800);
-session_set_cookie_params(604800);
-session_start();
+$tracker = new Craft\Trace\Tracker();
+$tracker->monitor('craft.app');
 
 
 /**

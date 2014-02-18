@@ -11,17 +11,18 @@ namespace Craft\Env;
 
 use Craft\Data\Repository;
 use Craft\Data\StaticProvider;
+use Craft\Env\Adapter\NativeConfig;
 
-abstract class Config extends StaticProvider
+abstract class Config extends Adapter
 {
 
     /**
      * Create provider instance
-     * @return Repository
+     * @return NativeConfig
      */
-    protected static function createInstance()
+    protected static function defaultInstance()
     {
-        return new Repository($_ENV);
+        return new NativeConfig();
     }
 
 
@@ -32,11 +33,7 @@ abstract class Config extends StaticProvider
      */
     public static function timezone($timezone = null)
     {
-        if($timezone) {
-            date_default_timezone_set($timezone);
-        }
-
-        return date_default_timezone_get();
+        return static::instance()->timezone($timezone);
     }
 
 
@@ -47,12 +44,7 @@ abstract class Config extends StaticProvider
      */
     public static function locale($lang = null)
     {
-        if($lang) {
-            setlocale(LC_ALL, $lang);
-            locale_set_default($lang);
-        }
-
-        return locale_get_default();
+        return static::instance()->locale($lang);
     }
 
 } 

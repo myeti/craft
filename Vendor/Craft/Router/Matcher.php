@@ -12,37 +12,37 @@ namespace Craft\Router;
 abstract class Matcher
 {
 
-    /** @var RouteProvider */
-    protected $router;
+    /** @var Map */
+    protected $map;
 
 
     /**
      * Setup matcher with router
-     * @param RouteProvider $router
+     * @param Map $map
      */
-    public function __construct(RouteProvider &$router)
+    public function __construct(Map $map)
     {
-        $this->router = $router;
+        $this->map = $map;
     }
 
 
     /**
      * Get router
-     * @return RouteProvider
+     * @return Map
      */
-    public function &router()
+    public function &map()
     {
-        return $this->router;
+        return $this->map;
     }
 
 
     /**
      * Find route
      * @param string $query
-     * @param array $context
+     * @param array $customs
      * @param mixed $fallback
      * @return Route
      */
-    abstract public function find($query, array $context = [], $fallback = null);
+    abstract public function find($query, array $customs = [], $fallback = null);
 
 } 
