@@ -9,20 +9,17 @@
  */
 namespace Craft\Cli;
 
-class In
+abstract class Dialog
 {
 
-    /** @var resource */
-    protected $scanner;
-
-
     /**
-     * Setup input scanner
-     * @param resource $resource
+     * Write message
+     * @param $message
+     * @return $this
      */
-    public function __construct($resource = null)
+    public static function say($message)
     {
-        $this->scanner = $resource ?: fopen('php://stdin', 'r');
+        echo implode(' ', func_get_args());
     }
 
 
@@ -30,9 +27,14 @@ class In
      * Get user input
      * @return string
      */
-    public function read()
+    public static function read()
     {
-        $input = fgets($this->scanner);
+        static $scanner;
+        if(!$scanner) {
+            $scanner = fopen('php://stdin', 'r');
+        }
+
+        $input = fgets($scanner);
         return trim($input);
     }
 
@@ -41,10 +43,10 @@ class In
      * @param $message
      * @return string
      */
-    public function ask($message)
+    public static function ask($message)
     {
-        echo $message;
-        return $this->read();
+        static::say($message);
+        return static::read();
     }
 
 }
