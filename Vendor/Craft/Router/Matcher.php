@@ -12,27 +12,74 @@ namespace Craft\Router;
 abstract class Matcher
 {
 
-    /** @var Map */
-    protected $map;
-
+    /** @var Route[] */
+    protected $routes = [];
 
     /**
-     * Setup matcher with router
-     * @param Map $map
+     * Setup matcher
+     * @param array $routes
      */
-    public function __construct(Map $map)
+    public function __construct(array $routes = [])
     {
-        $this->map = $map;
+        foreach($routes as $from => $to) {
+            if($to instanceof Route) {
+                $this->add($to);
+            }
+            else {
+                $this->map($from, $to);
+            }
+        }
     }
 
 
     /**
-     * Get router
-     * @return Map
+     * Make route from path
+     * @param string $from
+     * @param mixed $to
+     * @param array $customs
+     * @return $this
      */
-    public function &map()
+    public function map($from, $to, array $customs = [])
     {
-        return $this->map;
+        return $this->add(new Route($from, $to, $customs));
+    }
+
+
+    /**
+     * Add route
+     * @param Route $route
+     * @return $this
+     */
+    public function add(Route $route)
+    {
+        $this->routes[$route->from] = $route;
+        return $this;
+    }
+
+
+    /**
+     * Bind an inner router
+     * @param string $base
+     * @param Matcher $matcher
+     * @return $this
+     */
+    public function bind($base, Matcher $matcher)
+    {
+        foreach($matcher->routes() as $route) {
+            $route->from = $base . $route->from;
+            $this->add($route);
+        }
+        return $this;
+    }
+
+
+    /**
+     * Get all routes
+     * @return Route[]
+     */
+    public function routes()
+    {
+        return $this->routes;
     }
 
 

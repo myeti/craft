@@ -13,9 +13,7 @@ use Craft\Env\Config;
 use Craft\Env\Mog;
 use Craft\Reflect\Injector;
 use Craft\Router\Matcher;
-use Craft\Router\Matcher\UrlMatcher;
-use Craft\Router\Route;
-use Craft\Router\Map;
+use Craft\Router\Web as WebRouter;
 use Craft\View\Engine;
 use Craft\View\Engine\NativeEngine;
 use Craft\View\Engine\Native\Helper\Asset;
@@ -39,7 +37,7 @@ class App extends Dispatcher
     public function __construct(array $routes, Injector $injector = null, Engine $engine = null)
     {
         // init router
-        $this->router = new UrlMatcher(new Map($routes));
+        $this->router = new WebRouter($routes);
 
         // init engine
         if(!$engine) {

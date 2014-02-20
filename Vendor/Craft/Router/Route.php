@@ -13,9 +13,6 @@ class Route
 {
 
     /** @var string */
-    public $name;
-
-    /** @var string */
     public $from;
 
     /** @var mixed */
@@ -29,13 +26,15 @@ class Route
 
     /**
      * Define route
-     * @param $from
-     * @param $to
+     * @param string $from
+     * @param mixed $to
+     * @param array $customs
      */
-    public function __construct($from, $to)
+    public function __construct($from, $to, array $customs = [])
     {
         $this->from = $from;
         $this->to = $to;
+        $this->customs = $customs;
     }
 
 } 

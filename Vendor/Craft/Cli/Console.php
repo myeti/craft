@@ -9,8 +9,7 @@
  */
 namespace Craft\Cli;
 
-use Craft\Router\Matcher\UrlMatcher;
-use Craft\Router\RouteProvider;
+use Craft\Router\Web as WebRouter;
 
 class Console
 {
@@ -77,10 +76,10 @@ class Console
         }
 
         // setup router
-        $matcher = new UrlMatcher(new RouteProvider($this->commands));
+        $router = new WebRouter($this->commands);
 
         // look up command
-        $route = $matcher->find($query);
+        $route = $router->find($query);
 
         // error
         if(!$route) {
@@ -89,7 +88,7 @@ class Console
         }
 
         // execute
-        return call_user_func_array($route->target, $route->data);
+        return call_user_func_array($route->to, $route->data['args']);
 	}
 
 }
