@@ -106,7 +106,7 @@ abstract class Mapper
 
 
     /**
-     * Persist entity
+     * Box entity
      * @param string $alias
      * @param object $entity
      * @return bool

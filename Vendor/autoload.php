@@ -16,14 +16,6 @@ $loader->vendors([
 
 
 /**
- * Setup tracker
- */
-
-$tracker = new Craft\Trace\Tracker();
-$tracker->monitor('craft.app');
-
-
-/**
  * Load helpers
  */
 

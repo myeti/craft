@@ -101,7 +101,7 @@ class LipsumMapper extends Mapper
 
 
     /**
-     * Persist entity
+     * Box entity
      * @param string $alias
      * @param object $entity
      * @return bool

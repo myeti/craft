@@ -9,7 +9,7 @@
  */
 namespace Craft\Pattern;
 
-use Craft\Error\NotImplementedException;
+use Craft\Error\NotImplemented;
 
 trait StaticSingleton
 {
@@ -26,7 +26,7 @@ trait StaticSingleton
             $instance = $newInstance;
         }
         if(!$instance) {
-            $instance = static::defaultInstance();
+            $instance = static::bind();
         }
 
         return $instance;
@@ -37,9 +37,9 @@ trait StaticSingleton
      * Create instance
      * @return null
      */
-    protected static function defaultInstance()
+    protected static function bind()
     {
-        return new NotImplementedException('You must override this method.');
+        throw new NotImplemented('You must override this method.');
     }
 
 } 

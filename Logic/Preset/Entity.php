@@ -3,6 +3,7 @@
 namespace My\Logic\Preset;
 
 use Craft\Env\Flash;
+use Craft\Error\Abort;
 use Craft\Orm\Model\NullModel;
 
 
@@ -29,11 +30,19 @@ class Entity
      * Get one item
      * @render views\entity.one
      * @param  string $id
+     * @throws \Craft\Error\Abort
      * @return array
      */
     public function one($id)
     {
+        // get entity
         $item = NullModel::one($id);
+
+        // does not exist
+        if(!$item) {
+            throw new Abort('Entity #' . $id .' not found.', 404);
+        }
+
         return ['entity' => $item];
     }
 
@@ -41,6 +50,7 @@ class Entity
     /**
      * Create or edit entity
      * @param null $id
+     * @throws \Craft\Error\Abort
      * @render views/entity.form
      * @return array
      */
@@ -51,7 +61,7 @@ class Entity
 
         // does not exist
         if($id and !$model) {
-            Flash::set('entity.error', 'entity #' . $id .' not found.');
+            throw new Abort('Entity #' . $id .' not found.', 404);
         }
         // form attempt
         elseif($data = post()) {

@@ -37,7 +37,7 @@ $app = new Craft\App([
 ]);
 ```
 
-You can now get the lang value with `Craft\Env\Config::get('lang');`.
+You can now get the lang value with `Craft\Box\Config::get('lang');`.
 
 
 ## Action

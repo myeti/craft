@@ -74,7 +74,7 @@ trait Event
     {
         // fire * event
         if($event != '*') {
-            $params['_initial'] = $event;
+            array_unshift($params, $event);
             $this->fire('*', $params);
         }
 

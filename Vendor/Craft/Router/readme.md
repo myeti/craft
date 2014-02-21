@@ -11,7 +11,7 @@ query -> [router] -> route
 
 ### WebRouter
 
-In this example, we'll use the WebRouter (also used by the Craft\Kernel component).
+In this example, we'll use the WebRouter (also used by the Craft\Web component).
 First, create your routes :
 
 ```php
@@ -84,5 +84,5 @@ The WebRouter is only an example, router can be used for any kind of request :)
 ### And after ?
 
 You are now able to find a route depending on the query.
-You can use the `Craft\Kernel` component to execute action stored in the route !
+You can use the `Craft\Web` component to execute action stored in the route !
 

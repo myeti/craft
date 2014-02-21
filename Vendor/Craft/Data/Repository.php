@@ -9,21 +9,33 @@
  */
 namespace Craft\Data;
 
+use Craft\Reflect\Event;
+
 class Repository extends \ArrayObject implements Provider
 {
 
+    const SERIALIZE = 0x1;
+
     /** @var string */
     protected $separator;
+
+    /** @var int */
+    protected $flags;
 
 
     /**
      * Setup array and separator
      * @param array $input
+     * @param int $flags
      * @param string $separator
      */
-    public function __construct(array $input = [], $separator = '.')
+    public function __construct(array $input = [], $flags = null, $separator = '.')
     {
+        // set parameters
         $this->separator = $separator;
+        $this->flags = $flags;
+
+        // init array
         parent::__construct($input);
     }
 
@@ -35,8 +47,10 @@ class Repository extends \ArrayObject implements Provider
      */
     public function has($key)
     {
+        // get data
         $array = $this->resolve($key);
         $key = $this->parse($key);
+
         return isset($array[$key]);
     }
 
@@ -49,9 +63,20 @@ class Repository extends \ArrayObject implements Provider
      */
     public function get($key, $fallback = null)
     {
+        // get data
         $array = $this->resolve($key);
         $key = $this->parse($key);
-        return isset($array[$key]) ? $array[$key] : $fallback;
+        $value = isset($array[$key]) ? $array[$key] : $fallback;
+
+        // unserialize
+        if(($this->flags & self::SERIALIZE) and is_string($value)) {
+            $decrypted = @unserialize($value);
+            if($decrypted !== false or $value == 'b:0;') {
+                $value = $decrypted;
+            }
+        }
+
+        return $value;
     }
 
 
@@ -63,8 +88,16 @@ class Repository extends \ArrayObject implements Provider
      */
     public function set($key, $value)
     {
-        $array = &$this->resolve($key);
+        // get data
+        $array = &$this->resolve($key, true);
         $key = $this->parse($key);
+
+        // serialize
+        if(($this->flags & self::SERIALIZE) and !is_scalar($value)) {
+            $value = serialize($value);
+        }
+
+        // write
         $array[$key] = $value;
     }
 
@@ -76,8 +109,11 @@ class Repository extends \ArrayObject implements Provider
      */
     public function drop($key)
     {
+        // get data
         $array = &$this->resolve($key);
         $key = $this->parse($key);
+
+        // drop
         if(isset($array[$key])) {
             unset($array[$key]);
         }
@@ -96,11 +132,15 @@ class Repository extends \ArrayObject implements Provider
         $array = &$this;
         $namespace = trim($namespace, $this->separator);
         $segments = explode($this->separator, $namespace);
-        end($segments);
-        $last = key($segments);
+        $last = end($segments);
 
         // one does not simply walk into Mordor
         foreach($segments as $i => $segment) {
+
+            // is last ?
+            if($segment == $last) {
+                break;
+            }
 
             // namespace does not exist
             if(!isset($array[$segment])) {
@@ -115,9 +155,7 @@ class Repository extends \ArrayObject implements Provider
             }
 
             // next segment
-            if($i < $last) {
-                $array = &$array[$segment];
-            }
+            $array = &$array[$segment];
 
         }
 
@@ -134,22 +172,6 @@ class Repository extends \ArrayObject implements Provider
     {
         $segments = explode($this->separator, $namespace);
         return end($segments);
-    }
-
-
-    /**
-     * Create Repository from array
-     * @param array $array
-     * @param $baseKey
-     * @return Repository
-     */
-    public static function from(array &$array, $baseKey)
-    {
-        if(!isset($array[$baseKey])) {
-            $array[$baseKey] = [];
-        }
-
-        return new self($array[$baseKey]);
     }
 
 }

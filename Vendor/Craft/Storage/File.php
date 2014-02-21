@@ -9,7 +9,7 @@
  */
 namespace Craft\Storage;
 
-use craft\error\FileNotFoundException;
+use Craft\Error\FileNotFound;
 
 abstract class File
 {
@@ -127,13 +127,13 @@ abstract class File
     /**
      * Force download file
      * @param  string $filename
-     * @throws FileNotFoundException
+     * @throws FileNotFound
      */
 	public static function download($filename)
 	{
 		// error
 		if(!file_exists($filename)) {
-			throw new FileNotFoundException('File "' . $filename . '" not found.');
+			throw new FileNotFound('File "' . $filename . '" not found.');
 		}
 
 		// init & exit

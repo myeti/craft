@@ -41,6 +41,7 @@ class Action
         $this->args = $args;
         $this->metadata = $metadata;
         $this->data = $data;
+        $this->type = 'callable';
     }
 
 

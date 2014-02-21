@@ -186,7 +186,7 @@ abstract class Syn
 
 
     /**
-     * Persist entity
+     * Box entity
      * @param string $alias
      * @param object $entity
      * @return bool

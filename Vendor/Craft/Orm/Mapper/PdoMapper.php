@@ -163,7 +163,7 @@ class PdoMapper extends Mapper
 
 
     /**
-     * Persist entity
+     * Box entity
      * @param string $table
      * @param object $entity
      * @return bool

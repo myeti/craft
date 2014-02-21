@@ -12,16 +12,6 @@ namespace Craft\Data;
 class ArrayCollection extends \ArrayObject implements Provider
 {
 
-    /**
-     * Create array collection from reference
-     * @param array $data
-     * @return ArrayCollection
-     */
-    public static function ref(array &$data)
-    {
-        return new self($data);
-    }
-
 
     /**
      * Check if element exists

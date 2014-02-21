@@ -195,4 +195,24 @@ class Tracker extends AbstractLogger
         return $this->tasks;
     }
 
+
+    /**
+     * Basic report
+     * @return string
+     */
+    public function __toString()
+    {
+        $string = '';
+
+        foreach($this->tasks() as $task) {
+            $string .= $task . '<br/>';
+        }
+
+        foreach($this->logs() as $log) {
+            $string .= $log . '<br/>';
+        }
+
+        return $string;
+    }
+
 }
