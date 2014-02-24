@@ -9,9 +9,9 @@
 namespace Craft\Box\Native\Session;
 
 use Craft\Box\Provider\SessionProvider;
-use Craft\Data\Repository\ScalarReplica;
+use Craft\Data\Repository;
 
-class Storage extends ScalarReplica implements SessionProvider
+class Storage extends Repository implements SessionProvider
 {
 
     /** @var string */
@@ -58,7 +58,7 @@ class Storage extends ScalarReplica implements SessionProvider
     public function clear()
     {
         $this->exchangeArray([]);
-        $this->replicate();
+        $this->then();
     }
 
 
@@ -66,7 +66,7 @@ class Storage extends ScalarReplica implements SessionProvider
      * Replicate inner data into external source
      * @return mixed
      */
-    public function replicate()
+    protected function then()
     {
         $_SESSION[$this->name] = $this->getArrayCopy();
     }

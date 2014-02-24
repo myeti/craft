@@ -14,29 +14,42 @@ use Craft\Reflect\Event;
 class Repository extends \ArrayObject implements Provider
 {
 
-    const SERIALIZE = 0x1;
-
     /** @var string */
-    protected $separator;
+    protected $separator = '.';
 
-    /** @var int */
-    protected $flags;
+    /** @var Filter[] */
+    protected $filters = [];
 
 
     /**
      * Setup array and separator
      * @param array $input
-     * @param int $flags
-     * @param string $separator
+     * @param array $filters
+     * @internal param int $flags
+     * @internal param string $separator
      */
-    public function __construct(array $input = [], $flags = null, $separator = '.')
+    public function __construct(array $input = [], $filters = null)
     {
-        // set parameters
-        $this->separator = $separator;
-        $this->flags = $flags;
+        // set filters
+        $filters = is_array($filters) ? $filters : [$filters];
+        foreach($filters as $filter) {
+            if($filter instanceof Filter) {
+                $this->filter($filter);
+            }
+        }
 
         // init array
         parent::__construct($input);
+    }
+
+
+    /**
+     * Add data filter
+     * @param Filter $filter
+     */
+    public function filter(Filter $filter)
+    {
+        $this->filters[] = $filter;
     }
 
 
@@ -50,6 +63,8 @@ class Repository extends \ArrayObject implements Provider
         // get data
         $array = $this->resolve($key);
         $key = $this->parse($key);
+
+        $this->then();
 
         return isset($array[$key]);
     }
@@ -68,13 +83,12 @@ class Repository extends \ArrayObject implements Provider
         $key = $this->parse($key);
         $value = isset($array[$key]) ? $array[$key] : $fallback;
 
-        // unserialize
-        if(($this->flags & self::SERIALIZE) and is_string($value)) {
-            $decrypted = @unserialize($value);
-            if($decrypted !== false or $value == 'b:0;') {
-                $value = $decrypted;
-            }
+        // out filter
+        foreach($this->filters as $filter) {
+            $value = $filter->out($value);
         }
+
+        $this->then();
 
         return $value;
     }
@@ -92,13 +106,15 @@ class Repository extends \ArrayObject implements Provider
         $array = &$this->resolve($key, true);
         $key = $this->parse($key);
 
-        // serialize
-        if(($this->flags & self::SERIALIZE) and !is_scalar($value)) {
-            $value = serialize($value);
+        // in filter
+        foreach($this->filters as $filter) {
+            $value = $filter->in($value);
         }
 
         // write
         $array[$key] = $value;
+
+        $this->then();
     }
 
 
@@ -117,7 +133,15 @@ class Repository extends \ArrayObject implements Provider
         if(isset($array[$key])) {
             unset($array[$key]);
         }
+
+        $this->then();
     }
+
+
+    /**
+     * Done event
+     */
+    protected function then() {}
 
 
     /**

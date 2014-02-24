@@ -17,30 +17,10 @@ class Env extends Repository
 
 
     /**
-     * Set element by key with value
-     * @param $key
-     * @param $value
-     * @return bool
+     * In filter
      */
-    public function set($key, $value)
+    protected function in()
     {
-        parent::set($key, $value);
-
-        // replica
-        $_ENV = $this->getArrayCopy();
-    }
-
-
-    /**
-     * Drop element by key
-     * @param $key
-     * @return bool
-     */
-    public function drop($key)
-    {
-        parent::drop($key);
-
-        // replica
         $_ENV = $this->getArrayCopy();
     }
 

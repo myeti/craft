@@ -81,4 +81,5 @@ class Session implements SessionProvider
     {
         return $this->provider->drop($key);
     }
+
 }

@@ -9,7 +9,6 @@ class Cookie extends ArrayCollection
 
     /**
      * Create provider instance
-     * @return NativeCookie
      */
     public function __construct()
     {
