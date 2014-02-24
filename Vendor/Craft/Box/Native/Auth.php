@@ -1,10 +1,16 @@
 <?php
-
+/**
+ * This file is part of the Craft package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the Licence.txt
+ * file that was distributed with this source code.
+ */
 namespace Craft\Box\Native;
 
 use Craft\Box\Provider\AuthProvider;
 use Craft\Box\Provider\SessionProvider;
-use Craft\Data\ArrayCollection;
 
 class Auth implements AuthProvider
 {
@@ -18,7 +24,7 @@ class Auth implements AuthProvider
      */
     public function __construct()
     {
-        $this->session = new Session\Storage('_craft/auth');
+        $this->session = new Session\Storage('craft/auth');
     }
 
 

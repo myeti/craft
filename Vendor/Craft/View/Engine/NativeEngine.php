@@ -70,8 +70,13 @@ class NativeEngine extends \ArrayObject implements Engine
      * @param array $sections
      * @return string
      */
-    public function render($template, array $data = [], array $sections = [])
+    public function render($template, $data = [], array $sections = [])
     {
+        // fix array
+        if(!is_array($data)) {
+            $data = [];
+        }
+
         // define data
         $template = $this->root . $template . $this->ext;
         $data = array_merge((array)$this, $data);

@@ -1,17 +1,19 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Aymeric
- * Date: 21.02.14
- * Time: 13:55
+ * This file is part of the Craft package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the Licence.txt
+ * file that was distributed with this source code.
  */
-
 namespace Craft\Box\Native\Session;
 
 use Craft\Box\Provider\SessionProvider;
+use Craft\Data\Filter\Serializer;
 use Craft\Data\Repository;
 
-class Storage extends Repository implements SessionProvider
+class Storage extends Serializer implements SessionProvider
 {
 
     /** @var string */
@@ -37,7 +39,7 @@ class Storage extends Repository implements SessionProvider
         $this->name = $name;
         $session = isset($_SESSION[$name]) ? $_SESSION[$name] : [];
 
-        parent::__construct($session);
+        parent::__construct(new Repository($session));
     }
 
 
@@ -52,13 +54,38 @@ class Storage extends Repository implements SessionProvider
 
 
     /**
+     * Set and save
+     * @param $key
+     * @param $value
+     * @return bool|void
+     */
+    public function set($key, $value)
+    {
+        parent::set($key, $value);
+        $this->save();
+    }
+
+
+    /**
+     * Drop and save
+     * @param $key
+     * @return bool|void
+     */
+    public function drop($key)
+    {
+        parent::drop($key);
+        $this->save();
+    }
+
+
+    /**
      * Destroy session
      * @return bool
      */
     public function clear()
     {
-        $this->exchangeArray([]);
-        $this->then();
+        parent::clear();
+        $this->save();
     }
 
 
@@ -66,9 +93,9 @@ class Storage extends Repository implements SessionProvider
      * Replicate inner data into external source
      * @return mixed
      */
-    protected function then()
+    protected function save()
     {
-        $_SESSION[$this->name] = $this->getArrayCopy();
+        $_SESSION[$this->name] = $this->all();
     }
 
 }

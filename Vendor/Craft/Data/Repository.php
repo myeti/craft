@@ -17,26 +17,16 @@ class Repository extends \ArrayObject implements Provider
     /** @var string */
     protected $separator = '.';
 
-    /** @var Filter[] */
-    protected $filters = [];
-
 
     /**
      * Setup array and separator
      * @param array $input
-     * @param array $filters
-     * @internal param int $flags
-     * @internal param string $separator
+     * @param string $separator
      */
-    public function __construct(array $input = [], $filters = null)
+    public function __construct(array $input = [], $separator = '.')
     {
-        // set filters
-        $filters = is_array($filters) ? $filters : [$filters];
-        foreach($filters as $filter) {
-            if($filter instanceof Filter) {
-                $this->filter($filter);
-            }
-        }
+        // set separator
+        $this->separator = $separator;
 
         // init array
         parent::__construct($input);
@@ -44,12 +34,12 @@ class Repository extends \ArrayObject implements Provider
 
 
     /**
-     * Add data filter
-     * @param Filter $filter
+     * Get all elements
+     * @return array
      */
-    public function filter(Filter $filter)
+    public function all()
     {
-        $this->filters[] = $filter;
+        return $this->getArrayCopy();
     }
 
 
@@ -63,8 +53,6 @@ class Repository extends \ArrayObject implements Provider
         // get data
         $array = $this->resolve($key);
         $key = $this->parse($key);
-
-        $this->then();
 
         return isset($array[$key]);
     }
@@ -83,13 +71,6 @@ class Repository extends \ArrayObject implements Provider
         $key = $this->parse($key);
         $value = isset($array[$key]) ? $array[$key] : $fallback;
 
-        // out filter
-        foreach($this->filters as $filter) {
-            $value = $filter->out($value);
-        }
-
-        $this->then();
-
         return $value;
     }
 
@@ -106,15 +87,8 @@ class Repository extends \ArrayObject implements Provider
         $array = &$this->resolve($key, true);
         $key = $this->parse($key);
 
-        // in filter
-        foreach($this->filters as $filter) {
-            $value = $filter->in($value);
-        }
-
         // write
         $array[$key] = $value;
-
-        $this->then();
     }
 
 
@@ -133,15 +107,17 @@ class Repository extends \ArrayObject implements Provider
         if(isset($array[$key])) {
             unset($array[$key]);
         }
-
-        $this->then();
     }
 
 
     /**
-     * Done event
+     * Clear all elements
+     * @return bool
      */
-    protected function then() {}
+    public function clear()
+    {
+        $this->exchangeArray([]);
+    }
 
 
     /**

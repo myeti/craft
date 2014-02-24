@@ -9,55 +9,103 @@
  */
 namespace Craft\Web;
 
-use Craft\Box\Env;
 use Craft\Box\Mog;
+use Craft\Error\Abort;
+use Craft\Reflect\Event;
 use Craft\Reflect\Injector;
-use Craft\Router\Matcher;
+use Craft\Reflect\Resolver;
 use Craft\Router\Web as WebRouter;
 use Craft\View\Engine;
 use Craft\View\Engine\NativeEngine;
 use Craft\View\Engine\Native\Helper\Asset;
 
-class App extends Dispatcher
+class App implements Handler
 {
 
-    /** @var Matcher */
-    protected $router;
+    use Event;
+
+    /** @var Handler */
+    protected $handler;
 
     /** @var Engine */
     protected $engine;
 
 
     /**
-     * Setup router
-     * @param array $routes
-     * @param Injector $injector
+     * Setup App
+     * @param Handler $handler
      * @param Engine $engine
      */
-    public function __construct(array $routes, Injector $injector = null, Engine $engine = null)
+    public function __construct(Handler $handler, Engine $engine = null)
     {
-        // init router
-        $this->router = new WebRouter($routes);
-
-        // init engine
-        if(!$engine) {
-            $engine = new NativeEngine(dirname(Mog::server('SCRIPT_FILENAME')), 'php', []);
-            $engine->mount(new Asset(Mog::base()));
-        }
+        $this->handler = $handler;
         $this->engine = $engine;
-
-        // init dispatcher
-        parent::__construct($injector);
     }
 
 
     /**
-     * Get inner engine
-     * @return Engine|NativeEngine
+     * Middleware : before
+     * @param Handler $handler
      */
-    public function engine()
+    public function before(Handler $handler)
     {
-        return $this->engine;
+        $this->on('before', function(Request $request) use($handler) {
+            return $handler->handle($request);
+        });
+    }
+
+
+    /**
+     * Middleware : before
+     * @param Handler $handler
+     */
+    public function after(Handler $handler)
+    {
+        $this->on('after', function(Request $request, Response $response) use($handler) {
+            return $handler->handle($request, $response);
+        });
+    }
+
+
+    /**
+     * Main process
+     * @param Request $request
+     * @throws \Exception
+     * @return mixed
+     */
+    public function handle(Request $request)
+    {
+        // before event
+        $this->fire('before', [&$request]);
+
+        // run handler
+        try {
+            list($request, $response) = $this->handler->handle($request);
+        }
+        // catch abort as event
+        catch(Abort $e) {
+            if(!$this->fire($e->getCode(), [$request, $e->getMessage()])) { throw $e; }
+            return false;
+        }
+
+        // after event
+        $this->fire('after', [&$request, &$response]);
+
+        // render if asked
+        if(!empty($request->meta['render'])) {
+
+            // run engine
+            $content = $this->engine->render($request->meta['render'], $response->data);
+
+            // update response
+            $response->content = $content;
+
+            // send response
+            echo $response;
+
+        }
+
+        return [$request, $response];
     }
 
 
@@ -69,90 +117,18 @@ class App extends Dispatcher
     public function plug($query = null)
     {
         // resolve query
-        $query = $query ?: $this->query();
+        if(!$query) {
+            $query = Mog::url();
+            $query = substr($query, strlen(Mog::base()));
+            $query = parse_url($query, PHP_URL_PATH);
+        }
 
         // create request
-        $request = new Request($query);
-
-        // create context
-        $context = new Context($request);
+        $request = new Request();
+        $request->query = $query;
 
         // perform
-        return $this->handle($context);
-    }
-
-
-    /**
-     * Main process
-     * @param Context $context
-     * @return mixed
-     */
-    public function handle(Context $context)
-    {
-        // start
-        $this->fire('app.start', [&$context]);
-
-        // run router
-        $this->fire('app.route', [&$context]);
-        $context->route = $this->route($context);
-
-        // 404
-        if(!$context->route) {
-            $this->fire(404, ['message' => 'Route for query "' . $context->request->query . '" not found.']);
-            return false;
-        }
-
-        // set env data
-        foreach($context->route->data['envs'] as $key => $value) {
-            Env::set($key, $value);
-        }
-
-        // run dispatcher
-        $context = $this->dispatch($context, $this->engine);
-
-        // stop
-        $this->fire('app.stop', [&$context]);
-        return $context;
-    }
-
-
-    /**
-     * Get request query
-     * @return string
-     */
-    protected function query()
-    {
-        $query = Mog::url();
-        $query = substr($query, strlen(Mog::base()));
-        return parse_url($query, PHP_URL_PATH);
-    }
-
-
-    /**
-     * Find route with query
-     * @param Context $context
-     * @return Route
-     */
-    protected function route(Context $context)
-    {
-        return $this->router->find($context->request->query);
-    }
-
-
-    /**
-     * Run dispatcher
-     * @param Context $context
-     * @param Engine $engine
-     * @return Context
-     */
-    protected function dispatch(Context $context, Engine $engine = null)
-    {
-        // resolve args
-        $context->route->data = isset($context->route->data['args'])
-            ? $context->route->data['args']
-            : [];
-
-        return parent::handle($context, $engine);
+        return $this->handle($request);
     }
 
 
@@ -164,6 +140,41 @@ class App extends Dispatcher
     public function __invoke($query = null)
     {
         return $this->plug($query);
+    }
+
+
+    /**
+     * Forge app from routes
+     * @param array $routes
+     * @param Injector $injector
+     * @param Firewall\Strategy $strategy
+     * @return App
+     */
+    public static function forge(array $routes, Injector $injector = null, Firewall\Strategy $strategy = null)
+    {
+        // create resolver
+        $resolver = new Resolver($injector);
+
+        // create dispatcher
+        $dispatcher = new Dispatcher($resolver);
+
+        // create firewall
+        $firewall = new Firewall($dispatcher, $strategy ?: new Firewall\RankStrategy());
+
+        // create router
+        $router = new WebRouter($routes);
+
+        // create kernel
+        $kernel = new Kernel($firewall, $router);
+
+        // create engine
+        $engine = new NativeEngine(Mog::path(), 'php');
+        $engine->mount(
+            new Asset(Mog::base())
+        );
+
+        // create app
+        return new self($kernel, $engine);
     }
 
 }

@@ -17,11 +17,48 @@ class Env extends Repository
 
 
     /**
-     * In filter
+     * Set and save
+     * @param $key
+     * @param $value
+     * @return bool|void
      */
-    protected function in()
+    public function set($key, $value)
     {
-        $_ENV = $this->getArrayCopy();
+        parent::set($key, $value);
+        $this->save();
+    }
+
+
+    /**
+     * Drop and save
+     * @param $key
+     * @return bool|void
+     */
+    public function drop($key)
+    {
+        parent::drop($key);
+        $this->save();
+    }
+
+
+    /**
+     * Clear and save
+     * @return bool|void
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->save();
+    }
+
+
+    /**
+     * Replicate inner data into external source
+     * @return mixed
+     */
+    protected function save()
+    {
+        $_ENV = $this->all();
     }
 
 

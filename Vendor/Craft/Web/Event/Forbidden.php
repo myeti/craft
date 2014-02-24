@@ -7,18 +7,11 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Box\Provider;
+namespace Craft\Web\Event;
 
-use Craft\Data\Provider;
+use Craft\Error\Abort;
 
-interface SessionProvider extends Provider
+class Forbidden extends Abort
 {
-
-
-    /**
-     * Get session id
-     * @return string
-     */
-    public function id();
-
-}
+    protected $code = 403;
+} 

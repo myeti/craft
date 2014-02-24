@@ -1,9 +1,15 @@
 <?php
-
+/**
+ * This file is part of the Craft package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the Licence.txt
+ * file that was distributed with this source code.
+ */
 namespace Craft\Box\Native;
 
 use Craft\Box\Provider\SessionProvider;
-use Craft\Data\ArrayCollection;
 use Craft\Data\Provider;
 
 class Flash implements Provider
@@ -18,7 +24,17 @@ class Flash implements Provider
      */
     public function __construct()
     {
-        $this->session = new Session\Storage('_craft/flash');
+        $this->session = new Session\Storage('craft/flash');
+    }
+
+
+    /**
+     * Get all elements
+     * @return array
+     */
+    public function all()
+    {
+        return $this->session->all();
     }
 
 
@@ -31,6 +47,7 @@ class Flash implements Provider
     {
         return $this->session->has($key);
     }
+
 
     /**
      * Consume element
@@ -45,6 +62,7 @@ class Flash implements Provider
         return $message;
     }
 
+
     /**
      * Set element by key with value
      * @param $key
@@ -56,6 +74,7 @@ class Flash implements Provider
         $this->session->set($key, $value);
     }
 
+
     /**
      * Drop element by key
      * @param $key
@@ -64,6 +83,16 @@ class Flash implements Provider
     public function drop($key)
     {
         $this->session->drop($key);
+    }
+
+
+    /**
+     * Clear all elements
+     * @return bool
+     */
+    public function clear()
+    {
+        $this->session->clear();
     }
 
 }

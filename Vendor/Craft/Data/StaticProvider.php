@@ -17,6 +17,15 @@ abstract class StaticProvider
     use StaticSingleton;
 
     /**
+     * Get all elements
+     * @return bool
+     */
+    public static function all()
+    {
+        return static::instance()->all();
+    }
+
+    /**
      * Check if element exists
      * @param $key
      * @return bool
@@ -56,6 +65,15 @@ abstract class StaticProvider
     public static function drop($key)
     {
         return static::instance()->drop($key);
+    }
+
+    /**
+     * Clear all elements
+     * @return bool
+     */
+    public static function clear()
+    {
+        return static::instance()->clear();
     }
 
 } 

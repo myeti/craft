@@ -7,18 +7,18 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Box\Provider;
+namespace Craft\Web\Firewall;
 
-use Craft\Data\Provider;
+use Craft\Web\Request;
 
-interface SessionProvider extends Provider
+interface Strategy
 {
 
-
     /**
-     * Get session id
-     * @return string
+     * Apply strategy on request
+     * @param Request $request
+     * @return bool
      */
-    public function id();
+    public function pass(Request $request);
 
-}
+} 

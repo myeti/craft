@@ -15,51 +15,16 @@ trait Event
     /** @var array */
     protected $listeners = [];
 
-    /** @var array */
-    protected $locked = [];
-
 
     /**
      * Attach callback
      * @param string $event
      * @param callable $callable
-     * @param string $key
-     * @throws \LogicException
      * @return $this
      */
-    public function on($event, callable $callable, $key = null)
+    public function on($event, callable $callable)
     {
-        // locked, cannot attach
-        if(isset($this->locked[$event]) and !$this->locked[$event] == $key) {
-            throw new \LogicException('Event "' . $event . '" is locked.');
-        }
-
         $this->listeners[$event][] = $callable;
-        return $this;
-    }
-
-
-    /**
-     * Lock event attaching
-     * @param $event
-     * @param $key
-     * @return $this
-     */
-    protected function lock($event, $key = null)
-    {
-        $this->locked[$event] = $key ?: uniqid();
-        return $this;
-    }
-
-
-    /**
-     * Unlock attaching
-     * @param $event
-     * @return $this
-     */
-    protected function unlock($event)
-    {
-        unset($this->locked[$event]);
         return $this;
     }
 

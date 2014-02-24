@@ -12,6 +12,15 @@ namespace Craft\Data;
 class ArrayCollection extends \ArrayObject implements Provider
 {
 
+    /**
+     * Get all elements
+     * @return array
+     */
+    public function all()
+    {
+        return $this->getArrayCopy();
+    }
+
 
     /**
      * Check if element exists

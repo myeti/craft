@@ -9,168 +9,53 @@
  */
 namespace Craft\Web;
 
-use Craft\Box\Auth;
-use Craft\Error\Abort;
-use Craft\Router\Route;
-use Craft\View\Engine;
-use Craft\Reflect\Event;
-use Craft\Reflect\Action;
-use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
 
 class Dispatcher implements Handler
 {
 
-    use Event;
-
-    /** @var Injector */
-    protected $injector;
+    /** @var Resolver */
+    protected $resolver;
 
 
     /**
-     * Setup dispatcher with dependency injector
-     * @param Injector $injector
+     * Setup dispatcher
+     * @param Resolver $resolver
      */
-    public function __construct(Injector $injector = null)
+    public function __construct(Resolver $resolver = null)
     {
-        $this->injector = $injector ?: new Injector();
+        $this->resolver = $resolver;
     }
 
 
     /**
-     * Resolve query and handle
-     * @param $query
-     * @param array $args
-     * @param Engine $engine
-     * @return mixed
-     */
-    public function perform($query, array $args = [], Engine $engine = null)
-    {
-        // create request
-        $request = new Request($query);
-        $request->args = $args;
-
-        // create route based on request
-        $route = new Route($query, $query);
-        $route->data = $args;
-
-        // create context
-        $context = new Context($request, $route);
-
-        return $this->handle($context, $engine);
-    }
-
-
-    /**
-     * Run action & render template
-     * @param Context $context
-     * @param Engine $engine
-     * @return mixed
-     */
-    public function handle(Context $context, Engine $engine = null)
-    {
-        // start
-        $this->fire('dispatcher.start', [&$context]);
-
-        // resolve
-        $this->fire('dispatcher.resolve', [&$context]);
-        $context->action = $this->resolve($context);
-
-        // firewall
-        $this->fire('dispatcher.firewall', [&$context]);
-        if(!$this->firewall($context)) {
-            $this->fire(403, [&$context]);
-            return false;
-        }
-
-        // call
-        $this->fire('dispatcher.call', [&$context]);
-        try {
-            $context->action->data = $this->call($context);
-        }
-        catch(Abort $e) {
-
-            // inject error as event
-            $fall = $this->fire($e->getCode(), [&$context, $e->getMessage()]);
-            if($fall) {
-                return false;
-            }
-
-            throw $e;
-        }
-
-        // render
-        $this->fire('dispatcher.render', [&$context, &$engine]);
-        if($engine) {
-            $this->render($context, $engine);
-        }
-
-        // stop
-        $this->fire('dispatcher.stop', [&$context]);
-        return $context;
-    }
-
-
-    /**
-     * Resolve and prepare action
-     * @param Context $context
+     * Run dispatcher on request
+     * @param Request $request
      * @throws \BadMethodCallException
-     * @return Action
+     * @return Response
      */
-    protected function resolve(Context $context)
+    public function handle(Request $request)
     {
-        $action = Resolver::resolve($context->route->to, $this->injector);
-        if(!$action) {
-            throw new \BadMethodCallException('This action is not a valid callable.');
+        // apply resolver
+        if($this->resolver) {
+            $action = $this->resolver->resolve($request->action);
+            $request->action = $action->callable;
+            $request->meta = $action->metadata;
         }
 
-        $action->args = $context->route->data;
-        $action->metadata += [
-            'render' => null,
-            'auth'   => 0
-        ];
+        // not a valid callable
+        if(!is_callable($request->action)) {
+            throw new \BadMethodCallException('Request::action must be a valid callable.');
+        }
 
-        return $action;
-    }
+        // run
+        $data = call_user_func_array($request->action, $request->args);
 
+        // create response
+        $response = new Response();
+        $response->data = $data;
 
-    /**
-     * Gate keeper : check auth
-     * @param Context $context
-     * @return bool
-     */
-    protected function firewall(Context $context)
-    {
-        return Auth::rank() >= $context->action->metadata['auth'];
-    }
-
-
-    /**
-     * Execute action
-     * @param Context $context
-     * @return mixed
-     */
-    protected function call(Context &$context)
-    {
-        // resolve args
-        $args = $context->action->args;
-        $args[] = &$context;
-
-        return call_user_func_array($context->action, $args);
-    }
-
-
-    /**
-     * Render view
-     * @param Engine $engine
-     * @param Context $context
-     */
-    protected function render(Context $context, Engine $engine)
-    {
-        // resolve data
-        $data = isset($context->action->data) ? $context->action->data : [];
-
-        echo $engine->render($context->action->metadata['render'], $data);
+        return [$request, $response];
     }
 
 }

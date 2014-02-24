@@ -1,8 +1,14 @@
 <?php
-
+/**
+ * This file is part of the Craft package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the Licence.txt
+ * file that was distributed with this source code.
+ */
 namespace Craft\Box\Native;
 
-use Craft\Data\Repository;
 use Craft\Box\Provider\SessionProvider;
 
 class Session implements SessionProvider
@@ -17,7 +23,7 @@ class Session implements SessionProvider
      */
     public function __construct()
     {
-        $this->provider = new Session\Storage('_craft/session');
+        $this->provider = new Session\Storage('craft/session');
     }
 
 

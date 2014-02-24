@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft;
+namespace Craft\Web\Event;
 
-use Craft\Web\App as WebApp;
+use Craft\Error\Abort;
 
-class App extends WebApp
+class NotFound extends Abort
 {
-    // just an alias
-}
+    protected $code = 404;
+} 

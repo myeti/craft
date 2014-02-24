@@ -13,6 +13,12 @@ interface Provider
 {
 
     /**
+     * Get all elements
+     * @return array
+     */
+    public function all();
+
+    /**
      * Check if element exists
      * @param $key
      * @return bool
@@ -41,5 +47,12 @@ interface Provider
      * @return bool
      */
     public function drop($key);
+
+
+    /**
+     * Clear all elements
+     * @return bool
+     */
+    public function clear();
 
 } 
