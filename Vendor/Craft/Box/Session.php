@@ -10,9 +10,9 @@
 namespace Craft\Box;
 
 use Craft\Box\Provider\SessionProvider;
-use Craft\Data\StaticProvider;
+use Craft\Data\Provider\Container;
 
-abstract class Session extends StaticProvider
+abstract class Session extends Container
 {
 
     /**

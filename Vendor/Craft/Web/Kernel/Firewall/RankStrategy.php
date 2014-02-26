@@ -7,11 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Web\Firewall;
+namespace Craft\Web\Kernel\Firewall;
 
+use Craft\Box\Auth;
 use Craft\Web\Request;
 
-interface Strategy
+class RankStrategy implements Strategy
 {
 
     /**
@@ -19,6 +20,13 @@ interface Strategy
      * @param Request $request
      * @return bool
      */
-    public function pass(Request $request);
+    public function pass(Request $request)
+    {
+        if(isset($request->meta['auth']) and Auth::rank() < $request->meta['auth']) {
+            return false;
+        }
 
-} 
+        return true;
+    }
+
+}

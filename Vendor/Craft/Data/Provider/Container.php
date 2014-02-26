@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Data;
+namespace Craft\Data\Provider;
 
 use Craft\Pattern\StaticSingleton;
 
-abstract class StaticProvider
+abstract class Container
 {
 
     use StaticSingleton;

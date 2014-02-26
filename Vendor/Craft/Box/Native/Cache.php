@@ -15,6 +15,21 @@ class Cache implements Provider
 {
 
     /**
+     * Get all data
+     * @return mixed
+     */
+    public function all()
+    {
+        $all = [];
+        $iterator = new \APCIterator('user');
+        foreach($iterator as $item) {
+            $all[$item['key']] = $item['value'];
+        }
+
+        return $all;
+    }
+
+    /**
      * Check if element exists
      * @param $key
      * @return bool

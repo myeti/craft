@@ -7,7 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Web;
+namespace Craft\Web\Kernel;
+
+use Craft\Web\Event\Forbidden;
+use Craft\Web\Handler;
+use Craft\Web\Request;
+use Craft\Web\Response;
 
 class Firewall implements Handler
 {
@@ -34,14 +39,14 @@ class Firewall implements Handler
     /**
      * Handle context request
      * @param Request $request
-     * @throws Event\Forbidden
+     * @throws Forbidden
      * @return Response
      */
     public function handle(Request $request)
     {
         // 403
         if(!$this->strategy->pass($request)) {
-            throw new Event\Forbidden('User not allowed for query "' . $request->query . '"');
+            throw new Forbidden('User not allowed for query "' . $request->query . '"');
         }
 
         // run inner handler

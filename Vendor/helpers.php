@@ -16,7 +16,7 @@
  */
 function path()
 {
-    return call_user_func_array('\Craft\Persist\Mog::path', func_get_args());
+    return call_user_func_array('\Craft\Box\Mog::path', func_get_args());
 }
 
 
@@ -28,7 +28,7 @@ function path()
 function url()
 {
     $segments = func_get_args();
-    return rtrim(Craft\Persist\Mog::base(), '/') . '/' . ltrim(implode('/', $segments), '/');
+    return rtrim(Craft\Box\Mog::base(), '/') . '/' . ltrim(implode('/', $segments), '/');
 }
 
 
@@ -60,7 +60,7 @@ function debug()
  */
 function post($key = null, $fallback = null)
 {
-    return Craft\Persist\Mog::post($key, $fallback);
+    return Craft\Box\Mog::post($key, $fallback);
 }
 
 
@@ -71,9 +71,8 @@ function post($key = null, $fallback = null)
 function auth()
 {
     return (object)[
-        'logged'    => Craft\Persist\Auth::logged(),
-        'rank'      => Craft\Persist\Auth::rank(),
-        'user'      => Craft\Persist\Auth::user()
+        'rank'      => Craft\Box\Auth::rank(),
+        'user'      => Craft\Box\Auth::user()
     ];
 }
 
@@ -85,7 +84,7 @@ function auth()
  */
 function flash($key)
 {
-    return Craft\Persist\Flash::get($key);
+    return Craft\Box\Flash::get($key);
 }
 
 

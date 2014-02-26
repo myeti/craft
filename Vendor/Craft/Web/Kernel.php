@@ -9,81 +9,37 @@
  */
 namespace Craft\Web;
 
-use Craft\Reflect\Injector;
-use Craft\Reflect\Resolver;
-use Craft\Router\Matcher;
-use Craft\Router\Web as WebRouter;
-
+/**
+ * Class Kernel
+ * @package Craft\Web
+ *
+ * Basic handler : execute action and return data in response
+ */
 class Kernel implements Handler
 {
 
-    /** @var Handler */
-    protected $handler;
-
-    /** @var Matcher */
-    protected $router;
-
-
     /**
-     * Setup kernel
-     * @param Handler $handler
-     * @param Matcher $router
-     */
-    public function __construct(Handler $handler, Matcher $router)
-    {
-        $this->handler = $handler;
-        $this->router = $router;
-    }
-
-
-    /**
-     * Handle context request
+     * Run on request
      * @param Request $request
-     * @throws Event\NotFound
-     * @return Response
+     * @throws \BadMethodCallException
+     * @return array
      */
     public function handle(Request $request)
     {
-        // route query
-        $route = $this->router->find($request->query);
-
-        // 404
-        if(!$route) {
-            throw new Event\NotFound('Route "' . $request->query . '" not found.');
+        // not a valid callable
+        if(!is_callable($request->action)) {
+            throw new \BadMethodCallException('Request::action must be a valid callable.');
         }
 
-        // update request
-        $request->action = $route->to;
-        $request->args = $route->data;
+        // run
+        $data = call_user_func_array($request->action, $request->args);
 
-        // run dispatcher
-        return $this->handler->handle($request);
-    }
+        // create response
+        $response = new Response();
+        $response->data = $data;
 
-
-    /**
-     * Forge app from routes
-     * @param array $routes
-     * @param Injector $injector
-     * @param Firewall\Strategy $strategy
-     * @return App
-     */
-    public static function forge(array $routes, Injector $injector = null, Firewall\Strategy $strategy = null)
-    {
-        // create resolver
-        $resolver = new Resolver($injector);
-
-        // create dispatcher
-        $dispatcher = new Dispatcher($resolver);
-
-        // create firewall
-        $firewall = new Firewall($dispatcher, $strategy ?: new Firewall\RankStrategy());
-
-        // create router
-        $router = new WebRouter($routes);
-
-        // create kernel
-        return new self($firewall, $router);
+        return [$request, $response];
     }
 
 }
+

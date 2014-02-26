@@ -10,10 +10,10 @@
 namespace Craft\Box;
 
 use Craft\Data\Provider;
-use Craft\Data\StaticProvider;
-use Craft\Data\StaticProvider\Swap;
+use Craft\Data\Provider\Container;
+use Craft\Data\Provider\Container\Swap;
 
-abstract class Cookie extends StaticProvider
+abstract class Cookie extends Container
 {
 
     use Swap;

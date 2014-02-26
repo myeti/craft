@@ -10,9 +10,9 @@
 namespace Craft\Box;
 
 use Craft\Box\Provider\AuthProvider;
-use Craft\Data\StaticProvider;
+use Craft\Data\Provider\Container;
 
-abstract class Auth extends StaticProvider
+abstract class Auth extends Container
 {
 
     /**

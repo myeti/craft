@@ -9,10 +9,9 @@
  */
 namespace Craft\Orm\Mapper;
 
-use Craft\Orm\Mapper;
 use Craft\Text\Lipsum;
 
-class LipsumMapper extends Mapper
+class LipsumMapper extends AbstractMapper
 {
 
     /**
@@ -33,9 +32,9 @@ class LipsumMapper extends Mapper
      * @param  array $where
      * @return int
      */
-    public function count($alias, array $where = [])
+    public function has($alias, $where = [])
     {
-        return count($this->find($alias, $where));
+        return count($this->get($alias, $where));
     }
 
 
@@ -45,14 +44,18 @@ class LipsumMapper extends Mapper
      * @param  array $where
      * @param null $orderBy
      * @param null $limit
-     * @param null $step
      * @throws \PDOException
      * @return array
      */
-    public function find($alias, array $where = [], $orderBy = null, $limit = null, $step = null)
+    public function get($alias, $where = [], $orderBy = null, $limit = null)
     {
+        // set max
+        $max = rand(4, 20);
+        if($limit) {
+            $max = is_array($limit) ? $limit[1] : $limit;
+        }
+
         // init
-        $max = $limit ? ($step ?: $limit) : rand(4, 20);
         if(empty($this->models[$alias])) {
             throw new \PDOException('No alias named "' . $alias . '".');
         }
@@ -72,7 +75,7 @@ class LipsumMapper extends Mapper
                 // int
                 if($type == 'int') { $entity->{$field} = Lipsum::number(); }
                 // text
-                elseif($type == 'string text') { $entity->{$field} = Lipsum::paragraph(); }
+                elseif($type == 'string text') { $entity->{$field} = Lipsum::text(); }
                 // date
                 elseif($type == 'string date') { $entity->{$field} = Lipsum::date(); }
                 // string
@@ -95,7 +98,7 @@ class LipsumMapper extends Mapper
      */
     public function one($alias, $where = null)
     {
-        $data = $this->find($alias, [], null, 1);
+        $data = $this->get($alias, [], null, 1);
         return current($data);
     }
 
@@ -104,9 +107,10 @@ class LipsumMapper extends Mapper
      * Box entity
      * @param string $alias
      * @param object $entity
+     * @param null $none
      * @return bool
      */
-    public function save($alias, &$entity)
+    public function set($alias, $entity, $none = null)
     {
         return true;
     }
@@ -118,17 +122,7 @@ class LipsumMapper extends Mapper
      * @param  mixed $entity
      * @return bool|int
      */
-    public function drop($alias, $entity)
-    {
-        return true;
-    }
-
-
-    /**
-     * Sync model with database
-     * @return bool
-     */
-    public function merge()
+    public function drop($alias, $entity = null)
     {
         return true;
     }

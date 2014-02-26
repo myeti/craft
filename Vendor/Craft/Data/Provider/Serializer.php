@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Data\Filter;
+namespace Craft\Data\Provider;
 
 use Craft\Data\Provider;
 

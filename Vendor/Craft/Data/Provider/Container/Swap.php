@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Data\StaticProvider;
+namespace Craft\Data\Provider\Container;
 
 use Craft\Data\Provider;
 

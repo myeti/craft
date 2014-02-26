@@ -38,13 +38,14 @@ class Session implements SessionProvider
 
 
     /**
-     * Destroy session
+     * Get all data
      * @return mixed
      */
-    public function clear()
+    public function all()
     {
-        $this->provider->clear();
+        $this->provider->all();
     }
+
 
     /**
      * Check if element exists
@@ -55,6 +56,7 @@ class Session implements SessionProvider
     {
         return $this->provider->has($key);
     }
+
 
     /**
      * Get element by key, fallback on error
@@ -67,6 +69,7 @@ class Session implements SessionProvider
         return $this->provider->get($key, $fallback);
     }
 
+
     /**
      * Set element by key with value
      * @param $key
@@ -78,6 +81,7 @@ class Session implements SessionProvider
         return $this->provider->set($key, $value);
     }
 
+
     /**
      * Drop element by key
      * @param $key
@@ -86,6 +90,16 @@ class Session implements SessionProvider
     public function drop($key)
     {
         return $this->provider->drop($key);
+    }
+
+
+    /**
+     * Destroy session
+     * @return mixed
+     */
+    public function clear()
+    {
+        $this->provider->clear();
     }
 
 }

@@ -10,7 +10,7 @@
 namespace Craft\Box\Native\Session;
 
 use Craft\Box\Provider\SessionProvider;
-use Craft\Data\Filter\Serializer;
+use Craft\Data\Provider\Serializer;
 use Craft\Data\Repository;
 
 class Storage extends Serializer implements SessionProvider

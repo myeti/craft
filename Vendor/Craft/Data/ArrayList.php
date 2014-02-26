@@ -9,7 +9,7 @@
  */
 namespace Craft\Data;
 
-class ArrayCollection extends \ArrayObject implements Provider
+class ArrayList extends \ArrayObject implements Provider
 {
 
     /**

@@ -11,7 +11,7 @@ namespace Craft\Orm;
 
 use craft\data\Paginator;
 use Craft\Orm\Mapper;
-use Craft\Orm\Mapper\PdoMapper;
+use Craft\Orm\Mapper\NativeMapper;
 use Craft\Orm\Mapper\LipsumMapper;
 use Craft\Orm\Pdo\MySQL;
 use Craft\Orm\Pdo\SQLite;
@@ -31,7 +31,7 @@ abstract class Syn
             $instance = $mapper;
         }
         elseif(!$instance) {
-            $instance = new LipsumMapper();
+            $instance = new Mapper\LipsumMapper();
         }
 
         return $instance;
@@ -55,11 +55,11 @@ abstract class Syn
             ];
 
         // init pdo
-        $pdo = new MySQL($config['host'], $config['user'], $config['pass']);
+        $pdo = new Connector\MySQL($config['host'], $config['user'], $config['pass']);
         $pdo->open($dbname, $config['create']);
 
         // init mapper
-        $mapper = new PdoMapper($pdo, $config['prefix']);
+        $mapper = new Mapper\NativeMapper($pdo, $config['prefix']);
 
         static::mapper($mapper);
     }
@@ -73,8 +73,8 @@ abstract class Syn
     public static function sqlite($filename, $prefix = null)
     {
         // init pdo & mapper
-        $pdo = new SQLite($filename);
-        $mapper = new PdoMapper($pdo, $prefix);
+        $pdo = new Connector\SQLite($filename);
+        $mapper = new Mapper\NativeMapper($pdo, $prefix);
 
         static::mapper($mapper);
     }
@@ -92,28 +92,6 @@ abstract class Syn
 
 
     /**
-     * Get full model namespace
-     * @param  string $alias
-     * @return string
-     */
-    public static function model($alias)
-    {
-        return static::mapper()->model($alias);
-    }
-
-
-    /**
-     * Get schema of model
-     * @param $alias
-     * @return array
-     */
-    public static function schema($alias)
-    {
-        return static::mapper()->schema($alias);
-    }
-
-
-    /**
      * Execute a custom sql request
      * @param  string $query
      * @param  string $cast
@@ -127,48 +105,47 @@ abstract class Syn
 
     /**
      * Count items in collection
-     * @param  string $alias
-     * @param  array $where
+     * @param $alias
+     * @param $where
      * @return int
      */
-    public static function count($alias, array $where = [])
+    public static function has($alias, array $where = [])
     {
-        return static::mapper()->count($alias, $where);
+        return static::mapper()->has($alias, $where);
     }
 
 
     /**
      * Find a collection
-     * @param  string $alias
-     * @param  array $where
-     * @param null $orderBy
-     * @param null $limit
-     * @param null $step
+     * @param $alias
+     * @param $where
+     * @param $orderBy
+     * @param $limit
      * @return array
      */
-    public static function find($alias, array $where = [], $orderBy = null, $limit = null, $step = null)
+    public static function get($alias, array $where = [], $orderBy = null, $limit = null)
     {
-        return static::mapper()->find($alias, $where, $orderBy, $limit, $step);
+        return static::mapper()->get($alias, $where, $orderBy, $limit);
     }
 
 
     /**
      * Paginate a collection
-     * @param  string $alias
+     * @param $alias
      * @param $size
      * @param $page
-     * @param  array $where
-     * @param null $orderBy
+     * @param $where
+     * @param $sort
      * @return Paginator
      */
-    public static function paginate($alias, $size, $page, array $where = [], $orderBy = null)
+    public static function paginate($alias, $size, $page, array $where = [], $sort = null)
     {
         // calc boundaries
-        $total = Syn::count($alias, $where);
+        $total = Syn::has($alias, $where);
         $from = ($size * ($page - 1)) + 1;
 
         // execute request with limit
-        $data = Syn::find($alias, $where, $orderBy, $from, $size);
+        $data = Syn::get($alias, $where, $sort, [$from, $size]);
         return new Paginator($data, $size, $page, $total);
     }
 
@@ -191,9 +168,9 @@ abstract class Syn
      * @param object $entity
      * @return bool
      */
-    public static function save($alias, &$entity)
+    public static function set($alias, &$entity)
     {
-        return static::mapper()->save($alias,$entity);
+        return static::mapper()->set($alias,$entity);
     }
 
 
@@ -206,16 +183,6 @@ abstract class Syn
     public static function drop($alias, $entity)
     {
         return static::mapper()->drop($alias, $entity);
-    }
-
-
-    /**
-     * Sync model with database
-     * @return bool
-     */
-    public static function merge()
-    {
-        return static::mapper()->merge();
     }
 
 

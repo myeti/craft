@@ -22,18 +22,18 @@ trait Model
 	 * @param  int $step
 	 * @return array
 	 */
-	public static function find(array $where = [], $orderBy = null, $limit = null, $step = null)
+	public static function get(array $where = [], $orderBy = null, $limit = null, $step = null)
 	{
-		return Syn::find(static::model(), $where, $orderBy, $limit, $step);
+		return Syn::get(static::model(), $where, $orderBy, $limit, $step);
 	}
 
 
     /**
      * Count entities
-     * @param  array $where
+     * @param $where
      * @return array
      */
-    public static function count(array $where = [])
+    public static function has(array $where = [])
     {
         return Syn::count(static::model(), $where);
     }
@@ -43,13 +43,13 @@ trait Model
      * Paginate a collection
      * @param $size
      * @param $page
-     * @param  array $where
-     * @param null $orderBy
+     * @param $where
+     * @param $sort
      * @return array
      */
-    public static function paginate($size, $page, array $where = [], $orderBy = null)
+    public static function paginate($size, $page, array $where = [], $sort = null)
     {
-        return Syn::paginate(static::model(), $size, $page, $where, $orderBy);
+        return Syn::paginate(static::model(), $size, $page, $where, $sort);
     }
 
 
@@ -69,7 +69,7 @@ trait Model
 	 * @param  object $entity
 	 * @return bool
 	 */
-	public static function save(&$entity)
+	public static function set($entity)
 	{
 		return Syn::save(static::model(), $entity);
 	}

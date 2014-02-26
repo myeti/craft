@@ -14,57 +14,15 @@ use Craft\Error\Abort;
 use Craft\Reflect\Event;
 use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
-use Craft\Router\Web as WebRouter;
+use Craft\Router\Web as Router;
 use Craft\View\Engine;
 use Craft\View\Engine\NativeEngine;
 use Craft\View\Engine\Native\Helper\Asset;
 
-class App implements Handler
+class App extends Kernel\Wrapper
 {
 
     use Event;
-
-    /** @var Handler */
-    protected $handler;
-
-    /** @var Engine */
-    protected $engine;
-
-
-    /**
-     * Setup App
-     * @param Handler $handler
-     * @param Engine $engine
-     */
-    public function __construct(Handler $handler, Engine $engine = null)
-    {
-        $this->handler = $handler;
-        $this->engine = $engine;
-    }
-
-
-    /**
-     * Middleware : before
-     * @param Handler $handler
-     */
-    public function before(Handler $handler)
-    {
-        $this->on('before', function(Request $request) use($handler) {
-            return $handler->handle($request);
-        });
-    }
-
-
-    /**
-     * Middleware : before
-     * @param Handler $handler
-     */
-    public function after(Handler $handler)
-    {
-        $this->on('after', function(Request $request, Response $response) use($handler) {
-            return $handler->handle($request, $response);
-        });
-    }
 
 
     /**
@@ -76,11 +34,11 @@ class App implements Handler
     public function handle(Request $request)
     {
         // before event
-        $this->fire('before', [&$request]);
+        $this->fire('app.start', [&$request]);
 
         // run handler
         try {
-            list($request, $response) = $this->handler->handle($request);
+            list($request, $response) = parent::handle($request);
         }
         // catch abort as event
         catch(Abort $e) {
@@ -89,21 +47,7 @@ class App implements Handler
         }
 
         // after event
-        $this->fire('after', [&$request, &$response]);
-
-        // render if asked
-        if(!empty($request->meta['render'])) {
-
-            // run engine
-            $content = $this->engine->render($request->meta['render'], $response->data);
-
-            // update response
-            $response->content = $content;
-
-            // send response
-            echo $response;
-
-        }
+        $this->fire('app.end', [&$request, &$response]);
 
         return [$request, $response];
     }
@@ -147,34 +91,33 @@ class App implements Handler
      * Forge app from routes
      * @param array $routes
      * @param Injector $injector
-     * @param Firewall\Strategy $strategy
+     * @param Kernel\Firewall\Strategy $strategy
      * @return App
      */
-    public static function forge(array $routes, Injector $injector = null, Firewall\Strategy $strategy = null)
+    public static function forge(array $routes, Injector $injector = null, Kernel\Firewall\Strategy $strategy = null)
     {
-        // create resolver
+        // kernel
+        $kernel = new Kernel();
+
+        // firewall
+        $strategy = $strategy ?: new Kernel\Firewall\RankStrategy();
+        $firewall = new Kernel\Firewall($kernel, $strategy);
+
+        // reflector
         $resolver = new Resolver($injector);
+        $reflector = new Kernel\Reflector($firewall, $resolver);
 
-        // create dispatcher
-        $dispatcher = new Dispatcher($resolver);
+        // dispatcher
+        $router = new Router($routes);
+        $dispatcher = new Kernel\Dispatcher($reflector, $router);
 
-        // create firewall
-        $firewall = new Firewall($dispatcher, $strategy ?: new Firewall\RankStrategy());
-
-        // create router
-        $router = new WebRouter($routes);
-
-        // create kernel
-        $kernel = new Kernel($firewall, $router);
-
-        // create engine
+        // formatter
         $engine = new NativeEngine(Mog::path(), 'php');
-        $engine->mount(
-            new Asset(Mog::base())
-        );
+        $engine->mount(new Asset(Mog::base()));
+        $formatter = new Kernel\Formatter($dispatcher, $engine);
 
         // create app
-        return new self($kernel, $engine);
+        return new self($formatter);
     }
 
 }

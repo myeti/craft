@@ -9,132 +9,80 @@
  */
 namespace Craft\Orm;
 
-use Craft\Reflect\Annotation;
+use Craft\Data\ScopeProvider;
 
-abstract class Mapper
+interface Mapper
 {
 
-    /** @var array */
-    protected $models = [];
-
-
     /**
-     * Register models@
-     * @param  array $models
-     * @return $this
-     */
-    public function map(array $models)
-    {
-        $this->models = $models;
-        return $this;
-    }
-
-
-    /**
-     * Get full model namespace
-     * @param  string $alias
-     * @return string
-     */
-    public function model($alias)
-    {
-        return isset($this->models[$alias]) ? $this->models[$alias] : false;
-    }
-
-
-    /**
-     * Get schema of model
-     * @param $alias
-     * @return array
-     */
-    public function schema($alias)
-    {
-        if($model = $this->model($alias)) {
-
-            // get all properties
-            $props = get_object_vars($model);
-
-            // get env type
-            $data = [];
-            foreach($props as $prop) {
-                $data[$prop] = Annotation::property($model, $prop, 'var');
-            }
-
-            return $data;
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Execute a custom query
-     * @param string $query
-     * @param string $cast
+     * Map model classes
+     * @param array $models [key => class]
      * @return mixed
      */
-    abstract public function query($query, $cast = null);
+    public function map(array $models);
 
 
     /**
-     * Count items in collection
-     * @param string $alias
-     * @param array $where
+     * Check if entity exists
+     * @param $entity
+     * @param $where
      * @return int
      */
-    abstract public function count($alias, array $where = []);
+    public function has($entity, $where = null);
 
 
     /**
-     * Find a collection
-     * @param string $alias
-     * @param array $where
-     * @param string|array $orderBy
-     * @param int $limit
-     * @param int $step
-     * @return array
+     * Get entity
+     * @param $entity
+     * @param $where
+     * @param $sort
+     * @param $limit
+     * @return mixed
      */
-    abstract public function find($alias, array $where = [], $orderBy = null, $limit = null, $step = null);
+    public function get($entity, $where = null, $sort = null, $limit = null);
 
 
     /**
-     * Find a specific entity
-     * @param string $alias
-     * @param mixed $where
-     * @return object|\stdClass
+     * Get entity
+     * @param $entity
+     * @param $where
+     * @return mixed
      */
-    abstract public function one($alias, $where = null);
+    public function one($entity, $where = null);
 
 
     /**
-     * Box entity
-     * @param string $alias
-     * @param object $entity
+     * Set entity data
+     * @param $entity
+     * @param $where
+     * @param $data
+     * @return mixed
+     */
+    public function set($entity, $data, $where = null);
+
+
+    /**
+     * Drop entity
+     * @param $entity
+     * @param $where
      * @return bool
      */
-    abstract public function save($alias, &$entity);
+    public function drop($entity, $where = null);
 
 
     /**
-     * Delete entity
-     * @param string $alias
-     * @param mixed $entity
-     * @return bool
+     * Arbitrary query
+     * @param $input
+     * @return mixed
      */
-    abstract public function drop($alias, $entity);
+    public function query($input);
 
 
     /**
-     * Sync model with database
-     * @return bool
-     */
-    abstract public function merge();
-
-
-    /**
-     * Create a backup of the database in sql
+     * Create a backup
      * @param $filename string
      * @return bool
      */
-    abstract public function backup($filename);
+    public function backup($filename);
 
 }

@@ -7,18 +7,18 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Orm\Pdo;
+namespace Craft\Web\Kernel\Firewall;
 
-class SQLite extends \PDO
+use Craft\Web\Request;
+
+interface Strategy
 {
 
     /**
-     * Init for sqlite
-     * @param $filename
+     * Apply strategy on request
+     * @param Request $request
+     * @return bool
      */
-    public function __construct($filename)
-    {
-        parent::__construct('sqlite:' . $filename);
-    }
+    public function pass(Request $request);
 
 } 

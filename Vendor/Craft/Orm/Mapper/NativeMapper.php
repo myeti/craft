@@ -9,10 +9,9 @@
  */
 namespace Craft\Orm\Mapper;
 
-use Craft\Orm\Mapper;
 use Craft\Storage\File;
 
-class PdoMapper extends Mapper
+class NativeMapper extends AbstractMapper
 {
 
     /** @var \PDO */
@@ -57,17 +56,17 @@ class PdoMapper extends Mapper
      * @param  array $where
      * @return int
      */
-    public function count($alias, array $where = [])
+    public function has($alias, $where = [])
     {
         // prepare sql
         $sql = 'SELECT COUNT(*) FROM `' . $this->prefix . $alias . '`';
 
         // where clause
-        if($where)
-        {
+        if($where) {
             $sql .= ' WHERE 1';
-            foreach($where as $field => $condition)
+            foreach($where as $field => $condition) {
                 $sql .= ' AND `' . $field . '` = "' . $condition . '"';
+            }
         }
 
         $count = $this->pdo->query($sql)->fetchColumn();
@@ -77,51 +76,50 @@ class PdoMapper extends Mapper
 
 
     /**
-     * Find a collection
-     * @param  string $alias
-     * @param  array $where
-     * @param null $orderBy
-     * @param null $limit
-     * @param null $step
+     * Get entity
+     * @param $alias
+     * @param $where
+     * @param $sort
+     * @param $limit
      * @return array
      */
-    public function find($alias, array $where = [], $orderBy = null, $limit = null, $step = null)
+    public function get($alias, $where = [], $sort = null, $limit = null)
     {
         // prepare sql
         $sql = 'SELECT * FROM `' . $this->prefix . $alias . '`';
 
         // where clause
-        if($where)
-        {
+        if($where) {
             $sql .= ' WHERE 1';
-            foreach($where as $field => $condition)
+            foreach($where as $field => $condition) {
                 $sql .= ' AND `' . $field . '` = "' . $condition . '"';
+            }
         }
 
         // order by clause
-        if($orderBy) {
+        if($sort) {
 
             $sql .= ' ORDER BY';
 
-            if(is_array($orderBy)) {
-                foreach($orderBy as $field => $dir)
+            if(is_array($sort)) {
+                foreach($sort as $field => $dir) {
                     $sql .= ' `' . $field . '` ' . strtoupper($dir);
+                }
             }
             else {
-                $sql .= ' `' . (string)$orderBy . '`';
+                $sql .= ' `' . (string)$sort . '`';
             }
 
         }
 
         // limit
-        if($limit or $limit === 0){
-
-            $sql .= ' LIMIT ' . $limit;
-
-            if($step){
-                $sql .= ', ' . $step;
+        if($limit !== null) {
+            if(is_array($limit)) {
+                $sql .= ' LIMIT ' . $limit[0] . ', ' . $limit[1];
             }
-
+            else {
+                $sql .= ' LIMIT ' . $limit;
+            }
         }
 
         // execute
@@ -143,12 +141,12 @@ class PdoMapper extends Mapper
 
 
     /**
-     * Find a specific entity
-     * @param  string $alias
-     * @param  mixed $where
-     * @return object|\stdClass
+     * Get one entity
+     * @param $alias
+     * @param $where
+     * @return mixed
      */
-    public function one($alias, $where = null)
+    public function one($alias, $where = [])
     {
         // id or conditions ?
         if(is_string($where)){
@@ -156,19 +154,20 @@ class PdoMapper extends Mapper
         }
 
         // execute
-        $results = static::find($alias, $where, null, 1);
+        $results = $this->get($alias, $where, null, 1);
 
         return count($results) ? $results[0] : false;
     }
 
 
     /**
-     * Box entity
-     * @param string $table
-     * @param object $entity
+     * Set entity
+     * @param $alias
+     * @param $entity
+     * @param $nope
      * @return bool
      */
-    public function save($alias, &$entity)
+    public function set($alias, $entity, $nope = null)
     {
         // cast to object
         $entity = (object)$entity;
@@ -177,8 +176,7 @@ class PdoMapper extends Mapper
         $data = get_object_vars($entity);
 
         // insert
-        if(empty($data['id']))
-        {
+        if(empty($data['id'])) {
             // exclude id
             unset($data['id']);
 
@@ -192,8 +190,7 @@ class PdoMapper extends Mapper
             $sql .= ' VALUES ("' . implode('", "', $data) . '")';
         }
         // update
-        else
-        {
+        else {
             // exclude id
             $id = $data['id'];
             unset($data['id']);
@@ -203,8 +200,9 @@ class PdoMapper extends Mapper
 
             // prepare set
             $set = [];
-            foreach($data as $field => $value)
+            foreach($data as $field => $value) {
                 $set[] = '`' . $field . '` = "' . $value . '"';
+            }
 
             // add values
             $sql .= implode(', ', $set);
@@ -221,28 +219,29 @@ class PdoMapper extends Mapper
 
             // has id
             $newId = $entity->id ?: $this->pdo->lastInsertId();
-            if($newId)
+            if($newId) {
                 $entity = static::one($alias, $newId);
+            }
 
         }
 
-        return $result;
+        return $result ? $entity : false;
     }
 
 
     /**
      * Delete entity
-     * @param  string $table
-     * @param  mixed $entity
+     * @param $alias
+     * @param mixed $entity
      * @return bool|int
      */
-    public function drop($alias, $entity)
+    public function drop($alias, $entity = null)
     {
         // resolve id
         $id = is_object($entity) ? $entity->id : $entity;
 
         // id needed
-        if(!$id){
+        if(!$id) {
             return false;
         }
 
@@ -406,7 +405,7 @@ class PdoMapper extends Mapper
 
             // find env
             $lines = [];
-            foreach($this->find($table) as $row) {
+            foreach($this->get($table) as $row) {
 
                 // new line
                 $line = 'INSERT INTO `' . $table . '` (`';

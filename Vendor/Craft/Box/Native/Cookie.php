@@ -9,9 +9,9 @@
  */
 namespace Craft\Box\Native;
 
-use Craft\Data\ArrayCollection;
+use Craft\Data\ArrayList;
 
-class Cookie extends ArrayCollection
+class Cookie extends ArrayList
 {
 
     /**

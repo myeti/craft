@@ -74,7 +74,7 @@ class Web extends Basic
         }
 
         // clean query
-        $query = '/' . ltrim($query, '/');
+        $query = '/' . trim($query, '/');
 
         return [$query, $customs];
     }
@@ -96,7 +96,7 @@ class Web extends Basic
         }
 
         // clean query
-        $route->from =  '/' . ltrim($query, '/');
+        $route->from =  '/' . trim($query, '/');
 
         return $route;
     }

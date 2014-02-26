@@ -11,9 +11,9 @@ namespace Craft\Box;
 
 use Craft\Box\Provider\AuthProvider;
 use Craft\Data\Provider;
-use Craft\Data\StaticProvider;
+use Craft\Data\Provider\Container;
 
-abstract class Flash extends StaticProvider
+abstract class Flash extends Container
 {
 
     /**
