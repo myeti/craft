@@ -124,57 +124,6 @@ function with($object)
 
 
 /**
- * Get first element of array
- * @param $array
- * @return mixed
- */
-function array_first(array $array)
-{
-    $collection = new Craft\Data\ArrayCollection($array);
-    return $collection->first($array);
-}
-
-
-/**
- * Get last element of array
- * @param $array
- * @return mixed
- */
-function array_last(array $array)
-{
-    $collection = new Craft\Data\ArrayCollection($array);
-    return $collection->last($array);
-}
-
-
-/**
- * Get value or null, don't throw error
- * @param $array
- * @param $key
- * @return null
- */
-function array_get_silent($array, $key)
-{
-    $collection = new Craft\Data\ArrayCollection($array);
-    return $collection->get($key);
-}
-
-
-/**
- * Sort array by column names and directions
- * Ex : $sorted = array_sort($array, ['name' => SORT_DESC]);
- * @param array $array
- * @param array $set
- * @return mixed
- */
-function array_sort(array $array, array $set)
-{
-    $collection = new Craft\Data\ArrayCollection($array);
-    return $collection->sort($set);
-}
-
-
-/**
  * Alias of Strong::compose()
  * @param $string
  * @param array $vars

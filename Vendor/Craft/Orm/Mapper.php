@@ -9,8 +9,6 @@
  */
 namespace Craft\Orm;
 
-use Craft\Data\ScopeProvider;
-
 interface Mapper
 {
 

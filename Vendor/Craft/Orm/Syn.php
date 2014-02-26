@@ -10,11 +10,6 @@
 namespace Craft\Orm;
 
 use craft\data\Paginator;
-use Craft\Orm\Mapper;
-use Craft\Orm\Mapper\NativeMapper;
-use Craft\Orm\Mapper\LipsumMapper;
-use Craft\Orm\Pdo\MySQL;
-use Craft\Orm\Pdo\SQLite;
 
 abstract class Syn
 {

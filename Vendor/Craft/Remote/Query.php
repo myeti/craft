@@ -9,9 +9,7 @@
  */
 namespace Craft\Remote;
 
-use Craft\Remote\Context\HttpContext;
-
-abstract class Request
+abstract class Query
 {
 
     /**
@@ -42,7 +40,7 @@ abstract class Request
     public static function get($url, array $params = [])
     {
         // create http get context
-        $context = new HttpContext();
+        $context = new Context\HttpContext();
         $context->method = 'get';
         $context->data = $params;
 
@@ -59,7 +57,7 @@ abstract class Request
     public static function post($url, array $data = [])
     {
         // create http get context
-        $context = new HttpContext();
+        $context = new Context\HttpContext();
         $context->method = 'post';
         $context->data = $data;
 
