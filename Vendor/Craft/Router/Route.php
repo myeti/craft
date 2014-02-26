@@ -24,6 +24,10 @@ class Route
     /** @var array */
     public $data = [];
 
+    /** @var array */
+    public $meta = [];
+
+
     /**
      * Define route
      * @param string $from

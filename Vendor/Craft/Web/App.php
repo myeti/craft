@@ -14,7 +14,7 @@ use Craft\Error\Abort;
 use Craft\Reflect\Event;
 use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
-use Craft\Router\Web as Router;
+use Craft\Router\Basic as Router;
 use Craft\View\Engine;
 use Craft\View\Engine\NativeEngine;
 use Craft\View\Engine\Native\Helper\Asset;
