@@ -82,6 +82,18 @@ abstract class File
 		return unlink($filename);
 	}
 
+
+    /**
+     * Get file extension
+     * @param  string $filename
+     * @return string
+     */
+    public static function name($filename)
+    {
+        return pathinfo($filename, PATHINFO_FILENAME);
+    }
+
+
 	/**
 	 * Get file extension
 	 * @param  string $filename
@@ -92,6 +104,7 @@ abstract class File
 		return pathinfo($filename, PATHINFO_EXTENSION);
 	}
 
+
 	/**
 	 * Get file size
 	 * @param  string $filename
@@ -101,6 +114,7 @@ abstract class File
 	{
 		return filesize($filename);
 	}
+
 
     /**
      * Upload file
@@ -123,6 +137,7 @@ abstract class File
 
 		return move_uploaded_file($_FILES[$name]['tmp_name'], $to);
 	}
+
 
     /**
      * Force download file

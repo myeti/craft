@@ -15,7 +15,7 @@ In this example, we'll use the WebRouter (also used by the Craft\Web component).
 First, create your routes :
 
 ```php
-$router = new Craft\Router\Web([
+$router = new Craft\Router\Basic([
     '/'    => 'Front::index',
     '/foo' => 'Front::foo',
     '/bar' => 'Front::bar'
@@ -68,8 +68,8 @@ It's now time to run the router :
 $route = $router->find('/fr/foo/5');
 
 $route->to; // Front::foo
-$route->data['envs']['lang']; // fr
-$route->data['args']['id']; // 5
+$route->meta['lang']; // fr
+$route->data['id']; // 5
 ```
 
 If no routes are found, `false` is returned.

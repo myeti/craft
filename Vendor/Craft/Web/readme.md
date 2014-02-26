@@ -1,3 +1,0 @@
-# Craft\Web
-
-Coming soon...

@@ -2,8 +2,8 @@
 
 namespace My\Logic\Preset;
 
-use Craft\Env\Auth;
-use Craft\Env\Flash;
+use Craft\Box\Auth;
+use Craft\Box\Flash;
 use My\Model\User;
 
 class AuthUser
@@ -89,7 +89,7 @@ class AuthUser
             }
             // create + autologin
             else {
-                User::save($user);
+                User::set($user);
                 Auth::login(1, $user);
                 Flash::set('register.success', 'Welcome, ' . $user->username . '.');
                 go('/');

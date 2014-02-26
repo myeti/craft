@@ -132,5 +132,5 @@ And a lot more, check the code ;)
 If you want to run your own session, these classes use the following object to bind data :
 
 ```php
-$session = new Craft\Box\SessionRepository('my.key');
+$session = new Craft\Box\Native\Session\Storage('my.key');
 ```

@@ -2,13 +2,13 @@
 
 namespace My\Logic\Preset;
 
-use Craft\Env\Flash;
+use Craft\Box\Flash;
 use Craft\Error\Abort;
-use Craft\Orm\Model\NullModel;
+use \stdClass as YourModel;
 
 
 /**
- * Replace 'NullModel' with your Model
+ * Replace 'YourModel' with your Model
  * and 'entity' | 'entities' with your alias name
  */
 class Entity
@@ -21,7 +21,7 @@ class Entity
      */
     public function all()
     {
-        $items = NullModel::find();
+        $items = YourModel::get();
         return ['entities' => $items];
     }
 
@@ -36,7 +36,7 @@ class Entity
     public function one($id)
     {
         // get entity
-        $item = NullModel::one($id);
+        $item = YourModel::one($id);
 
         // does not exist
         if(!$item) {
@@ -57,7 +57,7 @@ class Entity
     public function form($id = null)
     {
         // get entity
-        $model = $id ? NullModel::one($id) : new NullModel();
+        $model = $id ? YourModel::one($id) : new YourModel();
 
         // does not exist
         if($id and !$model) {
@@ -66,11 +66,9 @@ class Entity
         // form attempt
         elseif($data = post()) {
 
-            // valid data here
-
             // save
             $model = hydrate($model, $data);
-            NullModel::save($model);
+            YourModel::set($model);
 
             // success
             Flash::set('form.success', $id ? 'entity updated.' : 'entity created.');
@@ -88,7 +86,7 @@ class Entity
      */
     public function delete($id)
     {
-        NullModel::drop($id);
+        YourModel::drop($id);
     }
 
 } 
