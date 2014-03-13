@@ -9,7 +9,7 @@
  */
 namespace Craft\Web\Kernel;
 
-use Craft\Router\Matcher;
+use Craft\Router\MatcherInterface;
 use Craft\Web\Event\NotFound;
 use Craft\Web\Handler;
 use Craft\Web\Request;
@@ -21,16 +21,16 @@ class Dispatcher implements Handler
     /** @var Handler */
     protected $handler;
 
-    /** @var Matcher */
+    /** @var MatcherInterface */
     protected $router;
 
 
     /**
      * Setup kernel
      * @param Handler $handler
-     * @param Matcher $router
+     * @param MatcherInterface $router
      */
-    public function __construct(Handler $handler, Matcher $router)
+    public function __construct(Handler $handler, MatcherInterface $router)
     {
         $this->handler = $handler;
         $this->router = $router;

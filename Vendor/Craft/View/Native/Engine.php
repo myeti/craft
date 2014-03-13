@@ -1,10 +1,10 @@
 <?php
 
-namespace Craft\View\Engine;
+namespace Craft\View\Native;
 
-use Craft\View\Engine;
+use Craft\View\EngineInterface;
 
-class NativeEngine extends \ArrayObject implements Engine
+class Engine extends \ArrayObject implements EngineInterface
 {
 
     /** @var string */
@@ -13,7 +13,7 @@ class NativeEngine extends \ArrayObject implements Engine
     /** @var string */
     protected $ext;
 
-    /** @var Native\Helper[] */
+    /** @var Helper[] */
     protected $helpers = [];
 
 
@@ -28,8 +28,8 @@ class NativeEngine extends \ArrayObject implements Engine
         $this->ext = '.' . ltrim($ext, '.');
 
         // default helpers
-        $this->mount(new Native\Helper\Asset());
-        $this->mount(new Native\Helper\Html());
+        $this->mount(new Helper\Asset());
+        $this->mount(new Helper\Html());
         $this->helper('partial', [$this, 'render']);
 
         parent::__construct();
@@ -51,10 +51,10 @@ class NativeEngine extends \ArrayObject implements Engine
 
     /**
      * Mount helper object
-     * @param Native\Helper $helper
+     * @param Helper $helper
      * @return $this
      */
-    public function mount(Native\Helper $helper)
+    public function mount(Helper $helper)
     {
         foreach($helper->register() as $name => $helper) {
             $this->helper($name, $helper);
@@ -82,7 +82,7 @@ class NativeEngine extends \ArrayObject implements Engine
         $data = array_merge((array)$this, $data);
 
         // create template
-        $template = new Native\Template($this, $template, $data, $sections, $this->helpers);
+        $template = new Template($this, $template, $data, $sections, $this->helpers);
 
         // compile
         $content = $template->compile();

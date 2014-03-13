@@ -50,7 +50,7 @@ class Task extends \ArrayObject
      * Stop task tracking
      * return array|bool
      */
-    public function over()
+    public function end()
     {
         $this->stop = [
             'time' => microtime(true),
@@ -78,7 +78,7 @@ class Task extends \ArrayObject
 
     /**
      * Formatted report
-     * @return array
+     * @return string
      */
     public function __toString()
     {

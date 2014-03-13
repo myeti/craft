@@ -9,11 +9,11 @@
  */
 namespace Craft\Box\Native\Session;
 
-use Craft\Box\Provider\SessionProvider;
-use Craft\Data\Provider\Serializer;
+use Craft\Box\Provider\SessionInterface;
+use Craft\Data\Serializer;
 use Craft\Data\Repository;
 
-class Storage extends Serializer implements SessionProvider
+class Storage extends Serializer implements SessionInterface
 {
 
     /** @var string */

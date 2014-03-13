@@ -35,7 +35,7 @@ trait Event
      * @param array $params
      * @return int
      */
-    protected function fire($event, array $params = [])
+    public function fire($event, array $params = [])
     {
         // fire * event
         if($event != '*') {

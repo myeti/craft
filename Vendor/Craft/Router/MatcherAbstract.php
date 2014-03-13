@@ -9,7 +9,7 @@
  */
 namespace Craft\Router;
 
-abstract class Matcher
+abstract class MatcherAbstract implements MatcherInterface
 {
 
     /** @var Route[] */
@@ -60,10 +60,10 @@ abstract class Matcher
     /**
      * Bind an inner router
      * @param string $base
-     * @param Matcher $matcher
+     * @param MatcherInterface $matcher
      * @return $this
      */
-    public function bind($base, Matcher $matcher)
+    public function bind($base, MatcherInterface $matcher)
     {
         foreach($matcher->routes() as $route) {
             $route->from = $base . $route->from;
@@ -81,15 +81,5 @@ abstract class Matcher
     {
         return $this->routes;
     }
-
-
-    /**
-     * Find route
-     * @param string $query
-     * @param array $customs
-     * @param mixed $fallback
-     * @return Route
-     */
-    abstract public function find($query, array $customs = [], $fallback = null);
 
 } 

@@ -9,7 +9,7 @@
  */
 namespace Craft\Web\Kernel;
 
-use Craft\View\Engine;
+use Craft\View\EngineInterface;
 use Craft\Web\Handler;
 use Craft\Web\Request;
 use Craft\Web\Response;
@@ -20,7 +20,7 @@ class Formatter implements Handler
     /** @var Handler */
     protected $handler;
 
-    /** @var Engine */
+    /** @var EngineInterface */
     protected $engine;
 
 
@@ -29,7 +29,7 @@ class Formatter implements Handler
      * @param Handler $handler
      * @param Engine $engine
      */
-    public function __construct(Handler $handler, Engine $engine)
+    public function __construct(Handler $handler, EngineInterface $engine)
     {
         $this->handler = $handler;
         $this->engine = $engine;

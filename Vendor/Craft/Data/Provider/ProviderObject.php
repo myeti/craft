@@ -7,43 +7,18 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Box\Native;
+namespace Craft\Data\Provider;
 
-use Craft\Box\Provider\SessionInterface;
-
-class Session implements SessionInterface
+class ProviderObject extends \ArrayObject implements ProviderInterface
 {
 
-    /** @var SessionInterface */
-    protected $provider;
-
-
     /**
-     * Setup session
-     */
-    public function __construct()
-    {
-        $this->provider = new Session\Storage('craft/session');
-    }
-
-
-    /**
-     * Get session id
-     * @return string
-     */
-    public function id()
-    {
-        return $this->provider->id();
-    }
-
-
-    /**
-     * Get all data
-     * @return mixed
+     * Get all elements
+     * @return array
      */
     public function all()
     {
-        $this->provider->all();
+        return $this->getArrayCopy();
     }
 
 
@@ -54,7 +29,11 @@ class Session implements SessionInterface
      */
     public function has($key)
     {
-        return $this->provider->has($key);
+        $has = true;
+        foreach(func_get_args() as $key) {
+            $has &= isset($this[$key]);
+        }
+        return $has;
     }
 
 
@@ -66,7 +45,7 @@ class Session implements SessionInterface
      */
     public function get($key, $fallback = null)
     {
-        return $this->provider->get($key, $fallback);
+        return isset($this[$key]) ? $this[$key] : $fallback;
     }
 
 
@@ -78,7 +57,8 @@ class Session implements SessionInterface
      */
     public function set($key, $value)
     {
-        return $this->provider->set($key, $value);
+        $this[$key] = $value;
+        return true;
     }
 
 
@@ -89,17 +69,21 @@ class Session implements SessionInterface
      */
     public function drop($key)
     {
-        return $this->provider->drop($key);
+        foreach(func_get_args() as $key) {
+            unset($this[$key]);
+        }
+        return true;
     }
 
 
     /**
-     * Destroy session
-     * @return mixed
+     * Clear data
+     * @return $this
      */
     public function clear()
     {
-        $this->provider->clear();
+        $this->exchangeArray([]);
+        return $this;
     }
 
 }

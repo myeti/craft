@@ -9,13 +9,13 @@
  */
 namespace Craft\Box\Native;
 
-use Craft\Box\Provider\SessionProvider;
-use Craft\Data\Provider;
+use Craft\Box\Provider\SessionInterface;
+use Craft\Data\Provider\ProviderInterface;
 
-class Flash implements Provider
+class Flash implements ProviderInterface
 {
 
-    /** @var SessionProvider */
+    /** @var SessionInterface */
     protected $session;
 
 

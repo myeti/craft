@@ -7,18 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Box\Provider;
+namespace Craft\View\Native;
 
-use Craft\Data\Provider;
-
-interface SessionProvider extends Provider
+class Template extends Sandbox
 {
-
-
-    /**
-     * Get session id
-     * @return string
-     */
-    public function id();
-
-}
+    // safe sandbox
+} 

@@ -1,99 +1,80 @@
 <?php
-/**
- * This file is part of the Craft package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
-namespace Craft\Orm;
 
-use Craft\Reflect\Object;
+namespace Craft\Orm;
 
 trait Model
 {
 
-	/**
-	 * Find many entities
-	 * @param  array $where
-	 * @param  mixed $orderBy
-	 * @param  int $limit
-	 * @param  int $step
-	 * @return array
-	 */
-	public static function get(array $where = [], $orderBy = null, $limit = null, $step = null)
-	{
-		return Syn::get(static::model(), $where, $orderBy, $limit, $step);
-	}
-
-
     /**
-     * Count entities
-     * @param $where
-     * @return array
+     * Get entity
+     * @return mixed
      */
-    public static function has(array $where = [])
+    public static function get()
     {
-        return Syn::count(static::model(), $where);
+        return Syn::get(static::entity());
     }
 
 
     /**
-     * Paginate a collection
-     * @param $size
-     * @param $page
-     * @param $where
-     * @param $sort
+     * Get many entities
+     * @param array $where
+     * @param null $sort
+     * @param null $limit
      * @return array
      */
-    public static function paginate($size, $page, array $where = [], $sort = null)
+    public static function all(array $where = [], $sort = null, $limit = null)
     {
-        return Syn::paginate(static::model(), $size, $page, $where, $sort);
+        return Syn::all(static::entity(), $where, $sort, $limit);
     }
 
 
-	/**
-	 * Find one entities
-	 * @param  int|array $where
-	 * @return object|\stdClass|bool
-	 */
-	public static function one($where = null)
-	{
-		return Syn::one(static::model(), $where);
-	}
+    /**
+     * Get one entities
+     * @param array $where
+     * @return mixed
+     */
+    public static function one(array $where = [])
+    {
+        return Syn::one(static::entity(), $where);
+    }
 
 
-	/**
-	 * Save entity
-	 * @param  object $entity
-	 * @return bool
-	 */
-	public static function set($entity)
-	{
-		return Syn::save(static::model(), $entity);
-	}
+    /**
+     * Save entity
+     * @param $data
+     * @return int
+     */
+    public static function save($data)
+    {
+        return Syn::save(static::entity(), $data);
+    }
 
 
-	/**
-	 * Delete entity
-	 * @param  object $entity
-	 * @return bool
-	 */
-	public static function drop($entity)
-	{
-		return Syn::drop(static::model(), $entity);
-	}
+    /**
+     * Drop entity
+     * @param $id
+     * @return int
+     */
+    public static function drop($id)
+    {
+        return Syn::drop(static::entity(), $id);
+    }
 
 
-	/**
-	 * Get model name
-	 * @return  string
-	 */
-	protected static function model()
-	{
-        $class = Object::classname(get_called_class());
-		return strtolower($class);
-	}
+    /**
+     * Get entity name
+     * @return string
+     */
+    protected static function entity()
+    {
+        static $name;
 
-}
+        if(!$name) {
+            $ns = explode('\\', get_called_class());
+            $name = strtolower(end($ns));
+        }
+
+        return $name;
+    }
+
+} 

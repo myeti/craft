@@ -2,7 +2,7 @@
 
 namespace Craft\View;
 
-interface Engine
+interface EngineInterface
 {
 
     /**

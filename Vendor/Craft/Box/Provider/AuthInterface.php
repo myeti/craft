@@ -9,7 +9,7 @@
  */
 namespace Craft\Box\Provider;
 
-interface AuthProvider
+interface AuthInterface
 {
 
     /**

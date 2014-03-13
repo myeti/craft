@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Orm\Connector;
+namespace Craft\Orm\Driver;
 
 class SQLite extends \PDO
 {

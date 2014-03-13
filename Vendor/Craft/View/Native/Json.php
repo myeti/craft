@@ -2,9 +2,9 @@
 
 namespace Craft\View\Engine;
 
-use Craft\View\Engine;
+use Craft\View\EngineInterface;
 
-class JsonEngine implements Engine
+class Json implements EngineInterface
 {
 
     /** @var \Closure */

@@ -28,4 +28,4 @@ $app->on(403, function() use($app) {
 $app->plug();
 
 # Need report ?
-echo $tracker->over('app');
+echo $tracker->end('app');

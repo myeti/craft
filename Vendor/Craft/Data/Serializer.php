@@ -7,22 +7,20 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Data\Provider;
+namespace Craft\Data;
 
-use Craft\Data\Provider;
-
-class Serializer implements Provider
+class Serializer implements Provider\ProviderInterface
 {
 
-    /** @var Provider */
+    /** @var Provider\ProviderInterface */
     protected $provider;
 
 
     /**
      * Set subject provider
-     * @param Provider $provider
+     * @param Provider\ProviderInterface $provider
      */
-    public function __construct(Provider $provider)
+    public function __construct(Provider\ProviderInterface $provider)
     {
         $this->provider = $provider;
     }

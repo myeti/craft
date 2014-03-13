@@ -7,15 +7,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Engine\Native;
-
-use Craft\View\Engine\Native;
-use Craft\View\Engine\NativeEngine;
+namespace Craft\View\Native;
 
 abstract class Sandbox
 {
 
-    /** @var NativeEngine */
+    /** @var Engine */
     private $engine;
 
     /** @var string */
@@ -42,13 +39,13 @@ abstract class Sandbox
 
     /**
      * Init template
-     * @param NativeEngine $engine
+     * @param Engine $engine
      * @param string $template
      * @param array $data
      * @param array $sections
      * @param array $helpers
      */
-    public function __construct(NativeEngine $engine, $template, array $data = [], array $sections = [], array $helpers = [])
+    public function __construct(Engine $engine, $template, array $data = [], array $sections = [], array $helpers = [])
     {
         $this->engine = $engine;
         $this->template = $template;

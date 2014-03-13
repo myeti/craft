@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Orm\Connector;
+namespace Craft\Orm\Driver;
 
 class MySQL extends \PDO
 {
@@ -19,7 +19,7 @@ class MySQL extends \PDO
      * @param string $password
      * @param string $dbname
      */
-    public function __construct($host, $username, $password, $dbname = null)
+    public function __construct($host = 'localhost', $username = 'root', $password = null, $dbname = null)
     {
         $connector = 'mysql:host=' . $host;
         if($dbname) {

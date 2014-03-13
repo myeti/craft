@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Engine\Native;
+namespace Craft\View\Native;
 
 abstract class Helper
 {

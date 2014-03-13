@@ -176,13 +176,13 @@ class Tracker extends AbstractLogger
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function over($process)
+    public function end($process)
     {
         if(!isset($this->tasks[$process])) {
             throw new \InvalidArgumentException('Unknown process "' . $process . '".');
         }
 
-        return $this->tasks[$process]->over();
+        return $this->tasks[$process]->end();
     }
 
 

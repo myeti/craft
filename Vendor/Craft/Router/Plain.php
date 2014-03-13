@@ -9,7 +9,7 @@
  */
 namespace Craft\Router;
 
-class Plain extends Matcher
+class Plain extends MatcherAbstract
 {
 
     /**

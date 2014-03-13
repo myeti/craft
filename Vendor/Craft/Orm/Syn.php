@@ -1,194 +1,151 @@
 <?php
-/**
- * This file is part of the Craft package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
-namespace Craft\Orm;
 
-use craft\data\Paginator;
+namespace Craft\Orm;
 
 abstract class Syn
 {
 
+    /** jars priority */
+    const MASTER = 'master.db';
+    const SLAVE = 'slave.db';
+
+    /** @var JarInterface[] */
+    protected static $jars = [];
+
+    /** @var int */
+    protected static $use = self::MASTER;
+
+
     /**
-     * Mapper singleton, setup Lipsum as default mapper
-     * @param Mapper $mapper
-     * @return Mapper
+     * Load jar as master
+     * @param JarInterface $jar
+     * @param string $as
      */
-    public static function mapper(Mapper $mapper = null)
+    public static function load(JarInterface $jar, $as = self::MASTER)
     {
-        static $instance;
-        if($mapper) {
-            $instance = $mapper;
+        static::$jars[$as] = $jar;
+    }
+
+
+    /**
+     * Load jar as master
+     * @param string $as
+     * @throws \LogicException
+     * @return JarInterface
+     */
+    public static function jar($as = null)
+    {
+        // set jar
+        if($as) {
+            static::$use = $as;
         }
-        elseif(!$instance) {
-            $instance = new Mapper\LipsumMapper();
+
+        // no jar
+        if(!isset(static::$jars[static::$use])) {
+            throw new \LogicException('No jar [' . static::$use . '] loaded.');
         }
 
-        return $instance;
+        return static::$jars[static::$use];
     }
 
 
     /**
-     * Helper : init mysql
-     * @param string $dbname
-     * @param array $config
+     * Get entity
+     * @param $entity
+     * @return mixed
      */
-    public static function mysql($dbname, array $config = [])
+    public static function get($entity)
     {
-        // merge config with defaults
-        $config = $config + [
-                'host' => '127.0.0.1',
-                'user' => 'root',
-                'pass' => '',
-                'prefix' => '',
-                'create' => true
-            ];
-
-        // init pdo
-        $pdo = new Connector\MySQL($config['host'], $config['user'], $config['pass']);
-        $pdo->open($dbname, $config['create']);
-
-        // init mapper
-        $mapper = new Mapper\NativeMapper($pdo, $config['prefix']);
-
-        static::mapper($mapper);
+        return static::jar()->get($entity);
     }
 
 
     /**
-     * Helper : init sqlite
-     * @param $filename
-     * @param null $prefix
-     */
-    public static function sqlite($filename, $prefix = null)
-    {
-        // init pdo & mapper
-        $pdo = new Connector\SQLite($filename);
-        $mapper = new Mapper\NativeMapper($pdo, $prefix);
-
-        static::mapper($mapper);
-    }
-
-
-    /**
-     * Register models
-     * @param  array $models
-     * @return $this
-     */
-    public static function map(array $models)
-    {
-        return static::mapper()->map($models);
-    }
-
-
-    /**
-     * Execute a custom sql request
-     * @param  string $query
-     * @param  string $cast
+     * Get many entities
+     * @param $entity
+     * @param array $where
+     * @param null $sort
+     * @param null $limit
      * @return array
      */
-    public static function query($query, $cast = null)
+    public static function all($entity, array $where = [], $sort = null, $limit = null)
     {
-        return static::mapper()->query($query, $cast);
+        $jar = static::jar()->get($entity);
+
+        foreach($where as $expression => $value) {
+            $jar->where($expression, $value);
+        }
+
+        if($sort and is_array($sort)) {
+            foreach($sort as $field => $sorting) {
+                $jar->sort($field, $sorting);
+            }
+        }
+        elseif($sort) {
+            $jar->sort($sort);
+        }
+
+        if($limit and is_array($limit)) {
+            $jar->limit($limit[0], $limit[1]);
+        }
+        elseif($limit) {
+            $jar->limit($limit);
+        }
+
+        return $jar->all();
     }
 
 
     /**
-     * Count items in collection
-     * @param $alias
-     * @param $where
+     * Get one entities
+     * @param $entity
+     * @param array $where
+     * @return mixed
+     */
+    public static function one($entity, array $where = [])
+    {
+        $jar = static::jar()->get($entity);
+
+        foreach($where as $expression => $value) {
+            $jar->where($expression, $value);
+        }
+
+        return $jar->one();
+    }
+
+
+    /**
+     * Save entity
+     * @param $entity
+     * @param $data
      * @return int
      */
-    public static function has($alias, array $where = [])
+    public static function save($entity, $data)
     {
-        return static::mapper()->has($alias, $where);
+        // parse object
+        if(is_object($data)) {
+            $data = get_object_vars($data);
+        }
+
+        // insert
+        if(empty($data['id'])) {
+            return static::jar()->get($entity)->add($data);
+        }
+
+        // update
+        return static::jar()->get($entity)->where('id', $data['id'])->set($data);
     }
 
 
     /**
-     * Find a collection
-     * @param $alias
-     * @param $where
-     * @param $orderBy
-     * @param $limit
-     * @return array
+     * Drop entity
+     * @param $entity
+     * @param $id
+     * @return int
      */
-    public static function get($alias, array $where = [], $orderBy = null, $limit = null)
+    public static function drop($entity, $id)
     {
-        return static::mapper()->get($alias, $where, $orderBy, $limit);
+        return static::jar()->get($entity)->where('id', $id)->drop();
     }
 
-
-    /**
-     * Paginate a collection
-     * @param $alias
-     * @param $size
-     * @param $page
-     * @param $where
-     * @param $sort
-     * @return Paginator
-     */
-    public static function paginate($alias, $size, $page, array $where = [], $sort = null)
-    {
-        // calc boundaries
-        $total = Syn::has($alias, $where);
-        $from = ($size * ($page - 1)) + 1;
-
-        // execute request with limit
-        $data = Syn::get($alias, $where, $sort, [$from, $size]);
-        return new Paginator($data, $size, $page, $total);
-    }
-
-
-    /**
-     * Find a specific entity
-     * @param  string $alias
-     * @param  mixed $where
-     * @return object|\stdClass
-     */
-    public static function one($alias, $where = null)
-    {
-        return static::mapper()->one($alias, $where);
-    }
-
-
-    /**
-     * Box entity
-     * @param string $alias
-     * @param object $entity
-     * @return bool
-     */
-    public static function set($alias, &$entity)
-    {
-        return static::mapper()->set($alias,$entity);
-    }
-
-
-    /**
-     * Delete entity
-     * @param  string $alias
-     * @param  mixed $entity
-     * @return bool
-     */
-    public static function drop($alias, $entity)
-    {
-        return static::mapper()->drop($alias, $entity);
-    }
-
-
-    /**
-     * Create a backup of the database in sql
-     * @param $filename string
-     * @return bool
-     */
-    public static function backup($filename)
-    {
-        return static::mapper()->backup($filename);
-    }
-
-}
+} 

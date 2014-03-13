@@ -9,9 +9,9 @@
  */
 namespace Craft\Box\Native;
 
-use Craft\Data\ArrayList;
+use Craft\Data\Provider\ProviderObject;
 
-class Cookie extends ArrayList
+class Cookie extends ProviderObject
 {
 
     /**

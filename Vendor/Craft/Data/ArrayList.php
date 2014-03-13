@@ -9,72 +9,8 @@
  */
 namespace Craft\Data;
 
-class ArrayList extends \ArrayObject implements Provider
+class ArrayList extends Provider\ProviderObject
 {
-
-    /**
-     * Get all elements
-     * @return array
-     */
-    public function all()
-    {
-        return $this->getArrayCopy();
-    }
-
-
-    /**
-     * Check if element exists
-     * @param $key
-     * @return bool
-     */
-    public function has($key)
-    {
-        $has = true;
-        foreach(func_get_args() as $key) {
-            $has &= isset($this[$key]);
-        }
-        return $has;
-    }
-
-
-    /**
-     * Get element by key, fallback on error
-     * @param $key
-     * @param null $fallback
-     * @return mixed
-     */
-    public function get($key, $fallback = null)
-    {
-        return isset($this[$key]) ? $this[$key] : $fallback;
-    }
-
-
-    /**
-     * Set element by key with value
-     * @param $key
-     * @param $value
-     * @return bool
-     */
-    public function set($key, $value)
-    {
-        $this[$key] = $value;
-        return true;
-    }
-
-
-    /**
-     * Drop element by key
-     * @param $key
-     * @return bool
-     */
-    public function drop($key)
-    {
-        foreach(func_get_args() as $key) {
-            unset($this[$key]);
-        }
-        return true;
-    }
-
 
     /**
      * Get first element
@@ -228,7 +164,7 @@ class ArrayList extends \ArrayObject implements Provider
      * Slice array in many part
      * @param $from
      * @param null $to
-     * @return ArrayCollection
+     * @return $this
      */
     public function slice($from, $to = null)
     {
@@ -296,17 +232,6 @@ class ArrayList extends \ArrayObject implements Provider
         $array = array_filter($array, $callback);
         $array = array_flip($array);
         $this->exchangeArray($array);
-        return $this;
-    }
-
-
-    /**
-     * Clear data
-     * @return $this
-     */
-    public function clear()
-    {
-        $this->exchangeArray([]);
         return $this;
     }
 

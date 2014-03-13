@@ -15,9 +15,8 @@ use Craft\Reflect\Event;
 use Craft\Reflect\Injector;
 use Craft\Reflect\Resolver;
 use Craft\Router\Basic as Router;
-use Craft\View\Engine;
-use Craft\View\Engine\NativeEngine;
-use Craft\View\Engine\Native\Helper\Asset;
+use Craft\View\Native\Engine;
+use Craft\View\Native\Helper\Asset;
 
 class App extends Kernel\Wrapper
 {
@@ -112,7 +111,7 @@ class App extends Kernel\Wrapper
         $dispatcher = new Kernel\Dispatcher($reflector, $router);
 
         // formatter
-        $engine = new NativeEngine(Mog::path(), 'php');
+        $engine = new Engine(Mog::path(), 'php');
         $engine->mount(new Asset(Mog::base()));
         $formatter = new Kernel\Formatter($dispatcher, $engine);
 

@@ -47,7 +47,7 @@ class Reflector implements Handler
         // apply resolver
         $action = $this->resolver->resolve($request->action);
         $request->action = $action->callable;
-        $request->meta = $action->metadata;
+        $request->meta = $action->meta;
 
         // run inner handler
         return $this->handler->handle($request);

@@ -9,13 +9,13 @@
  */
 namespace Craft\Box\Native;
 
-use Craft\Box\Provider\AuthProvider;
-use Craft\Box\Provider\SessionProvider;
+use Craft\Box\Provider\AuthInterface;
+use Craft\Data\Provider\ProviderInterface;
 
-class Auth implements AuthProvider
+class Auth implements AuthInterface
 {
 
-    /** @var SessionProvider */
+    /** @var ProviderInterface */
     protected $session;
 
 
