@@ -2,6 +2,9 @@
 
 namespace Craft\Orm;
 
+use Craft\Orm\Driver\MySQL;
+use Craft\Orm\Driver\SQLite;
+
 abstract class Syn
 {
 
@@ -20,10 +23,12 @@ abstract class Syn
      * Load jar as master
      * @param JarInterface $jar
      * @param string $as
+     * @return \Craft\Orm\JarInterface
      */
     public static function load(JarInterface $jar, $as = self::MASTER)
     {
         static::$jars[$as] = $jar;
+        return static::jar();
     }
 
 
@@ -146,6 +151,49 @@ abstract class Syn
     public static function drop($entity, $id)
     {
         return static::jar()->get($entity)->where('id', $id)->drop();
+    }
+
+
+    /**
+     * Setup mysql
+     * @param string $dbname
+     * @param array $config
+     * @return \Craft\Orm\JarInterface
+     */
+    public static function MySQL($dbname, array $config = [])
+    {
+        // set config params
+        $config = $config + [
+            'host'      => 'localhost',
+            'username'  => 'root',
+            'password'  => null,
+            'prefix'    => null,
+        ];
+
+        // create pdo
+        $pdo = new MySQL($config['host'], $config['username'], $config['password'],  $dbname);
+
+        // create jar
+        $jar = new Jar($pdo, $config['prefix']);
+        static::load($jar);
+
+        return static::jar();
+    }
+
+
+    /**
+     * Setup mysql
+     * @param string $filename
+     * @param string $prefix
+     * @return \Craft\Orm\JarInterface
+     */
+    public static function SQLite($filename, $prefix = null)
+    {
+        $pdo = new SQLite($filename);
+        $jar = new Jar($pdo, $prefix);
+        static::load($jar);
+
+        return static::jar();
     }
 
 } 

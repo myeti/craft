@@ -27,6 +27,9 @@ class Response
     /** @var string */
     public $content = '';
 
+    /** @var Request */
+    public $request;
+
 
     /**
      * New content response

@@ -45,13 +45,13 @@ class Formatter implements Handler
     public function handle(Request $request)
     {
         // run handler
-        list($request, $response) = $this->handler->handle($request);
+        $response = $this->handler->handle($request);
 
         // render if asked
-        if(!empty($request->meta['render'])) {
+        if(!empty($response->request->meta['render'])) {
 
             // run engine
-            $content = $this->engine->render($request->meta['render'], $response->data);
+            $content = $this->engine->render($response->request->meta['render'], $response->data);
 
             // update response
             $response->content = $content;
@@ -61,7 +61,7 @@ class Formatter implements Handler
 
         }
 
-        return [$request, $response];
+        return $response;
     }
 
 } 

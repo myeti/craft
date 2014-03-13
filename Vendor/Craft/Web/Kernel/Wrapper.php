@@ -73,14 +73,14 @@ class Wrapper implements Handler
         }
 
         // run main
-        list($request, $response) = $this->handler->handle($request);
+        $response = $this->handler->handle($request);
 
         // run after, impact both request and response
         foreach($this->after as $after) {
-            list($request, $response) = $after->handle($request, $response);
+            $response = $after->handle($response->request, $response);
         }
 
-        return [$request, $response];
+        return $response;
     }
 
 }

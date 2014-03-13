@@ -22,7 +22,7 @@ class Kernel implements Handler
      * Run on request
      * @param Request $request
      * @throws \BadMethodCallException
-     * @return array
+     * @return Response
      */
     public function handle(Request $request)
     {
@@ -36,9 +36,10 @@ class Kernel implements Handler
 
         // create response
         $response = new Response();
+        $response->request = $request;
         $response->data = $data;
 
-        return [$request, $response];
+        return $response;
     }
 
 }

@@ -7,19 +7,23 @@ use Craft\Reflect\Event;
 class Channel implements \SplSubject
 {
 
-    use Event {
-        fire as protected innerFire;
-    };
+    /** @var string */
+    protected $name;
 
     /** @var \SplObjectStorage */
     protected $observers;
+
+    use Event {
+        fire as protected innerFire;
+    };
 
 
     /**
      * Setup event channel
      */
-    public function __construct()
+    public function __construct($name = null)
     {
+        $this->name = $name;
         $this->observers = new \SplObjectStorage();
     }
 
@@ -69,6 +73,11 @@ class Channel implements \SplSubject
      */
     public function fire($event, array $params = [])
     {
+        // resolve event namespace
+        if($this->name) {
+            $event = $this->name . '.' . $event;
+        }
+
         // fire inner event
         $count = $this->innerFire($event, $params);
 

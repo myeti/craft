@@ -25,75 +25,12 @@ class App extends Kernel\Wrapper
 
 
     /**
-     * Main process
-     * @param Request $request
-     * @throws \Exception
-     * @return mixed
-     */
-    public function handle(Request $request)
-    {
-        // before event
-        $this->fire('app.start', [&$request]);
-
-        // run handler
-        try {
-            list($request, $response) = parent::handle($request);
-        }
-        // catch abort as event
-        catch(Abort $e) {
-            if(!$this->fire($e->getCode(), [$request, $e->getMessage()])) { throw $e; }
-            return false;
-        }
-
-        // after event
-        $this->fire('app.end', [&$request, &$response]);
-
-        return [$request, $response];
-    }
-
-
-    /**
-     * Resolve and perform query
-     * @param string $query
-     * @return mixed
-     */
-    public function plug($query = null)
-    {
-        // resolve query
-        if(!$query) {
-            $query = Mog::url();
-            $query = substr($query, strlen(Mog::base()));
-            $query = parse_url($query, PHP_URL_PATH);
-        }
-
-        // create request
-        $request = new Request();
-        $request->query = $query;
-
-        // perform
-        return $this->handle($request);
-    }
-
-
-    /**
-     * App as a service
-     * @param string $query
-     * @return mixed
-     */
-    public function __invoke($query = null)
-    {
-        return $this->plug($query);
-    }
-
-
-    /**
-     * Forge app from routes
+     * Create web app from routes
      * @param array $routes
      * @param Injector $injector
      * @param Kernel\Firewall\Strategy $strategy
-     * @return App
      */
-    public static function forge(array $routes, Injector $injector = null, Kernel\Firewall\Strategy $strategy = null)
+    public function __construct(array $routes, Injector $injector = null, Kernel\Firewall\Strategy $strategy = null)
     {
         // kernel
         $kernel = new Kernel();
@@ -116,7 +53,60 @@ class App extends Kernel\Wrapper
         $formatter = new Kernel\Formatter($dispatcher, $engine);
 
         // create app
-        return new self($formatter);
+        parent::__construct($formatter);
+    }
+
+
+    /**
+     * Main process
+     * @param Request $request
+     * @throws \Exception
+     * @return mixed
+     */
+    public function handle(Request $request = null)
+    {
+        // before event
+        $this->fire('app.start', [&$request]);
+
+        // resolve request
+        if(!$request) {
+            $query = Mog::url();
+            $query = substr($query, strlen(Mog::base()));
+            $query = parse_url($query, PHP_URL_PATH);
+            $request = new Request();
+            $request->query = $query;
+        }
+
+        // run handler
+        try {
+            $response = parent::handle($request);
+        }
+        // catch abort as event
+        catch(Abort $e) {
+            if(!$this->fire($e->getCode(), [$request, $e->getMessage()])) { throw $e; }
+            return false;
+        }
+
+        // after event
+        $this->fire('app.end', [&$request, &$response]);
+
+        return $response;
+    }
+
+
+    /**
+     * Resolve and perform query
+     * @param string $query
+     * @return mixed
+     */
+    public function to($query)
+    {
+        // create request
+        $request = new Request();
+        $request->query = $query;
+
+        // perform
+        return $this->handle($request);
     }
 
 }

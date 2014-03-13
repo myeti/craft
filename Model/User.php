@@ -19,7 +19,7 @@ class User
 
     /**
      * This trait allow the model to use the Syn methods
-     * such as : User::find(), User::save(), ...
+     * such as : User::all(), User::save(), ...
      */
     use Model;
 

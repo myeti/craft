@@ -12,15 +12,10 @@ interface JarInterface
     public function pdo();
 
     /**
-     * Set discovery mode on
-     * @return mixed
-     */
-    public function discovery();
-
-    /**
      * Map entity class
      * @param $entity
      * @param $class
+     * @return $this
      */
     public function map($entity, $class);
 

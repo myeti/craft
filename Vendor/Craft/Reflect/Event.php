@@ -30,6 +30,18 @@ trait Event
 
 
     /**
+     * Clear listener list
+     * @param string $event
+     * @return $this
+     */
+    public function off($event)
+    {
+        $this->listeners[$event] = [];
+        return $this;
+    }
+
+
+    /**
      * Fire event
      * @param string $event
      * @param array $params

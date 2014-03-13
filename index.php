@@ -3,29 +3,27 @@
 # Hello :)
 require 'vendor/autoload.php';
 
-# Start tracking
-$tracker = new Craft\Trace\Tracker();
-$tracker->monitor('app');
+use Craft\Orm\Syn;
+use Craft\Web\App;
 
-# Routing
-$app = Craft\Web\App::forge([
+# Open your db & map your models
+# Syn::MySQL('mydbname')
+#     ->map('user', 'My\Model\User')
+#     ->build();
+
+# Setup your business routes
+$app = new App([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'
 ]);
 
-# Not found
+# Handle 404 & 403
 $app->on(404, function() use($app) {
-    $app->plug('/lost');
+    $app->to('/lost');
+})->on(403, function() use($app) {
+    $app->to('/sorry');
 });
 
-# Forbidden
-$app->on(403, function() use($app) {
-    $app->plug('/sorry');
-});
-
-# Handle query
-$app->plug();
-
-# Need report ?
-echo $tracker->end('app');
+# Let's go !
+$app->handle();

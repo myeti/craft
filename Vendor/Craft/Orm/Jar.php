@@ -50,6 +50,7 @@ class Jar implements JarInterface
     public function map($entity, $class)
     {
         $this->map[$entity] = $class;
+        return $this;
     }
 
 
