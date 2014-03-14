@@ -113,7 +113,7 @@ abstract class Field implements Element
      */
     protected function render($template)
     {
-        $engine = new Native(__DIR__ . '/templates/', 'php');
+        $engine = new Engine(__DIR__ . '/templates/', 'php');
         return $engine->render($template, ['field' => $this]);
     }
 

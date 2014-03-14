@@ -7,9 +7,11 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Native;
+namespace Craft\App\Event;
 
-class Template extends Sandbox
+use Craft\Error\Abort;
+
+class Forbidden extends Abort
 {
-    // safe sandbox
+    protected $code = 403;
 } 

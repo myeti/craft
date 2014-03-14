@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Web;
+namespace Craft\App;
 
 class Response
 {
@@ -26,9 +26,6 @@ class Response
 
     /** @var string */
     public $content = '';
-
-    /** @var Request */
-    public $request;
 
 
     /**

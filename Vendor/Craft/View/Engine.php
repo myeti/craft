@@ -1,17 +1,15 @@
 <?php
 
-namespace Craft\View\Native;
+namespace Craft\View;
 
-use Craft\View\EngineInterface;
-
-class Engine extends \ArrayObject implements EngineInterface
+class Engine extends \ArrayObject
 {
 
     /** @var string */
     protected $root;
 
     /** @var string */
-    protected $ext;
+    protected $ext = 'php';
 
     /** @var Helper[] */
     protected $helpers = [];
@@ -22,7 +20,7 @@ class Engine extends \ArrayObject implements EngineInterface
      * @param string $root
      * @param string $ext
      */
-    public function __construct($root = null, $ext = null)
+    public function __construct($root = null, $ext = 'php')
     {
         $this->root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->ext = '.' . ltrim($ext, '.');
@@ -82,7 +80,7 @@ class Engine extends \ArrayObject implements EngineInterface
         $data = array_merge((array)$this, $data);
 
         // create template
-        $template = new Template($this, $template, $data, $sections, $this->helpers);
+        $template = new Engine\Template($this, $template, $data, $sections, $this->helpers);
 
         // compile
         $content = $template->compile();
@@ -102,6 +100,22 @@ class Engine extends \ArrayObject implements EngineInterface
         }
 
         return $content;
+    }
+
+
+    /**
+     * Quick render
+     * @param $template
+     * @param array $data
+     * @return string
+     */
+    public static function forge($template, array $data = [])
+    {
+        $dirname = dirname($template);
+        $filename = basename($template);
+
+        $engine = new self($dirname);
+        return $engine->render($filename, $data);
     }
 
 }

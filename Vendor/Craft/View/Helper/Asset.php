@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Native\Helper;
+namespace Craft\View\Helper;
 
-use Craft\View\Native\Helper;
+use Craft\View\Helper;
 
 class Asset extends Helper
 {

@@ -9,7 +9,7 @@
  */
 namespace Craft\View;
 
-use Craft\View\Engine\NativeEngine;
+use Craft\View\Engine;
 use Craft\View\Form\Element;
 use Craft\View\Form\Field;
 
@@ -65,7 +65,7 @@ class Form extends \ArrayObject implements Element
      * @param Form\Element $element
      * @return Element
      */
-    public function &add(Element $element)
+    public function &add(Form\Element $element)
     {
         $element->parent = $this->name();
         parent::offsetSet($element->name, $element);

@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Web;
+namespace Craft\App;
 
 /**
  * Class Kernel
@@ -15,7 +15,7 @@ namespace Craft\Web;
  *
  * Basic handler : execute action and return data in response
  */
-class Kernel implements Handler
+class Dispatcher implements Handler
 {
 
     /**
@@ -36,7 +36,6 @@ class Kernel implements Handler
 
         // create response
         $response = new Response();
-        $response->request = $request;
         $response->data = $data;
 
         return $response;

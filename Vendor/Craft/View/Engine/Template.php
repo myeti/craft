@@ -7,18 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Web\Kernel\Firewall;
+namespace Craft\View\Engine;
 
-use Craft\Web\Request;
-
-interface Strategy
+class Template extends Sandbox
 {
-
-    /**
-     * Apply strategy on request
-     * @param Request $request
-     * @return bool
-     */
-    public function pass(Request $request);
-
+    // safe sandbox
 } 
