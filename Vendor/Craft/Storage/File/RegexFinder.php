@@ -25,4 +25,17 @@ class RegexFinder extends \RegexIterator
         parent::__construct($iterator, $regex);
     }
 
+
+    /**
+     * Check if file exists
+     * @param $in
+     * @param $regex
+     * @return bool
+     */
+    public static function find($in, $regex)
+    {
+        $iterator = new self($in, $regex);
+        return $iterator->valid();
+    }
+
 }

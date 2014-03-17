@@ -25,4 +25,17 @@ class GlobFinder extends \RecursiveIteratorIterator
         parent::__construct($directory);
     }
 
+
+    /**
+     * Check if file exists
+     * @param $in
+     * @param $glob
+     * @return bool
+     */
+    public static function find($in, $glob)
+    {
+        $iterator = new self($in, $glob);
+        return $iterator->valid();
+    }
+
 }
