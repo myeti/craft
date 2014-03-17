@@ -2,7 +2,7 @@
 
 namespace Craft\App\Plugin;
 
-use Craft\App\Handler\After;
+use Craft\App\Plugin;
 use Craft\App\Request;
 use Craft\App\Response;
 use Craft\Box\Mog;
@@ -10,7 +10,7 @@ use Craft\View\Engine;
 use Craft\View\Helper\Asset;
 use Craft\View\Helper\Html;
 
-class Templates extends After
+class Templates extends Plugin
 {
 
     /** @var Engine */
@@ -39,7 +39,7 @@ class Templates extends After
      * @param Request $request
      * @return Response
      */
-    public function handle(Request $request, Response $response = null)
+    public function after(Request $request, Response $response = null)
     {
         // render if metadata provided
         if(!empty($request->meta['render'])) {

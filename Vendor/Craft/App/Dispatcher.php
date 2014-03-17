@@ -9,12 +9,6 @@
  */
 namespace Craft\App;
 
-/**
- * Class Kernel
- * @package Craft\Web
- *
- * Basic handler : execute action and return data in response
- */
 class Dispatcher implements Handler
 {
 

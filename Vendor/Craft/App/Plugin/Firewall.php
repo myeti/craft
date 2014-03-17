@@ -3,11 +3,11 @@
 namespace Craft\App\Plugin;
 
 use Craft\App\Event\Forbidden;
-use Craft\App\Handler\Before;
+use Craft\App\Plugin;
 use Craft\App\Request;
 use Craft\Box\Auth;
 
-class Firewall extends Before
+class Firewall extends Plugin
 {
 
     /**
@@ -16,7 +16,7 @@ class Firewall extends Before
      * @throws \Craft\App\Event\Forbidden
      * @return Request
      */
-    public function handle(Request $request)
+    public function before(Request $request)
     {
         if(isset($request->meta['auth']) and Auth::rank() < $request->meta['auth']) {
             throw new Forbidden('User not allowed for query "' . $request->query . '"');

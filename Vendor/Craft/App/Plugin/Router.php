@@ -3,11 +3,11 @@
 namespace Craft\App\Plugin;
 
 use Craft\App\Event\NotFound;
-use Craft\App\Handler\Before;
+use Craft\App\Plugin;
 use Craft\App\Request;
 use Craft\Router\Basic;
 
-class Router extends Before
+class Router extends Plugin
 {
 
     /** @var Basic */
@@ -28,7 +28,7 @@ class Router extends Before
      * @throws \Craft\App\Event\NotFound
      * @return Request
      */
-    public function handle(Request $request)
+    public function before(Request $request)
     {
         // route query
         $route = $this->router->find($request->query);

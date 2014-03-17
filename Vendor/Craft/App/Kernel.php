@@ -2,8 +2,6 @@
 
 namespace Craft\App;
 
-use Craft\App\Handler\Before;
-use Craft\App\Handler\After;
 use Craft\Error\Abort;
 use Craft\Reflect\Event;
 
@@ -12,26 +10,18 @@ class Kernel extends Dispatcher
 
     use Event;
 
-    /** @var Before[] */
-    protected $before = [];
-
-    /** @var After[] */
-    protected $after = [];
+    /** @var Plugin[] */
+    protected $plugins = [];
 
 
     /**
      * Add plugin
-     * @param Before $plugin
+     * @param Plugin $plugin
      * @return $this
      */
-    public function plug(Before $plugin)
+    public function plug(Plugin $plugin)
     {
-        if($plugin instanceof After) {
-            $this->after[] = $plugin;
-        }
-        else {
-            $this->before[] = $plugin;
-        }
+        $this->plugins[] = $plugin;
 
         return $this;
     }
@@ -55,16 +45,16 @@ class Kernel extends Dispatcher
         try {
 
             // execute 'before' plugin
-            foreach($this->before as $before) {
-                $request = $before->handle($request);
+            foreach($this->plugins as $before) {
+                $request = $before->before($request);
             }
 
             // dispatch
             $response = parent::handle($request);
 
             // execute 'after' plugin
-            foreach($this->after as $after) {
-                $response = $after->handle($request, $response);
+            foreach($this->plugins as $after) {
+                $response = $after->after($request, $response);
             }
 
         }

@@ -2,11 +2,11 @@
 
 namespace Craft\App\Plugin;
 
-use Craft\App\Handler\Before;
+use Craft\App\Plugin;
 use Craft\App\Request;
 use Craft\Reflect\Resolver;
 
-class Metadata extends Before
+class Metadata extends Plugin
 {
 
     /**
@@ -14,7 +14,7 @@ class Metadata extends Before
      * @param Request $request
      * @return Request
      */
-    public function handle(Request $request)
+    public function before(Request $request)
     {
         // get resolver
         $resolver = new Resolver();
