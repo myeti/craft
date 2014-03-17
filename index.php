@@ -91,9 +91,13 @@ $app->plug(new Craft\App\Plugin\Firewall);
 $app->plug(new Craft\App\Plugin\Templates);
 
 /**
- * If you want to create your own plugin, just extends :
- * - Craft\App\Handler\Before if you want to impact the Request
- * - Craft\App\Handler\After if you want to impact the Response
+ * If you want to create your own plugin, just extend the Craft\App\Plugin class
+ * and override the method you want : before() and/or after() and/or finish()
+ * - before($request) will change the current request before execution
+ * - after($request, $response) will change the response before rendering
+ * - finish($request, $response) won't change anything, but can be useful (cache, stats)
+ *
+ * Check the Craft\App\Plugin folder for some example.
  */
 
 
@@ -122,7 +126,7 @@ $app->handle();
 /**
  * Then, get the tracker data to
  * see elapsed time and memory.
- * Craft is fast ;)
+ * But you know, Craft is fast ;)
  */
 
 echo $tracker->end('app');
