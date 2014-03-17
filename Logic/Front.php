@@ -6,11 +6,11 @@
  */
 namespace My\Logic;
 
-use Craft\Env\Auth;
-use Craft\Env\Config;
-use Craft\Env\Flash;
-use Craft\Env\Mog;
-use Craft\Env\Session;
+use Craft\Box\Auth;
+use Craft\Box\Env;
+use Craft\Box\Flash;
+use Craft\Box\Mog;
+use Craft\Box\Session;
 use My\Model\User;
 
 /**
@@ -56,12 +56,8 @@ class Front
     public function models()
     {
         // find many
-        $users = User::find();
-        $users = User::find(['age' => 20]);
-
-        // count
-        $users = User::count();
-        $users = User::count(['age' => 20]);
+        $users = User::all();
+        $users = User::all(['age' => 20]);
 
         // find one
         $user = User::one(['age' => 20]);
@@ -123,7 +119,7 @@ class Front
         $user = Auth::user();
 
         // check if logged in
-        if(Auth::logged()) {
+        if(Auth::rank()) {
 
         }
 
@@ -138,7 +134,7 @@ class Front
      */
     public function env()
     {
-        Config::set('app.env', 'dev');
+        Env::set('app.env', 'dev');
     }
 
 

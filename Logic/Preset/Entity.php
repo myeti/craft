@@ -21,7 +21,7 @@ class Entity
      */
     public function all()
     {
-        $items = YourModel::get();
+        $items = YourModel::all();
         return ['entities' => $items];
     }
 
@@ -68,7 +68,7 @@ class Entity
 
             // save
             $model = hydrate($model, $data);
-            YourModel::set($model);
+            YourModel::save($model);
 
             // success
             Flash::set('form.success', $id ? 'entity updated.' : 'entity created.');

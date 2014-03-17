@@ -89,7 +89,7 @@ class AuthUser
             }
             // create + autologin
             else {
-                User::set($user);
+                User::save($user);
                 Auth::login(1, $user);
                 Flash::set('register.success', 'Welcome, ' . $user->username . '.');
                 go('/');
