@@ -6,7 +6,7 @@ abstract class Plugin
 {
 
     /**
-     * Before execution
+     * Handle request
      * @param Request $request
      * @return Request
      */
@@ -16,7 +16,7 @@ abstract class Plugin
     }
 
     /**
-     * After execution
+     * Handle response
      * @param Request $request
      * @param Response $response
      * @return Response
@@ -25,5 +25,13 @@ abstract class Plugin
     {
         return $response;
     }
+
+
+    /**
+     * End of execution
+     * @param Request $request
+     * @param Response $response
+     */
+    public function finish(Request $request, Response $response) {}
 
 } 

@@ -73,6 +73,11 @@ class Kernel extends Dispatcher
         // send response
         echo $response;
 
+        // finish process
+        foreach($this->plugins as $finish) {
+            $finish->finish($request, $response);
+        }
+
         return $response;
     }
 
