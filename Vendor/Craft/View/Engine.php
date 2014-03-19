@@ -26,8 +26,10 @@ class Engine extends \ArrayObject
         $this->ext = '.' . ltrim($ext, '.');
 
         // default helpers
-        $this->mount(new Helper\Asset());
-        $this->mount(new Helper\Html());
+        $this->mount(new Helper\Asset);
+        $this->mount(new Helper\Html);
+        $this->mount(new Helper\Box);
+
         $this->helper('partial', [$this, 'render']);
 
         parent::__construct();

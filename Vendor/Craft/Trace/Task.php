@@ -15,22 +15,14 @@ class Task extends \ArrayObject
     /** @var string */
     public $name;
 
-    /** @var array */
-    public $start = [
-        'time'   => 0,
-        'memory' => 0
-    ];
+    /** @var float */
+    public $base;
 
     /** @var array */
-    public $stop = [
-        'time'   => 0,
-        'memory' => 0
-    ];
+    public $data = [];
 
-    public $total = [
-        'time'   => 0,
-        'memory' => 0
-    ];
+    /** @var bool */
+    public $running = true;
 
 
     /**
@@ -39,8 +31,25 @@ class Task extends \ArrayObject
     public function __construct($name)
     {
         $this->name = $name;
-        $this->start = [
-            'time' => microtime(true),
+        $this->base = microtime(true);
+        $this->step('start');
+    }
+
+
+    /**
+     * Add step
+     * @param string $label
+     * @throws \LogicException
+     */
+    public function step($label = null)
+    {
+        if(!$this->running) {
+            throw new \LogicException('Task is over, cannot add step.');
+        }
+
+        $this->data[] = [
+            'label'  => $label,
+            'time'   => microtime(true) - $this->base,
             'memory' => memory_get_usage(true)
         ];
     }
@@ -52,48 +61,53 @@ class Task extends \ArrayObject
      */
     public function end()
     {
-        $this->stop = [
-            'time' => microtime(true),
-            'memory' => memory_get_usage(true)
+        if(!$this->running) {
+            throw new \LogicException('Task is already over.');
+        }
+
+        $this->step('end');
+        $this->running = false;
+
+        return $this->total();
+    }
+
+
+    /**
+     * calculate total data
+     * @return array
+     * @throws \LogicException
+     */
+    public function total()
+    {
+        if($this->running) {
+            throw new \LogicException('Task is running, cannot make report.');
+        }
+
+        // get boundaries
+        $first = $this->data[0];
+        $last = $this->data[count($this->data) - 1];
+
+        return (object)[
+            'time'   => $last['time'] - $first['time'],
+            'memory' => $last['memory'] - $first['memory']
         ];
-
-        $this->total = $this->report();
-
-        return $this;
     }
 
 
     /**
      * Get current state
+     * @throws \LogicException
      * @return array
      */
-    protected function report()
+    public function report()
     {
-        return [
-            'time' => microtime(true) - $this->start['time'],
-            'memory' => memory_get_usage(true) - $this->start['memory']
-        ];
-    }
+        // get boundaries
+        $total = $this->total();
 
-
-    /**
-     * Formatted report
-     * @return string
-     */
-    public function __toString()
-    {
-        // get current state
-        $report = ($this->total['time'] > 0)
-            ? $this->total
-            : $this->report();
-
-        // prepare string
-        $time = number_format($report['time'], 4);
-        $memory = $report['memory'] / 1024;
-        $string = '# ' . $this->name . ' : ' . $time . 'ms / ' . $memory . 'ko ';
-
-        // state
-        $string .= ($this->total['time'] > 0) ? '(finished)' : '(running)';
+        // make string
+        $string = '# ' . $this->name . ' : ';
+        $string .= number_format($total->time, 4) . 'ms / ';
+        $string .= ($total->memory / 1024) . 'ko ';
 
         return $string;
     }

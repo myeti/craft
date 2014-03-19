@@ -65,30 +65,6 @@ function post($key = null, $fallback = null)
 
 
 /**
- * Read-only Auth
- * @return \stdClass
- */
-function auth()
-{
-    return (object)[
-        'rank'      => Craft\Box\Auth::rank(),
-        'user'      => Craft\Box\Auth::user()
-    ];
-}
-
-
-/**
- * Read-only Flash
- * @param string $key
- * @return string
- */
-function flash($key)
-{
-    return Craft\Box\Flash::get($key);
-}
-
-
-/**
  * Alias of craft\I18n::translate()
  * @param  string $text
  * @param  array $vars
@@ -113,17 +89,6 @@ function hydrate($object, array $data)
 
 
 /**
- * Return object instance for chaining
- * @param $object
- * @return object
- */
-function with($object)
-{
-    return Craft\Reflect\Object::with($object);
-}
-
-
-/**
  * Alias of Strong::compose()
  * @param $string
  * @param array $vars
@@ -132,15 +97,4 @@ function with($object)
 function compose($string, array $vars = [])
 {
     return Craft\Text\String::compose($string, $vars);
-}
-
-
-/**
- * Return input reference
- * @param $something
- * return mixed
- */
-function ref(&$something)
-{
-    return $something;
 }

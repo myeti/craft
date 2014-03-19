@@ -14,7 +14,7 @@ require 'vendor/autoload.php';
 use Craft\Trace\Tracker;
 
 $tracker = new Tracker();
-$tracker->monitor('app');
+$tracker->start('app');
 
 
 /**
@@ -129,4 +129,4 @@ $app->handle();
  * But you know, Craft is fast ;)
  */
 
-echo $tracker->end('app');
+echo $tracker->end('app')->report();

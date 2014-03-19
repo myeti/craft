@@ -3,7 +3,7 @@
 namespace Craft\App;
 
 use Craft\Error\Abort;
-use Craft\Reflect\Event;
+use Craft\Signal\Event;
 
 class Kernel extends Dispatcher
 {
@@ -32,7 +32,7 @@ class Kernel extends Dispatcher
      * @param Request $request
      * @throws \Craft\Error\Abort
      * @throws \Exception
-     * @return Response
+     * @return bool
      */
     public function handle(Request $request = null)
     {
@@ -57,6 +57,14 @@ class Kernel extends Dispatcher
                 $response = $after->after($request, $response);
             }
 
+            // send response
+            echo $response;
+
+            // finish process
+            foreach($this->plugins as $finish) {
+                $finish->finish($request, $response);
+            }
+
         }
         // abort
         catch(Abort $e) {
@@ -70,15 +78,7 @@ class Kernel extends Dispatcher
             return false;
         }
 
-        // send response
-        echo $response;
-
-        // finish process
-        foreach($this->plugins as $finish) {
-            $finish->finish($request, $response);
-        }
-
-        return $response;
+        return true;
     }
 
 

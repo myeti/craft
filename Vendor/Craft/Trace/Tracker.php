@@ -164,7 +164,7 @@ class Tracker extends AbstractLogger
      * Start tracking
      * @param $process
      */
-    public function monitor($process)
+    public function start($process)
     {
         $this->tasks[$process] = new Task($process);
     }
@@ -173,7 +173,7 @@ class Tracker extends AbstractLogger
     /**
      * Stop tracking
      * @param $process
-     * @return array
+     * @return Task
      * @throws \InvalidArgumentException
      */
     public function end($process)
@@ -182,7 +182,22 @@ class Tracker extends AbstractLogger
             throw new \InvalidArgumentException('Unknown process "' . $process . '".');
         }
 
-        return $this->tasks[$process]->end();
+        $this->tasks[$process]->end();
+        return $this->tasks[$process];
+    }
+
+
+    /**
+     * Monitor action
+     * @param $process
+     * @param callable $subject
+     * @return array
+     */
+    public function monitor($process, callable $subject)
+    {
+        $this->start($process);
+        call_user_func($subject);
+        return $this->end($process);
     }
 
 
@@ -205,7 +220,7 @@ class Tracker extends AbstractLogger
         $string = '';
 
         foreach($this->tasks() as $task) {
-            $string .= $task . '<br/>';
+            $string .= $task->report() . '<br/>';
         }
 
         foreach($this->logs() as $log) {
