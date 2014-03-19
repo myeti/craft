@@ -2,7 +2,7 @@
 
 namespace Craft\Signal;
 
-class Channel implements EventChannel
+class Channel implements EventInterface
 {
     use Event;
 } 

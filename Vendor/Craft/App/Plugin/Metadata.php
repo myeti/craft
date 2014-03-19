@@ -5,9 +5,24 @@ namespace Craft\App\Plugin;
 use Craft\App\Plugin;
 use Craft\App\Request;
 use Craft\Reflect\Resolver;
+use Craft\Reflect\ResolverInterface;
 
 class Metadata extends Plugin
 {
+
+    /** @var ResolverInterface */
+    protected $resolver;
+
+
+    /**
+     * Set resolver
+     * @param ResolverInterface $resolver
+     */
+    public function __construct(ResolverInterface $resolver = null)
+    {
+        $this->resolver = $resolver ?: new Resolver;
+    }
+
 
     /**
      * Handle request
@@ -16,11 +31,7 @@ class Metadata extends Plugin
      */
     public function before(Request $request)
     {
-        // get resolver
-        $resolver = new Resolver();
-
-        // get metadata
-        $action = $resolver->resolve($request->action);
+        $action = $this->resolver->resolve($request->action);
         $request->action = $action->callable;
         $request->meta = $action->meta;
 

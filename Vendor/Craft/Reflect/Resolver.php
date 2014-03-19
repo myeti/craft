@@ -9,7 +9,7 @@
  */
 namespace Craft\Reflect;
 
-class Resolver
+class Resolver implements ResolverInterface
 {
 
     /** @var Injector */

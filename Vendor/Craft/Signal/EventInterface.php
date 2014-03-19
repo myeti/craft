@@ -2,7 +2,7 @@
 
 namespace Craft\Signal;
 
-interface EventChannel
+interface EventInterface
 {
 
     /**

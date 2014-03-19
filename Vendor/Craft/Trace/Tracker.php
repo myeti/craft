@@ -12,7 +12,7 @@ namespace Craft\Trace;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 
-class Tracker extends AbstractLogger
+class Tracker extends AbstractLogger implements TrackerInterface
 {
 
     /** @var Log[] */

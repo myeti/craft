@@ -14,7 +14,7 @@ class Bundle extends Kernel
         $this->plug(new Plugin\Router($routes));
         $this->plug(new Plugin\Metadata);
         $this->plug(new Plugin\Firewall);
-        $this->plug(new Plugin\Templates);
+        $this->plug(new Plugin\View);
     }
 
 } 

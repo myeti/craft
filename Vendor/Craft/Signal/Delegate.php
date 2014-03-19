@@ -5,7 +5,7 @@ namespace Craft\Signal;
 trait Delegate
 {
 
-    /** @var EventChannel */
+    /** @var EventInterface */
     protected $channel;
 
     /**

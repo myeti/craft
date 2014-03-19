@@ -5,12 +5,12 @@ namespace Craft\App\Plugin;
 use Craft\App\Event\NotFound;
 use Craft\App\Plugin;
 use Craft\App\Request;
-use Craft\Router\Basic;
+use Craft\Map\Router as MapRouter;
 
 class Router extends Plugin
 {
 
-    /** @var Basic */
+    /** @var MapRouter */
     protected $router;
 
     /**
@@ -19,7 +19,7 @@ class Router extends Plugin
      */
     public function __construct(array $routes)
     {
-        $this->router = new Basic($routes);
+        $this->router = new MapRouter($routes);
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace Craft\Router;
+namespace Craft\Map;
 
-interface MatcherInterface
+interface RouterInterface
 {
 
     /**

@@ -7,10 +7,11 @@ use Craft\App\Request;
 use Craft\App\Response;
 use Craft\Box\Mog;
 use Craft\View\Engine;
+use Craft\View\EngineInterface;
 use Craft\View\Helper\Asset;
 use Craft\View\Helper\Html;
 
-class Templates extends Plugin
+class View extends Plugin
 {
 
     /** @var Engine */
@@ -23,13 +24,14 @@ class Templates extends Plugin
      */
     public function __construct($root = null)
     {
-        if(!$root) {
-            $root = Mog::path();
+        if($root instanceof EngineInterface) {
+            $this->engine = $root;
         }
-
-        $this->engine = new Engine($root);
-        $this->engine->mount(new Html);
-        $this->engine->mount(new Asset(Mog::base()));
+        else {
+            $this->engine = new Engine($root ?: Mog::path());
+            $this->engine->mount(new Html);
+            $this->engine->mount(new Asset(Mog::base()));
+        }
     }
 
 

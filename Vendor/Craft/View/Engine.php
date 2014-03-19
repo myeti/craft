@@ -2,7 +2,7 @@
 
 namespace Craft\View;
 
-class Engine extends \ArrayObject
+class Engine extends \ArrayObject implements EngineInterface
 {
 
     /** @var string */
