@@ -25,8 +25,12 @@ class Dispatcher implements Handler
             throw new \BadMethodCallException('Request::action must be a valid callable.');
         }
 
+        // add request in args
+        $args = $request->args;
+        $args[] = &$request;
+
         // run
-        $data = call_user_func_array($request->action, $request->args);
+        $data = call_user_func_array($request->action, $args);
 
         // create response
         $response = new Response();

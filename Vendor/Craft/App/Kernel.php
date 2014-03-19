@@ -4,8 +4,9 @@ namespace Craft\App;
 
 use Craft\Error\Abort;
 use Craft\Signal\Event;
+use Craft\Signal\EventInterface;
 
-class Kernel extends Dispatcher
+class Kernel extends Dispatcher implements EventInterface
 {
 
     use Event;

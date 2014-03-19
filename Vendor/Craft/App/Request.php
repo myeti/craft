@@ -43,8 +43,7 @@ class Request
     public static function generate()
     {
         // resolve query
-        $query = substr(Mog::url(), strlen(Mog::base()));
-        $query = parse_url($query, PHP_URL_PATH);
+        $query = Mog::query();
 
         // create request
         return new self($query);

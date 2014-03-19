@@ -77,4 +77,30 @@ trait Model
         return $name;
     }
 
+
+    /**
+     * Many relation
+     * @param $entity
+     * @param $foreign
+     * @param string $local
+     * @return mixed
+     */
+    protected function _many($entity, $foreign, $local = 'id')
+    {
+        return Syn::get($entity)->where($foreign, $this->{$local})->all();
+    }
+
+
+    /**
+     * One relation
+     * @param $entity
+     * @param $local
+     * @param string $foreign
+     * @return mixed
+     */
+    protected function _one($entity, $local, $foreign = 'id')
+    {
+        return Syn::get($entity)->where($foreign, $this->{$local})->one();
+    }
+
 } 

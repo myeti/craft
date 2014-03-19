@@ -12,15 +12,26 @@ namespace Craft\Box;
 abstract class Mog
 {
 
+    /** @var string */
+    protected static $root;
+
+    /** @var string */
+    protected static $base;
+
+    /** @var string */
+    protected static $query;
+
     /**
      * Get root dir
      * @return string
      */
     public static function path()
     {
-        $segments = func_get_args();
-        $root = dirname(static::server('SCRIPT_FILENAME'));
-        return $root . implode(DIRECTORY_SEPARATOR, $segments);
+        if(!static::$root) {
+            static::$root = dirname(static::server('SCRIPT_FILENAME'));
+        }
+
+        return static::$root . implode(DIRECTORY_SEPARATOR, func_get_args());
     }
 
     /**
@@ -78,7 +89,34 @@ abstract class Mog
      */
     public static function base()
     {
-        return rtrim(dirname(static::server('SCRIPT_NAME')), '/') . '/';
+        if(!static::$base) {
+            $uri = static::server('REQUEST_URI');
+            $path = static::server('SCRIPT_NAME');
+
+            $offset = strlen($path);
+            if(substr($uri, 0, $offset) != $path) {
+                $offset = strlen(dirname($path));
+            }
+
+            static::$base = rtrim(substr($uri, 0, $offset), '/') . '/';
+            static::$query = '/' . trim(substr($uri, $offset), '/');
+        }
+
+        return static::$base;
+    }
+
+
+    /**
+     * Get url query segment
+     * @return string
+     */
+    public static function query()
+    {
+        if(!static::$query) {
+            static::base();
+        }
+
+        return static::$query;
     }
 
 
@@ -89,7 +127,7 @@ abstract class Mog
     public static function fullurl()
     {
         $protocol = static::https() ? 'https' : 'http';
-        return $protocol . '://' . static::host() . static::base() . static::url();
+        return $protocol . '://' . static::host() . static::base() . static::query();
     }
 
 

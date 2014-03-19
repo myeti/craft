@@ -48,7 +48,7 @@ class Resolver implements ResolverInterface
     public function resolveFunction($input)
     {
         // check
-        if(!function_exists($input) and !($input instanceof \Closure)) {
+        if(!($input instanceof \Closure) and !function_exists($input)) {
             return false;
         }
 

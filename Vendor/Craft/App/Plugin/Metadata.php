@@ -33,7 +33,7 @@ class Metadata extends Plugin
     {
         $action = $this->resolver->resolve($request->action);
         $request->action = $action->callable;
-        $request->meta = $action->meta;
+        $request->meta = array_merge($request->meta, $action->meta);
 
         return $request;
     }
