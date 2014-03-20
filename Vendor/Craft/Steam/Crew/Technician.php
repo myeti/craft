@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Steam\Gear;
+namespace Craft\Steam\Crew;
 
 use Craft\App\Plugin\Metadata;
 

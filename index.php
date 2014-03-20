@@ -24,7 +24,7 @@ $tracker->start('app');
 
 use Craft\Orm\Syn;
 
-Syn::MySQL('dbname')              // open dbname on localhost
+Syn::MySQL('dbname')                // open dbname on localhost
     ->map('user', 'My\Model\User')  // map entity 'user' as 'My\Model\User'
     ->build();                      // build your models into your db
 

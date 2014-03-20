@@ -3,8 +3,8 @@
 namespace Craft\App;
 
 use Craft\Error\Abort;
-use Craft\Signal\Event;
-use Craft\Signal\EventInterface;
+use Craft\Trigger\Event;
+use Craft\Trigger\EventInterface;
 
 class Kernel extends Dispatcher implements EventInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Signal;
+namespace Craft\Trigger;
 
 class Channel implements EventInterface
 {
