@@ -123,7 +123,7 @@ class Jar implements JarInterface
      */
     public function wipe($entity)
     {
-        $sql = $this->builder->drop($this->prefix . $entity);
+        $sql = $this->builder->wipe($this->prefix . $entity);
         return $this->pdo->query($sql)->rowCount();
     }
 

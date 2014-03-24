@@ -64,6 +64,8 @@ class EntityBuilder
             $sql .= ',';
         }
 
+        $sql = trim($sql, ',') . ')';
+
         return $sql;
     }
 
