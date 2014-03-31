@@ -1,8 +1,8 @@
 <?php
 
-namespace Craft\Orm\Jar;
+namespace Craft\Orm;
 
-interface BeanInterface
+interface CandyInterface
 {
 
     /**

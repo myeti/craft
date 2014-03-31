@@ -1,8 +1,10 @@
 <?php
 
-namespace Craft\Orm\Jar;
+namespace Craft\Orm;
 
-class Bean implements BeanInterface
+use Craft\Orm\Error\SQLException;
+
+class Candy implements CandyInterface
 {
 
     /** @var string */
@@ -11,13 +13,14 @@ class Bean implements BeanInterface
     /** @var \PDO */
     protected $pdo;
 
-    /** @var Bean\QueryBuilder */
+    /** @var QueryInterface */
     protected $query;
 
 
     /**
      * Init entity
      * @param \PDO $pdo
+     * @param QueryInterface $query
      * @param string $entity
      * @param string $class
      */
@@ -25,7 +28,7 @@ class Bean implements BeanInterface
     {
         $this->pdo = $pdo;
         $this->class = $class;
-        $this->query = new Bean\QueryBuilder($entity);
+        $this->query = new Native\Query($entity);
     }
 
 
@@ -120,9 +123,7 @@ class Bean implements BeanInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $stm = $this->pdo->prepare($sql);
-        $stm->execute($values);
-
+        $this->execute($sql, $values);
         return $this->pdo->lastInsertId();
     }
 
@@ -139,9 +140,7 @@ class Bean implements BeanInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $stm = $this->pdo->prepare($sql);
-        $stm->execute($values);
-
+        $stm = $this->execute($sql, $values);
         return $stm->rowCount();
     }
 
@@ -156,10 +155,28 @@ class Bean implements BeanInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $stm = $this->pdo->prepare($sql);
+        $stm = $this->execute($sql, $values);
+        return $stm->rowCount();
+    }
+
+
+    /**
+     * Execute query
+     * @param string $statement
+     * @param array $values
+     * @return \PDOStatement
+     * @throws \Craft\Orm\Error\SQLException
+     */
+    protected function execute($statement, array $values = [])
+    {
+        $stm = $this->pdo->prepare($statement);
         $stm->execute($values);
 
-        return $stm->rowCount();
+        if(!$stm) {
+            throw new SQLException($this->pdo->errorInfo());
+        }
+
+        return $stm;
     }
 
 }

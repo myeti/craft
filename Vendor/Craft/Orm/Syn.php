@@ -2,55 +2,55 @@
 
 namespace Craft\Orm;
 
-use Craft\Orm\Driver\MySQL;
-use Craft\Orm\Driver\SQLite;
+use Craft\Orm\Adapter\MySQL;
+use Craft\Orm\Adapter\SQLite;
 
 abstract class Syn
 {
 
-    /** jars priority */
+    /** Bags priority */
     const MASTER = 'master.db';
     const SLAVE = 'slave.db';
 
-    /** @var JarInterface[] */
-    protected static $jars = [];
+    /** @var BagInterface[] */
+    protected static $bags = [];
 
     /** @var int */
     protected static $use = self::MASTER;
 
 
     /**
-     * Load jar as master
-     * @param JarInterface $jar
+     * Load Bag as master
+     * @param BagInterface $bag
      * @param string $as
-     * @return \Craft\Orm\JarInterface
+     * @return \Craft\Orm\BagInterface
      */
-    public static function load(JarInterface $jar, $as = self::MASTER)
+    public static function load(BagInterface $bag, $as = self::MASTER)
     {
-        static::$jars[$as] = $jar;
-        return static::jar();
+        static::$bags[$as] = $bag;
+        return static::bag();
     }
 
 
     /**
-     * Load jar as master
+     * Load Bag as master
      * @param string $as
      * @throws \LogicException
-     * @return JarInterface
+     * @return BagInterface
      */
-    public static function jar($as = null)
+    public static function bag($as = null)
     {
-        // set jar
+        // set Bag
         if($as) {
             static::$use = $as;
         }
 
-        // no jar
-        if(!isset(static::$jars[static::$use])) {
-            throw new \LogicException('No jar [' . static::$use . '] loaded.');
+        // no Bag
+        if(!isset(static::$bags[static::$use])) {
+            throw new \LogicException('No Bag [' . static::$use . '] loaded.');
         }
 
-        return static::$jars[static::$use];
+        return static::$bags[static::$use];
     }
 
 
@@ -61,7 +61,7 @@ abstract class Syn
      */
     public static function get($entity)
     {
-        return static::jar()->get($entity);
+        return static::bag()->get($entity);
     }
 
 
@@ -75,29 +75,29 @@ abstract class Syn
      */
     public static function all($entity, array $where = [], $sort = null, $limit = null)
     {
-        $jar = static::jar()->get($entity);
+        $bag = static::bag()->get($entity);
 
         foreach($where as $expression => $value) {
-            $jar->where($expression, $value);
+            $bag->where($expression, $value);
         }
 
         if($sort and is_array($sort)) {
             foreach($sort as $field => $sorting) {
-                $jar->sort($field, $sorting);
+                $bag->sort($field, $sorting);
             }
         }
         elseif($sort) {
-            $jar->sort($sort);
+            $bag->sort($sort);
         }
 
         if($limit and is_array($limit)) {
-            $jar->limit($limit[0], $limit[1]);
+            $bag->limit($limit[0], $limit[1]);
         }
         elseif($limit) {
-            $jar->limit($limit);
+            $bag->limit($limit);
         }
 
-        return $jar->all();
+        return $bag->all();
     }
 
 
@@ -109,13 +109,13 @@ abstract class Syn
      */
     public static function one($entity, array $where = [])
     {
-        $jar = static::jar()->get($entity);
+        $bag = static::bag()->get($entity);
 
         foreach($where as $expression => $value) {
-            $jar->where($expression, $value);
+            $bag->where($expression, $value);
         }
 
-        return $jar->one();
+        return $bag->one();
     }
 
 
@@ -134,11 +134,11 @@ abstract class Syn
 
         // insert
         if(empty($data['id'])) {
-            return static::jar()->get($entity)->add($data);
+            return static::bag()->get($entity)->add($data);
         }
 
         // update
-        return static::jar()->get($entity)->where('id', $data['id'])->set($data);
+        return static::bag()->get($entity)->where('id', $data['id'])->set($data);
     }
 
 
@@ -150,7 +150,7 @@ abstract class Syn
      */
     public static function drop($entity, $id)
     {
-        return static::jar()->get($entity)->where('id', $id)->drop();
+        return static::bag()->get($entity)->where('id', $id)->drop();
     }
 
 
@@ -158,42 +158,29 @@ abstract class Syn
      * Setup mysql
      * @param string $dbname
      * @param array $config
-     * @return \Craft\Orm\JarInterface
+     * @return \Craft\Orm\BagInterface
      */
     public static function MySQL($dbname, array $config = [])
     {
-        // set config params
-        $config = $config + [
-            'host'      => 'localhost',
-            'username'  => 'root',
-            'password'  => null,
-            'prefix'    => null,
-        ];
+        // create bag
+        $bag = new MySQL($dbname, $config);
+        static::load($bag);
 
-        // create pdo
-        $pdo = new MySQL($config['host'], $config['username'], $config['password'],  $dbname);
-
-        // create jar
-        $jar = new Jar($pdo, $config['prefix']);
-        static::load($jar);
-
-        return static::jar();
+        return static::bag();
     }
 
 
     /**
      * Setup mysql
      * @param string $filename
-     * @param string $prefix
-     * @return \Craft\Orm\JarInterface
+     * @return \Craft\Orm\BagInterface
      */
-    public static function SQLite($filename, $prefix = null)
+    public static function SQLite($filename)
     {
-        $pdo = new SQLite($filename);
-        $jar = new Jar($pdo, $prefix);
-        static::load($jar);
+        $bag = new SQLite($filename);
+        static::load($bag);
 
-        return static::jar();
+        return static::bag();
     }
 
 } 
