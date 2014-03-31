@@ -1,8 +1,8 @@
 <?php
 
-namespace Craft\Orm\Jar\Bean;
+namespace Craft\Orm\Native;
 
-class QueryBuilder
+class Query
 {
 
     /** @var string */

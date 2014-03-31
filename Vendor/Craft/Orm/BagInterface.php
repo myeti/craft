@@ -2,7 +2,7 @@
 
 namespace Craft\Orm;
 
-interface JarInterface
+interface BagInterface
 {
 
     /**
@@ -28,23 +28,15 @@ interface JarInterface
     /**
      * Get lazy entity
      * @param $entity
-     * @return Jar\Bean
+     * @return CandyInterface
      */
     public function get($entity);
 
     /**
-     * Create entity
-     * @param $entity
-     * @param array $fields
-     * @return \PDOStatement
+     * Run custom query
+     * @param $statement
+     * @return mixed
      */
-    public function create($entity, array $fields);
+    public function query($statement);
 
-    /**
-     * Drop entity
-     * @param $entity
-     * @return int
-     */
-    public function wipe($entity);
-
-} 
+}
