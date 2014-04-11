@@ -32,7 +32,7 @@ class RegexFinder extends \RegexIterator
      * @param $regex
      * @return bool
      */
-    public static function find($in, $regex)
+    public static function has($in, $regex)
     {
         $iterator = new self($in, $regex);
         return $iterator->valid();

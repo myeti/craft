@@ -9,7 +9,7 @@
  */
 namespace Craft\Storage;
 
-class Ftp
+class Ftp implements Adapter
 {
 
     /** @var resource */
@@ -18,88 +18,92 @@ class Ftp
 
     /**
      * Open a FTP remote connection
-     * @param $url
+     * @param string $url
+     * @param string $username
+     * @param string $password
      * @param bool $secure
      */
-    public function __construct($url, $secure = false)
+    public function __construct($url, $username, $password, $secure = false)
     {
         $this->remote = $secure ? ftp_ssl_connect($url) : ftp_connect($url);
-    }
-
-
-    /**
-     * Log in ftp
-     * @param $username
-     * @param $password
-     * @return bool
-     */
-    public function login($username, $password)
-    {
-        return ftp_login($this->remote, $username, $password);
+        ftp_login($this->remote, $username, $password);
     }
 
 
     /**
      * Get current directory
-     * @return string
+     * @param string $path
+     * @return array
      */
-    public function current()
+    public function listing($path = '.')
     {
-        return ftp_pwd($this->remote);
+        return ftp_nlist($this->remote, $path);
     }
 
 
     /**
-     * Get current directory
-     * @param string $of
-     * @return string
-     */
-    public function listing($of = '.')
-    {
-        return ftp_nlist($this->remote, $of);
-    }
-
-
-    /**
-     * Move to another directory
-     * @param $to
+     * Check if path exists
+     * @param string $path
      * @return bool
      */
-    public function walk($to)
+    public function has($path)
     {
-        $moved = true;
-        $dirs = explode('/', trim($to, '/'));
-        foreach($dirs as $dir) {
-            $moved &= ftp_chdir($this->remote, $dir);
+        $list = ftp_nlist($this->remote, dirname($path));
+        return in_array($path, $list);
+    }
+
+
+    /**
+     * Read file
+     * @param string $filename
+     * @return $this
+     */
+    public function read($filename)
+    {
+        $tmp = tmpfile();
+        ftp_fget($this->remote, $tmp, $filename, FTP_BINARY);
+        $content = stream_get_contents($tmp, -1, 0);
+        fclose($tmp);
+        return $content;
+    }
+
+
+    /**
+     * Upload file to ftp
+     * @param string $filename
+     * @param string $content
+     * @param int $where
+     * @return $this
+     */
+    public function write($filename, $content, $where = self::REPLACE)
+    {
+        $tmp = tmpfile();
+
+        if($where = self::BEFORE) {
+            $content .= $this->read($filename);
+        }
+        elseif($where = self::AFTER) {
+            $content = $this->read($filename) . $content;
         }
 
-        return $moved;
-    }
-
-
-    /**
-     * Delete file or directory
-     * @param $file
-     * @return bool
-     */
-    public function delete($file)
-    {
-        return ftp_delete($this->remote, $file) ?: ftp_rmdir($this->remote, $file);
+        fwrite($tmp, $content);
+        $bool = ftp_fput($this->remote, $filename, $tmp, FTP_BINARY);
+        fclose($tmp);
+        return $bool;
     }
 
 
     /**
      * Create directory
-     * @param $directory
+     * @param string $path
      * @param int $mode
-     * @internal param int $mod
      * @return bool
      */
-    public function create($directory, $mode = null)
+    public function create($path, $mode = 0755)
     {
-        $created = ftp_mkdir($this->remote, $directory);
+        $created = ftp_mkdir($this->remote, $path);
         if($mode) {
-            ftp_chmod($this->remote, $mode, $directory);
+            ftp_chmod($this->remote, $mode, $path);
         }
 
         return $created;
@@ -107,52 +111,25 @@ class Ftp
 
 
     /**
+     * Delete file or directory
+     * @param string $filename
+     * @return bool
+     */
+    public function delete($filename)
+    {
+        return ftp_delete($this->remote, $filename) ?: ftp_rmdir($this->remote, $filename);
+    }
+
+
+    /**
      * Rename file or directory
-     * @param $old
-     * @param $new
+     * @param string $old
+     * @param string $new
      * @return bool
      */
     public function rename($old, $new)
     {
         return ftp_rename($this->remote, $old, $new);
-    }
-
-
-    /**
-     * Move file or directory
-     * @param $what
-     * @param $to
-     * @return bool
-     */
-    public function move($what, $to)
-    {
-        $filename = pathinfo($what, PATHINFO_BASENAME);
-        $to .= '/' . $filename;
-        return ftp_rename($this->remote, $filename, $to);
-    }
-
-
-    /**
-     * Download file
-     * @param $filename
-     * @param $to
-     * @return $this
-     */
-    public function download($filename, $to)
-    {
-        return ftp_get($this->remote, $to, $filename, FTP_BINARY);
-    }
-
-
-    /**
-     * Upload file to ftp
-     * @param $filename
-     * @param null $to
-     * @return $this
-     */
-    public function upload($filename, $to = null)
-    {
-        return ftp_put($this->remote, $to, $filename, FTP_BINARY);
     }
 
 
@@ -164,4 +141,4 @@ class Ftp
         ftp_close($this->remote);
     }
 
-} 
+}

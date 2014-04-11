@@ -32,7 +32,7 @@ class GlobFinder extends \RecursiveIteratorIterator
      * @param $glob
      * @return bool
      */
-    public static function find($in, $glob)
+    public static function has($in, $glob)
     {
         $iterator = new self($in, $glob);
         return $iterator->valid();

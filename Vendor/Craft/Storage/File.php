@@ -16,13 +16,14 @@ abstract class File
 
 	/**
 	 * Check if a file exists
-	 * @param  string $filename
+	 * @param  string $path
 	 * @return bool
 	 */
-	public static function exists($filename)
+	public static function has($path)
 	{
-		return file_exists($filename);
+		return static::local()->has($path);
 	}
+
 
 	/**
 	 * Read file content
@@ -31,8 +32,9 @@ abstract class File
 	 */
 	public static function read($filename)
 	{
-		return file_get_contents($filename);
+		return static::local()->read($filename);
 	}
+
 
 	/**
 	 * Write content in file
@@ -42,44 +44,42 @@ abstract class File
 	 */
 	public static function write($filename, $content)
 	{
-		return file_put_contents($filename, $content);
+        return static::local()->write($filename, $content);
 	}
 
-    /**
-     * Move file
-     * @param string $filename
-     * @param string $to
-     * @return bool
-     */
-	public static function move($filename, $to)
-	{
-		// clean to
-		if(is_dir($to)) {
-			$to .= DIRECTORY_SEPARATOR . basename($filename);
-		}
-
-		return rename($filename, $to);
-	}
 
     /**
      * Rename file
-     * @param string $filename
-     * @param string $to
+     * @param string $old
+     * @param string $new
      * @return bool
      */
-	public static function rename($filename, $to)
+    public static function rename($old, $new)
+    {
+        return static::local()->rename($old, $new);
+    }
+
+
+    /**
+     * Move file
+     * @param string $old
+     * @param string $new
+     * @return bool
+     */
+	public static function move($old, $new)
 	{
-		return rename($filename, $to);
+		return static::local()->rename($old, $new);
 	}
+
 
 	/**
 	 * Delete file
-	 * @param  string $filename
+	 * @param  string $path
 	 * @return bool
 	 */
-	public static function delete($filename)
+	public static function delete($path)
 	{
-		return unlink($filename);
+        return static::local()->delete($path);
 	}
 
 
@@ -158,5 +158,20 @@ abstract class File
 		readfile($filename);
 		exit;
 	}
+
+
+    /**
+     * Get local instance
+     * @return Adapter
+     */
+    protected static function local()
+    {
+        static $local;
+        if(!$local) {
+            $local = new Local(null);
+        }
+
+        return $local;
+    }
 
 }
