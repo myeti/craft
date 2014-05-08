@@ -14,37 +14,43 @@ abstract class Query
 
     /**
      * Send request
-     * @param $url
-     * @param StreamContext $context
+     * @param string $url
+     * @param array $opts
      * @return mixed
      */
-    public static function make($url, StreamContext $context)
+    public static function make($url, array $opts = [])
     {
-        // make opts
-        $opts = $context->opts();
-
-        // create stream context
         $context = stream_context_create($opts);
-
-        // execute query
         return file_get_contents($url, null, $context);
     }
 
 
     /**
      * Make get request
-     * @param $url
+     * @param string $url
      * @param array $params
      * @return mixed
      */
     public static function get($url, array $params = [])
     {
-        // create http get context
-        $context = new Context\HttpContext();
-        $context->method = 'get';
-        $context->data = $params;
+        // default opts
+        $opts = [
+            'http' => [
+                'method'            => 'get',
+                'request_fulluri'   => false,
+                'follow_location'   => 1,
+                'max_redirects'     => 20,
+                'protocol_version'  => 1.0,
+                'ignore_errors'     => false
+            ]
+        ];
 
-        return static::make($url, $context);
+        // build query
+        if($params) {
+            $url .= '?' . http_build_query($params);
+        }
+
+        return static::make($url, $opts);
     }
 
 
@@ -56,12 +62,20 @@ abstract class Query
      */
     public static function post($url, array $data = [])
     {
-        // create http get context
-        $context = new Context\HttpContext();
-        $context->method = 'post';
-        $context->data = $data;
+        // default opts
+        $opts = [
+            'http' => [
+                'method'            => 'post',
+                'request_fulluri'   => false,
+                'follow_location'   => 1,
+                'max_redirects'     => 20,
+                'protocol_version'  => 1.0,
+                'ignore_errors'     => false,
+                'content'           => http_build_query($data)
+            ]
+        ];
 
-        return static::make($url, $context);
+        return static::make($url, $opts);
     }
 
 } 

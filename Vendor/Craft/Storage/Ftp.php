@@ -9,48 +9,10 @@
  */
 namespace Craft\Storage;
 
-class Ftp implements Adapter
+use Craft\Remote\FTP as NativeFTP;
+
+class FTP extends NativeFTP implements Adapter
 {
-
-    /** @var resource */
-    protected $remote;
-
-
-    /**
-     * Open a FTP remote connection
-     * @param string $url
-     * @param string $username
-     * @param string $password
-     * @param bool $secure
-     */
-    public function __construct($url, $username, $password, $secure = false)
-    {
-        $this->remote = $secure ? ftp_ssl_connect($url) : ftp_connect($url);
-        ftp_login($this->remote, $username, $password);
-    }
-
-
-    /**
-     * Get current directory
-     * @param string $path
-     * @return array
-     */
-    public function listing($path = '.')
-    {
-        return ftp_nlist($this->remote, $path);
-    }
-
-
-    /**
-     * Check if path exists
-     * @param string $path
-     * @return bool
-     */
-    public function has($path)
-    {
-        $list = ftp_nlist($this->remote, dirname($path));
-        return in_array($path, $list);
-    }
 
 
     /**
@@ -94,51 +56,13 @@ class Ftp implements Adapter
 
 
     /**
-     * Create directory
+     * Delete path
      * @param string $path
-     * @param int $mode
      * @return bool
      */
-    public function create($path, $mode = 0755)
+    public function delete($path)
     {
-        $created = ftp_mkdir($this->remote, $path);
-        if($mode) {
-            ftp_chmod($this->remote, $mode, $path);
-        }
-
-        return $created;
-    }
-
-
-    /**
-     * Delete file or directory
-     * @param string $filename
-     * @return bool
-     */
-    public function delete($filename)
-    {
-        return ftp_delete($this->remote, $filename) ?: ftp_rmdir($this->remote, $filename);
-    }
-
-
-    /**
-     * Rename file or directory
-     * @param string $old
-     * @param string $new
-     * @return bool
-     */
-    public function rename($old, $new)
-    {
-        return ftp_rename($this->remote, $old, $new);
-    }
-
-
-    /**
-     * Close connection
-     */
-    public function __destruct()
-    {
-        ftp_close($this->remote);
+        return $this->drop($path);
     }
 
 }

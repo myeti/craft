@@ -113,14 +113,14 @@ class Query
         $last = end($split);
 
         // case 1 : missing '= ?'
-        if(preg_match('/^[a-zA-Z_0-9]$/', $expression)) {
+        if(preg_match('/^[a-zA-Z_0-9]+$/', $expression)) {
             $expression .= ' = ?';
         }
         // case 2 : missing '?'
         elseif(in_array($last, $this->operators)) {
             if(is_array($value)) {
                 $values = $value;
-                $placeholders = array_fill(0, count($value), '?');
+                $placeholders = array_fill(0, count($values), '?');
                 $expression .= ' (' . implode(', ', $placeholders) . ')';
             }
             else {
@@ -195,7 +195,7 @@ class Query
             }
 
             if($this->limit) {
-                $sql[] = 'LIMIT' . $this->limit;
+                $sql[] = 'LIMIT ' . $this->limit;
             }
 
         }
@@ -206,7 +206,7 @@ class Query
 
             $fields = $holders = [];
             foreach($this->insert as $field => $value) {
-                $fields = '`' . $field . '`';
+                $fields[] = '`' . $field . '`';
                 $holders[] = '?';
                 $values[] = $value;
             }

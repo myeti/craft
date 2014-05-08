@@ -107,12 +107,19 @@ abstract class Syn
      * @param array $where
      * @return mixed
      */
-    public static function one($entity, array $where = [])
+    public static function one($entity, $where = [])
     {
         $bag = static::bag()->get($entity);
 
-        foreach($where as $expression => $value) {
-            $bag->where($expression, $value);
+        // id
+        if(is_string($where)) {
+            $bag->where('id', $where);
+        }
+        // where
+        elseif(is_array($where)) {
+            foreach($where as $expression => $value) {
+                $bag->where($expression, $value);
+            }
         }
 
         return $bag->one();
@@ -148,9 +155,22 @@ abstract class Syn
      * @param $id
      * @return int
      */
-    public static function drop($entity, $id)
+    public static function drop($entity, $where)
     {
-        return static::bag()->get($entity)->where('id', $id)->drop();
+        $bag = static::bag()->get($entity);
+
+        // id
+        if(is_string($where)) {
+            $bag->where('id', $where);
+        }
+        // where
+        elseif(is_array($where)) {
+            foreach($where as $expression => $value) {
+                $bag->where($expression, $value);
+            }
+        }
+
+        return $bag->drop();
     }
 
 
@@ -166,7 +186,7 @@ abstract class Syn
         $bag = new MySQL($dbname, $config);
         static::load($bag);
 
-        return static::bag();
+        return $bag;
     }
 
 
@@ -180,7 +200,7 @@ abstract class Syn
         $bag = new SQLite($filename);
         static::load($bag);
 
-        return static::bag();
+        return $bag;
     }
 
-} 
+}

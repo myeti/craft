@@ -13,14 +13,13 @@ class Candy implements CandyInterface
     /** @var \PDO */
     protected $pdo;
 
-    /** @var QueryInterface */
+    /** @var Native\Query */
     protected $query;
 
 
     /**
      * Init entity
      * @param \PDO $pdo
-     * @param QueryInterface $query
      * @param string $entity
      * @param string $class
      */
@@ -87,8 +86,7 @@ class Candy implements CandyInterface
 
         // cast
         if($this->class) {
-            $stm->setFetchMode(\PDO::FETCH_CLASS, $this->class);
-            return $stm->fetchAll(\PDO::FETCH_CLASS);
+            return $stm->fetchAll(\PDO::FETCH_CLASS, $this->class);
         }
 
         return $stm->fetchAll(\PDO::FETCH_OBJ);

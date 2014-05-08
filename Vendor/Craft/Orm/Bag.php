@@ -87,7 +87,6 @@ class Bag implements BagInterface
      */
     public function get($entity)
     {
-        $query = $this->query;
         $class = isset($this->map[$entity]) ? $this->map[$entity] : null;
         return $this->delegate($this->pdo, $this->prefix . $entity, $class);
     }
@@ -141,6 +140,7 @@ class Bag implements BagInterface
     {
         $query = $this->pdo->query($statement);
         if(!$query) {
+            debug($statement, $this->pdo->errorInfo());
             throw new Error\SQLException($this->pdo->errorInfo());
         }
 

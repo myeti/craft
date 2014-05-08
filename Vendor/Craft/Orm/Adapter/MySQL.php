@@ -17,12 +17,12 @@ class MySQL extends Bag
     /**
      * Init for mysql
      * @param string $dbname
-     * @param array $connector
+     * @param array $config
      */
-    public function __construct($dbname, array $connector = [])
+    public function __construct($dbname, array $config = [])
     {
         // default connector
-        $connector = $connector + [
+        $config += [
             'host'      => 'localhost',
             'username'  => 'root',
             'password'  => null,
@@ -30,11 +30,11 @@ class MySQL extends Bag
         ];
 
         // create pdo instance
-        $connector = 'mysql:host=' . $connector['host'] . ';dbname=' . $dbname;
-        $pdo = new \PDO($connector, $connector['username'], $connector['password']);
+        $connector = 'mysql:host=' . $config['host'] . ';dbname=' . $dbname;
+        $pdo = new \PDO($connector, $config['username'], $config['password']);
 
         // init bag
-        parent::__construct($pdo, $connector['prefix']);
+        parent::__construct($pdo, $config['prefix']);
     }
 
 } 

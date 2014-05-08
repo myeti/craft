@@ -12,7 +12,7 @@ class Builder extends NativeBuilder
      */
     public function __construct()
     {
-        $this->syntax['primary'] = 'autoincrement';
+        $this->syntax['primary'] = 'primary key autoincrement';
     }
 
 } 

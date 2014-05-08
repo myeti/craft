@@ -7,7 +7,7 @@ class Builder
 
     /** @var array */
     protected $syntax = [
-        'primary'       => 'auto_increment',
+        'primary'       => 'primary key auto_increment',
         'null'          => 'not null',
         'default'       => 'default',
     ];
@@ -44,10 +44,14 @@ class Builder
         // each field
         foreach($fields as $field => $type) {
 
+            // clean
+
             // define opts
             $opts = is_array($type)
                 ? $type + $this->defaults
                 : ['type' => $type] + $this->defaults;
+
+            $opts['type'] = trim($opts['type']);
 
             // parse type
             if(isset($this->types[$opts['type']])) {
@@ -59,6 +63,7 @@ class Builder
 
             // primary
             if($opts['primary']) {
+                $opts['default'] = null;
                 $sql .= ' ' . $this->syntax['primary'];
             }
 
@@ -69,7 +74,7 @@ class Builder
 
             // default
             if($opts['default']) {
-                $sql .= ' ' . $this->syntax['default'];
+                $sql .= ' ' . $this->syntax['default'] . ' ' . $opts['default'];
             }
 
             // end of line
