@@ -9,8 +9,6 @@
  */
 namespace Craft\Data;
 
-use Craft\Reflect\Event;
-
 class Repository extends \ArrayObject implements Provider\ProviderInterface
 {
 

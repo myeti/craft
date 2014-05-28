@@ -14,6 +14,9 @@ class Engine extends \ArrayObject implements EngineInterface
     /** @var Helper[] */
     protected $helpers = [];
 
+    /** @var Engine[] */
+    protected static $instances = [];
+
 
     /**
      * Setup root path
@@ -113,10 +116,17 @@ class Engine extends \ArrayObject implements EngineInterface
      */
     public static function forge($template, array $data = [])
     {
+        // parse path
         $dirname = dirname($template);
         $filename = basename($template);
 
-        $engine = new self($dirname);
+        // stock instance
+        if(!isset(static::$instances[$dirname])) {
+            static::$instances[$dirname] = new self($dirname);
+        }
+
+        // return engine
+        $engine = static::$instances[$dirname];
         return $engine->render($filename, $data);
     }
 

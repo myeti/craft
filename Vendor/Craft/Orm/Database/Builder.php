@@ -1,33 +1,33 @@
 <?php
 
-namespace Craft\Orm\Native;
+namespace Craft\Orm\Database;
 
 class Builder
 {
 
     /** @var array */
     protected $syntax = [
-        'primary'       => 'primary key auto_increment',
-        'null'          => 'not null',
-        'default'       => 'default',
+        'primary'       => 'PRIMARY KEY AUTO_INCREMENT',
+        'null'          => 'NOT NULL',
+        'default'       => 'DEFAULT',
     ];
 
     /** @var array */
     protected $types = [
-        'varchar'           => 'varchar(255)',
-        'string'            => 'varchar(255)',
-        'string text'       => 'text',
-        'string date'       => 'date',
-        'string datetime'   => 'datetime',
-        'int'               => 'integer',
+        'varchar'           => 'VARCHAR(255)',
+        'string'            => 'VARCHAR(255)',
+        'string text'       => 'TEXT',
+        'string date'       => 'DATE',
+        'string datetime'   => 'DATETIME',
+        'int'               => 'INTEGER',
     ];
 
     /** @var array */
     protected $defaults = [
-        'type'      => 'varchar(255)',
+        'type'      => 'VARCHAR(255)',
         'primary'   => false,
         'null'      => true,
-        'default'   => 'null'
+        'default'   => 'NULL'
     ];
 
     /**
@@ -39,12 +39,10 @@ class Builder
     public function create($entity, array $fields)
     {
         // write create
-        $sql = 'create table if not exists `' . $entity . '` (';
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . $entity . '` (';
 
         // each field
         foreach($fields as $field => $type) {
-
-            // clean
 
             // define opts
             $opts = is_array($type)
@@ -95,7 +93,7 @@ class Builder
      */
     public function clear($entity)
     {
-        return 'truncate `' . $entity . '`;';
+        return 'TRUNCATE `' . $entity . '`;';
     }
 
 
@@ -106,7 +104,7 @@ class Builder
      */
     public function wipe($entity)
     {
-        return 'drop table `' . $entity . '`;';
+        return 'DROP TABLE `' . $entity . '`;';
     }
 
 }

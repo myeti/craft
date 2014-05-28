@@ -2,7 +2,7 @@
 
 namespace Craft\Orm\Adapter\SQLite;
 
-use Craft\Orm\Native\Builder as NativeBuilder;
+use Craft\Orm\Database\Builder as NativeBuilder;
 
 class Builder extends NativeBuilder
 {
@@ -12,7 +12,7 @@ class Builder extends NativeBuilder
      */
     public function __construct()
     {
-        $this->syntax['primary'] = 'primary key autoincrement';
+        $this->syntax['primary'] = 'PRIMARY KEY AUTOINCREMENT';
     }
 
 } 

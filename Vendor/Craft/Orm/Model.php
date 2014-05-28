@@ -7,7 +7,7 @@ trait Model
 
     /**
      * Get entity
-     * @return CandyInterface
+     * @return Database\Entity
      */
     public static function get()
     {
@@ -18,9 +18,9 @@ trait Model
     /**
      * Get many entities
      * @param array $where
-     * @param null $sort
-     * @param null $limit
-     * @return self[]
+     * @param int $sort
+     * @param mixed $limit
+     * @return static[]
      */
     public static function all(array $where = [], $sort = null, $limit = null)
     {
@@ -29,11 +29,11 @@ trait Model
 
 
     /**
-     * Get one entities
-     * @param array $where
-     * @return self
+     * Get one entity
+     * @param mixed $where
+     * @return static
      */
-    public static function one(array $where = [])
+    public static function one($where = [])
     {
         return Syn::one(static::entity(), $where);
     }
@@ -41,8 +41,8 @@ trait Model
 
     /**
      * Save entity
-     * @param $data
-     * @return self
+     * @param mixed $data
+     * @return int
      */
     public static function save($data)
     {
@@ -58,16 +58,6 @@ trait Model
     public static function drop($id)
     {
         return Syn::drop(static::entity(), $id);
-    }
-
-
-    /**
-     * Alias of ::get()
-     * @return CandyInterface
-     */
-    public static function query()
-    {
-        return Syn::get(static::entity());
     }
 
 

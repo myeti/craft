@@ -2,7 +2,7 @@
 
 namespace Craft\App;
 
-class Bundle extends Kernel
+class Ready extends Kernel
 {
 
     /**

@@ -49,7 +49,7 @@ Syn::MySQL('dbname', [
  * You just have to set the routes to your actions :
  */
 
-$app = new Craft\App\Bundle([
+$app = new Craft\App\Ready([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'

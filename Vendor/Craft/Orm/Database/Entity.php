@@ -1,34 +1,39 @@
 <?php
 
-namespace Craft\Orm;
+namespace Craft\Orm\Database;
 
-use Craft\Orm\Error\SQLException;
+use Craft\Orm\Database;
 
-class Candy implements CandyInterface
+class Entity
 {
 
+    /** @var Database */
+    protected $db;
+
     /** @var string */
-    protected $class;
+    protected $name;
 
-    /** @var \PDO */
-    protected $pdo;
+    /** @var string */
+    protected $model;
 
-    /** @var Native\Query */
+    /** @var Entity\Query */
     protected $query;
 
 
     /**
-     * Init entity
-     * @param \PDO $pdo
+     * Ini entity mapper
+     * @param Database $db
      * @param string $entity
-     * @param string $class
+     * @param string $model
      */
-    public function __construct(\PDO $pdo, $entity, $class = null)
+    public function __construct(Database $db, $entity, $model = null)
     {
-        $this->pdo = $pdo;
-        $this->class = $class;
-        $this->query = new Native\Query($entity);
+        $this->db = $db;
+        $this->entity = $entity;
+        $this->model = $model;
+        $this->query = new Entity\Query($entity);
     }
+
 
 
     /**
@@ -81,15 +86,7 @@ class Candy implements CandyInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $stm = $this->pdo->prepare($sql);
-        $stm->execute($values);
-
-        // cast
-        if($this->class) {
-            return $stm->fetchAll(\PDO::FETCH_CLASS, $this->class);
-        }
-
-        return $stm->fetchAll(\PDO::FETCH_OBJ);
+        return $this->db->query($sql, $values, $this->model);
     }
 
 
@@ -121,8 +118,8 @@ class Candy implements CandyInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $this->execute($sql, $values);
-        return $this->pdo->lastInsertId();
+        $this->db->query($sql, $values);
+        return $this->db->pdo()->lastInsertId();
     }
 
 
@@ -138,13 +135,13 @@ class Candy implements CandyInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $stm = $this->execute($sql, $values);
-        return $stm->rowCount();
+        return $this->db->query($sql, $values);
     }
 
 
     /**
      * Drop entity
+     * @return int
      */
     public function drop()
     {
@@ -153,28 +150,7 @@ class Candy implements CandyInterface
         list($sql, $values) = $this->query->generate();
 
         // execute
-        $stm = $this->execute($sql, $values);
-        return $stm->rowCount();
+        return $this->db->query($sql, $values);
     }
 
-
-    /**
-     * Execute query
-     * @param string $statement
-     * @param array $values
-     * @return \PDOStatement
-     * @throws \Craft\Orm\Error\SQLException
-     */
-    protected function execute($statement, array $values = [])
-    {
-        $stm = $this->pdo->prepare($statement);
-        $stm->execute($values);
-
-        if(!$stm) {
-            throw new SQLException($this->pdo->errorInfo());
-        }
-
-        return $stm;
-    }
-
-}
+} 

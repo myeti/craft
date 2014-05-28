@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Orm\Native;
+namespace Craft\Orm\Database\Entity;
 
 class Query
 {
