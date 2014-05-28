@@ -15,7 +15,7 @@ le fichier `index.php` est configurer par défaut pour une utilisation basique :
 
 require 'vendor/autoload.php';
 
-$app = new Craft\App\Bundle([
+$app = new Craft\App\Ready([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'
@@ -105,9 +105,9 @@ Non vraiment, vous souhaitez utiliser votre propre driver `PDO` :
 
 ```php
 $pdo = new \PDO(...);
-$jar = new Craft\Orm\Jar($pdo);
+$db = new Craft\Orm\Database($pdo);
 
-Syn::load($jar);
+Syn::load($db);
 ```
 
 Aussi simple que ça !
