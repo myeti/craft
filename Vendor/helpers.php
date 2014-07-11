@@ -65,14 +65,14 @@ function post($key = null, $fallback = null)
 
 
 /**
- * Alias of craft\I18n::translate()
+ * Alias of Lang::translate()
  * @param  string $text
  * @param  array $vars
  * @return string
  */
 function __($text, array $vars = [])
 {
-    return Craft\Text\I18n::translate($text, $vars);
+    return Craft\Text\Lang::translate($text, $vars);
 }
 
 
@@ -89,7 +89,7 @@ function hydrate($object, array $data)
 
 
 /**
- * Alias of Strong::compose()
+ * Alias of String::compose()
  * @param $string
  * @param array $vars
  * @return mixed

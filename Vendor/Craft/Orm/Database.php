@@ -2,16 +2,11 @@
 
 namespace Craft\Orm;
 
-use Craft\Reflect\Annotation;
-
 class Database
 {
 
     /** @var \PDO */
     protected $pdo;
-
-    /** @var array */
-    protected $models = [];
 
     /** @var Database\Entity[] */
     protected $entities = [];
@@ -42,38 +37,17 @@ class Database
 
 
     /**
-     * Map entities to models
-     * @param array $models
+     * Map entities
+     * @param string $entity
      * @return $this
      */
-    public function map(array $models)
+    public function map($entity)
     {
-        $this->models = array_merge($this->models, $models);
+        foreach(func_get_args() as $entity) {
+            $this->entities[$entity] = new Database\Entity($this, $entity);
+        }
+
         return $this;
-    }
-
-
-    /**
-     * Get model from entity
-     * @param string $entity
-     * @return bool|string
-     */
-    public function model($entity)
-    {
-        return isset($this->models[$entity])
-            ? $this->models[$entity]
-            : false;
-    }
-
-
-    /**
-     * Get entity from model
-     * @param string $model
-     * @return bool|string
-     */
-    public function entity($model)
-    {
-        return array_search($model, $this->models);
     }
 
 
@@ -99,7 +73,7 @@ class Database
         // select type
         if($stm->columnCount()) {
             return $entity
-                ? $stm->fetchAll(\PDO::FETCH_CLASS, $this->entities[$entity])
+                ? $stm->fetchAll(\PDO::FETCH_CLASS, $entity)
                 : $stm->fetchAll(\PDO::FETCH_OBJ);
         }
 
@@ -117,8 +91,7 @@ class Database
     {
         // create entity
         if(!isset($this->entities[$entity])) {
-            $model = $this->model($entity);
-            $this->entities[$entity] = new Database\Entity($this, $entity, $model);
+            $this->entities[$entity] = new Database\Entity($this, $entity);
         }
 
         return $this->entities[$entity];
@@ -126,25 +99,18 @@ class Database
 
 
     /**
-     * Build entities in db
+     * Build entities
      * @return bool
      */
     public function build()
     {
         $valid = true;
-        foreach($this->models as $entity => $model) {
 
-            // get props
-            $fields = get_class_vars($model);
-            foreach($fields as $prop => $null) {
-                $fields[$prop] = [
-                    'type'      => Annotation::property($model, $prop, 'var') ?: 'string',
-                    'primary'   => ($prop == 'id')
-                ];
-            }
+        // create entities
+        foreach(array_keys($this->entities) as $entity) {
 
             // create query
-            $sql = $this->builder->create($entity, $fields);
+            $sql = $this->builder->create($entity);
 
             // execute query
             $valid &= $this->query($sql);

@@ -7,34 +7,46 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Storage\File;
+namespace Craft\Storage\Finder;
 
-class GlobFinder extends \RecursiveIteratorIterator
+class GlobFinder extends \AppendIterator
 {
 
     /**
-     * Recursive glob file finder
-     * @param string $in
+     * Setup iterator
+     * @param string $path
      * @param string $glob
      * @param int $flags
      */
-    public function __construct($in, $glob, $flags = \FilesystemIterator::SKIP_DOTS)
+    public function __construct($path, $glob, $flags = \FilesystemIterator::SKIP_DOTS)
     {
-        $path = rtrim($in, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($glob, DIRECTORY_SEPARATOR);
-        $directory = new \GlobIterator($path, $flags);
-        parent::__construct($directory);
+        // init parent
+        parent::__construct();
+
+        // parse
+        $glob = ltrim($glob, '/');
+        $path = rtrim($path, '/') . '/';
+
+        // glob finder
+        $this->append(new \GlobIterator($path . $glob, $flags));
+
+        // go deeper
+        $sub = glob($path . '*', GLOB_ONLYDIR);
+        foreach($sub as $dir) {
+            $this->append(new self($dir, $glob, $flags));
+        }
     }
 
 
     /**
      * Check if file exists
-     * @param $in
-     * @param $glob
+     * @param string $path
+     * @param string $glob
      * @return bool
      */
-    public static function has($in, $glob)
+    public static function has($path, $glob)
     {
-        $iterator = new self($in, $glob);
+        $iterator = new self($path, $glob);
         return $iterator->valid();
     }
 

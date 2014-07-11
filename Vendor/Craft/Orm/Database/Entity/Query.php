@@ -2,6 +2,8 @@
 
 namespace Craft\Orm\Database\Entity;
 
+use Craft\Orm\Database\Builder;
+
 class Query
 {
 
@@ -42,7 +44,7 @@ class Query
      */
     public function __construct($entity)
     {
-        $this->entity = $entity;
+        $this->entity = Builder::resolve($entity);
     }
 
 

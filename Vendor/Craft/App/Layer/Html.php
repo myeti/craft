@@ -1,0 +1,60 @@
+<?php
+
+namespace Craft\App\Layer;
+
+use Craft\App\Layer;
+use Craft\App\Request;
+use Craft\App\Response;
+use Craft\Box\Mog;
+use Craft\View\Engine;
+use Craft\View\EngineInterface;
+use Craft\View\Helper\Asset;
+use Craft\View\Helper\Html as HtmlHelper;
+
+/**
+ * Render view using the html engine
+ * when @render in specified.
+ *
+ * Needs Layer\Metadata
+ */
+class Html extends Layer
+{
+
+    /** @var Engine */
+    protected $engine;
+
+
+    /**
+     * Setup engine
+     * @param string $root
+     */
+    public function __construct($root = null)
+    {
+        if($root instanceof EngineInterface) {
+            $this->engine = $root;
+        }
+        else {
+            $this->engine = new Engine($root ?: Mog::path());
+            $this->engine->mount(new HtmlHelper);
+            $this->engine->mount(new Asset(Mog::base()));
+        }
+    }
+
+
+    /**
+     * Handle response
+     * @param Response $response
+     * @param Request $request
+     * @return Response
+     */
+    public function after(Request $request, Response $response = null)
+    {
+        // render if metadata provided
+        if(!empty($request->meta['render'])) {
+            $response->content = $this->engine->render($request->meta['render'], $response->data);
+        }
+
+        return $response;
+    }
+
+}

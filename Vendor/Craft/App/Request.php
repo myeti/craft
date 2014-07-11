@@ -11,6 +11,10 @@ namespace Craft\App;
 
 use Craft\Box\Mog;
 
+/**
+ * The Request object contains
+ * all the data given from http
+ */
 class Request
 {
 
@@ -29,11 +33,17 @@ class Request
 
     /**
      * Init request
-     * @param null $query
+     * @param string $query
+     * @param array $args
+     * @param string|callable $action
+     * @param array $meta
      */
-    public function __construct($query = null)
+    public function __construct($query = null, $args = [], $action = null, $meta = [])
     {
         $this->query = $query;
+        $this->args = $args;
+        $this->action = $action;
+        $this->meta = $meta;
     }
 
 

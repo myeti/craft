@@ -7,21 +7,13 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\App;
+namespace Craft\Error;
 
 /**
- * Universal handler :
- * receives a Request and
- * returns a Response.
+ * The most significant error
+ * full of serenity and love.
  */
-interface Handler
+class FuckOff extends \Exception
 {
-
-    /**
-     * Handle context request
-     * @param Request $request
-     * @return Response
-     */
-    public function handle(Request $request);
 
 } 

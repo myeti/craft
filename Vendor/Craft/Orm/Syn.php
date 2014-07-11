@@ -68,7 +68,7 @@ abstract class Syn
     /**
      * Get entity
      * @param $entity
-     * @return mixed
+     * @return Database\Entity
      */
     public static function get($entity)
     {
@@ -208,6 +208,7 @@ abstract class Syn
      */
     public static function SQLite($filename)
     {
+        // create db
         $db = new SQLite($filename);
         static::load($db);
 

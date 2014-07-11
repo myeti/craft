@@ -2,6 +2,8 @@
 
 namespace Craft\Orm\Database;
 
+use Craft\Reflect\Annotation;
+
 class Builder
 {
 
@@ -16,10 +18,12 @@ class Builder
     protected $types = [
         'varchar'           => 'VARCHAR(255)',
         'string'            => 'VARCHAR(255)',
+        'string email'      => 'VARCHAR(255)',
         'string text'       => 'TEXT',
         'string date'       => 'DATE',
         'string datetime'   => 'DATETIME',
         'int'               => 'INTEGER',
+        'bool'              => 'BOOLEAN',
     ];
 
     /** @var array */
@@ -30,26 +34,28 @@ class Builder
         'default'   => 'NULL'
     ];
 
+    /** @var array */
+    protected static $resolved = [];
+
     /**
      * Create entity
      * @param $entity
-     * @param array $fields
      * @return mixed
      */
-    public function create($entity, array $fields)
+    public function create($entity)
     {
         // write create
-        $sql = 'CREATE TABLE IF NOT EXISTS `' . $entity . '` (';
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . static::resolve($entity) . '` (';
 
         // each field
-        foreach($fields as $field => $type) {
+        $fields = get_class_vars($entity);
+        foreach($fields as $field => $null) {
+
+            // resolve type
+            $type = Annotation::property($entity, $field, 'var') ?: 'string';
 
             // define opts
-            $opts = is_array($type)
-                ? $type + $this->defaults
-                : ['type' => $type] + $this->defaults;
-
-            $opts['type'] = trim($opts['type']);
+            $opts = ['type' => trim($type)] + $this->defaults;
 
             // parse type
             if(isset($this->types[$opts['type']])) {
@@ -60,7 +66,8 @@ class Builder
             $sql .= '`' . $field . '` ' . $opts['type'];
 
             // primary
-            if($opts['primary']) {
+            if($field === 'id') {
+                $opts['primary'] = true;
                 $opts['default'] = null;
                 $sql .= ' ' . $this->syntax['primary'];
             }
@@ -93,7 +100,7 @@ class Builder
      */
     public function clear($entity)
     {
-        return 'TRUNCATE `' . $entity . '`;';
+        return 'TRUNCATE `' . static::resolve($entity) . '`;';
     }
 
 
@@ -104,7 +111,22 @@ class Builder
      */
     public function wipe($entity)
     {
-        return 'DROP TABLE `' . $entity . '`;';
+        return 'DROP TABLE `' . static::resolve($entity) . '`;';
+    }
+
+
+    /**
+     * Resolve entity name
+     * @param $entity
+     * @return string
+     */
+    public static function resolve($entity)
+    {
+        if(!isset(static::$resolved[$entity])) {
+            static::$resolved[$entity] = Annotation::object($entity, 'entity') ?: end(explode('\\', $entity));
+        }
+
+        return static::$resolved[$entity];
     }
 
 }

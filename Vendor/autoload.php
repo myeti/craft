@@ -10,6 +10,7 @@ $loader = new Craft\Reflect\ClassLoader();
 $loader->register();
 $loader->vendors([
     'Craft' => __DIR__ . '/Craft',
+    'Forge' => __DIR__ . '/Forge',
     'Psr'   => __DIR__ . '/Psr',
     'My'    => dirname($_SERVER['SCRIPT_FILENAME'])
 ]);

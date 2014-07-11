@@ -2,6 +2,9 @@
 
 namespace Craft\Map;
 
+use Craft\Reflect\Annotation;
+use Craft\Storage\Finder\GlobFinder;
+
 class Router implements RouterInterface
 {
 
@@ -247,6 +250,138 @@ class Router implements RouterInterface
         }
 
         return [null, $query];
+    }
+
+
+    /**
+     * Setup routes from methods
+     * @param array $classes
+     * @throws \InvalidArgumentException
+     * @return Router
+     */
+    public static function actions(array $classes)
+    {
+        $routes = [];
+
+        // for all classes
+        foreach($classes as $class) {
+
+            // not class
+            if(!class_exists($class)) {
+                throw new \InvalidArgumentException('Class "' . $class . '" not found.');
+            }
+
+            // scan class
+            $ref = new \ReflectionClass($class);
+
+            // make query
+            $query = '/' . strtolower($ref->getShortName());
+
+            // get methods
+            foreach($ref->getMethods() as $method) {
+
+                // add action in query
+                if($method->getName() != 'index') {
+                    $query .= '/' . strtolower($method->getName());
+                }
+
+                // front::index as root
+                if($query == '/front') {
+                    $query = '/';
+                }
+
+                // args
+                $args = $method->getParameters();
+                foreach($args as $arg) {
+
+                    // optional param : save last route
+                    if($arg->isOptional()) {
+                        $routes[$query] = [$class, $method];
+                    }
+
+                    // add to query
+                    $query .= '/:' . strtolower($arg->getName());
+                }
+
+                // save (last) route
+                $routes[$query] = [$class, $method];
+            }
+
+        }
+
+        return new self($routes);
+    }
+
+
+    /**
+     * Setup routes from annotations
+     * @param array $classes
+     * @throws \InvalidArgumentException
+     * @return Router
+     */
+    public static function annotations(array $classes)
+    {
+        $routes = [];
+
+        // for all classes
+        foreach($classes as $class) {
+
+            // not class
+            if(!class_exists($class)) {
+                throw new \InvalidArgumentException('Class "' . $class . '" not found.');
+            }
+
+            // and all methods
+            foreach(get_class_methods($class) as $method) {
+
+                // @route specified
+                if($url = Annotation::method($class, $method, 'route')) {
+                    $routes[$url] = [$class, $method];
+                }
+
+            }
+
+        }
+
+        return new self($routes);
+    }
+
+
+    /**
+     * Setup routes from files
+     * @param string $dir
+     * @throws \InvalidArgumentException
+     * @return Router
+     */
+    public static function files($dir)
+    {
+        // get all files and sub files
+        $files = new GlobFinder($dir, '*');
+
+        // null action
+        $null = function(){};
+
+        // make routes
+        $routes = [];
+        foreach($files as $file) {
+
+            // clean path
+            $path = str_replace($dir, null, pathinfo($file, PATHINFO_BASENAME));
+            $path = '/' . ltrim($path, '/');
+            $template = str_replace($dir, null, $file);
+
+            // index route
+            if($path == '/index') {
+                $path = '/';
+            }
+
+            // make route
+            $route = new Route($path, $null);
+            $route->meta['render'] = $template;
+            $routes[] = $route;
+        }
+
+        return new self($routes);
     }
 
 } 

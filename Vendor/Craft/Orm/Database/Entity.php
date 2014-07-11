@@ -11,10 +11,7 @@ class Entity
     protected $db;
 
     /** @var string */
-    protected $name;
-
-    /** @var string */
-    protected $model;
+    protected $entity;
 
     /** @var Entity\Query */
     protected $query;
@@ -24,13 +21,11 @@ class Entity
      * Ini entity mapper
      * @param Database $db
      * @param string $entity
-     * @param string $model
      */
-    public function __construct(Database $db, $entity, $model = null)
+    public function __construct(Database $db, $entity)
     {
         $this->db = $db;
         $this->entity = $entity;
-        $this->model = $model;
         $this->query = new Entity\Query($entity);
     }
 
@@ -86,7 +81,8 @@ class Entity
         list($sql, $values) = $this->query->generate();
 
         // execute
-        return $this->db->query($sql, $values, $this->model);
+        $this->query = new Entity\Query($this->entity);
+        return $this->db->query($sql, $values, $this->entity);
     }
 
 
@@ -118,6 +114,7 @@ class Entity
         list($sql, $values) = $this->query->generate();
 
         // execute
+        $this->query = new Entity\Query($this->entity);
         $this->db->query($sql, $values);
         return $this->db->pdo()->lastInsertId();
     }
@@ -135,6 +132,7 @@ class Entity
         list($sql, $values) = $this->query->generate();
 
         // execute
+        $this->query = new Entity\Query($this->entity);
         return $this->db->query($sql, $values);
     }
 
@@ -150,6 +148,7 @@ class Entity
         list($sql, $values) = $this->query->generate();
 
         // execute
+        $this->query = new Entity\Query($this->entity);
         return $this->db->query($sql, $values);
     }
 

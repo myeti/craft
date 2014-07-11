@@ -9,6 +9,11 @@
  */
 namespace Craft\App;
 
+/**
+ * The most basic class :
+ * execute the action stored in
+ * the Request object.
+ */
 class Dispatcher implements Handler
 {
 
@@ -22,10 +27,10 @@ class Dispatcher implements Handler
     {
         // not a valid callable
         if(!is_callable($request->action)) {
-            throw new \BadMethodCallException('Request::action must be a valid callable.');
+            throw new \BadMethodCallException('Request->action must be a valid callable.');
         }
 
-        // add request in args
+        // add request as last (and optional) method arg
         $args = $request->args;
         $args[] = &$request;
 
@@ -40,4 +45,5 @@ class Dispatcher implements Handler
     }
 
 }
+
 

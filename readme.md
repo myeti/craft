@@ -35,7 +35,7 @@ A vous de customisez et d'ajouter vos routes vers vos actions !
 ### Plus loin
 
 Si vous souhaitez créer votre app personalisée et non utiliser le bundle,
-il est possible d'utiliser directement le coeur, et d'ajouter vos propres plugins (voir la classe `Craft\App\Plugin`) :
+il est possible d'utiliser directement le coeur, et d'ajouter vos propres plugins (voir la classe `Craft\App\Layer`) :
 
 ```php
 <?php
@@ -45,14 +45,14 @@ require 'vendor/autoload.php';
 $app = new Craft\App\Kernel;
 
 // ajout d'un router
-$app->plug(new Craft\App\Plugin\Router([
+$app->plug(new Craft\App\Layer\Router([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'
 ]);
 
 // utilisation des templates
-$app->plug(new Craft\App\Plugin\Templates);
+$app->plug(new Craft\App\Layer\Templates);
 
 $app->handle();
 ```

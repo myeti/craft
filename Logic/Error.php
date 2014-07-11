@@ -9,7 +9,7 @@ class Error
      * 404 Not found
      * @render views/error.404
      */
-    public function lost()
+    public function oops()
     {
 
     }
@@ -18,7 +18,7 @@ class Error
      * 403 Forbidden
      * @render views/error.403
      */
-    public function sorry()
+    public function nope()
     {
 
     }

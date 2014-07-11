@@ -11,7 +11,7 @@ trait Model
      */
     public static function get()
     {
-        return Syn::get(static::entity());
+        return Syn::get(get_called_class());
     }
 
 
@@ -24,7 +24,7 @@ trait Model
      */
     public static function all(array $where = [], $sort = null, $limit = null)
     {
-        return Syn::all(static::entity(), $where, $sort, $limit);
+        return Syn::all(get_called_class(), $where, $sort, $limit);
     }
 
 
@@ -35,7 +35,7 @@ trait Model
      */
     public static function one($where = [])
     {
-        return Syn::one(static::entity(), $where);
+        return Syn::one(get_called_class(), $where);
     }
 
 
@@ -46,7 +46,7 @@ trait Model
      */
     public static function save($data)
     {
-        return Syn::save(static::entity(), $data);
+        return Syn::save(get_called_class(), $data);
     }
 
 
@@ -57,24 +57,7 @@ trait Model
      */
     public static function drop($id)
     {
-        return Syn::drop(static::entity(), $id);
-    }
-
-
-    /**
-     * Get entity name
-     * @return string
-     */
-    protected static function entity()
-    {
-        static $name;
-
-        if(!$name) {
-            $ns = explode('\\', get_called_class());
-            $name = strtolower(end($ns));
-        }
-
-        return $name;
+        return Syn::drop(get_called_class(), $id);
     }
 
 

@@ -6,27 +6,18 @@
  */
 require 'vendor/autoload.php';
 
-/**
- * During development, tracking time and memory
- * is a useful tool enhancing productivity
- */
-
-use Craft\Trace\Tracker;
-
-$tracker = new Tracker();
-$tracker->start('app');
-
 
 /**
  * First, you might need to setup you database.
  * Here is how to use a MySQL local base :
- *//*
+ */
 
 use Craft\Orm\Syn;
 
-Syn::MySQL('dbname')                // open dbname on localhost
-    ->map('user', 'My\Model\User')  // map entity 'user' as 'My\Model\User'
-    ->build();                      // build your models into your db
+Syn::SQLite('craft.db')      // open dbname on localhost
+    ->map('My\Entity\User')  // map entity 'My\Model\User'
+    ->build();               // build your models into your db
+
 
 /**
  * You can manually change the db settings :
@@ -49,10 +40,10 @@ Syn::MySQL('dbname', [
  * You just have to set the routes to your actions :
  */
 
-$app = new Craft\App\Ready([
+$app = new Forge\App([
     '/'         => 'My\Logic\Front::hello',
-    '/lost'     => 'My\Logic\Error::lost',
-    '/sorry'    => 'My\Logic\Error::sorry'
+    '/oops'     => 'My\Logic\Error::oops',
+    '/nope'     => 'My\Logic\Error::nope'
 ]);
 
 /**
@@ -61,7 +52,7 @@ $app = new Craft\App\Ready([
  * - env will be available with Craft\Box\Env::get('yourenv');
  *//*
 
-$app = new Craft\App\Bundle([
+$app = new Forge\App([
     '/foo/:bar'   => 'My\Foo::bar',     // class Foo, function bar($bar)
     '/+lang/home' => 'My\Foo::home',    // $lang = Craft\Box\Env::get('lang');
 ]);
@@ -75,29 +66,29 @@ $app = new Craft\App\Bundle([
 $app = new Craft\App\Kernel;
 
 // you need a router ?
-$app->plug(new Craft\App\Plugin\Router([
+$app->plug(new Forge\Routing([
     '/'         => 'My\Logic\Front::hello',
-    '/lost'     => 'My\Logic\Error::lost',
-    '/sorry'    => 'My\Logic\Error::sorry'
+    '/oops'     => 'My\Logic\Error::oops',
+    '/nope'     => 'My\Logic\Error::nope'
 ]));
 
 // you want to read action metatag ? (@auth, @render...)
-$app->plug(new Craft\App\Plugin\Metadata);
+$app->plug(new Forge\Metadata);
 
 // you need to check user auth ?
-$app->plug(new Craft\App\Plugin\Firewall);
+$app->plug(new Forge\Firewall);
 
-// finally, you want to render your templates using php engine ?
-$app->plug(new Craft\App\Plugin\Templates);
+// finally, you want to render your templates using the native engine ?
+$app->plug(new Forge\Html);
 
 /**
- * If you want to create your own plugin, just extend the Craft\App\Plugin class
+ * If you want to create your own plugin, just extend the Craft\App\Layer class
  * and override the method you want : before() and/or after() and/or finish()
  * - before($request) will change the current request before execution
  * - after($request, $response) will change the response before rendering
  * - finish($request, $response) won't change anything, but can be useful (cache, stats)
  *
- * Check the Craft\App\Plugin folder for some example.
+ * Check the Craft\App\Layer folder for some example.
  */
 
 
@@ -107,13 +98,8 @@ $app->plug(new Craft\App\Plugin\Templates);
  * Just like the page not found (404)
  * and user forbidden (403) :
  */
-$app->on(404, function() use($app) {
-    $app->to('/lost'); // redirect to '/lost'
-});
-
-$app->on(403, function() use($app) {
-    $app->to('/sorry'); // redirect to '/sorry'
-});
+$app->oops('/oops'); // 404 : redirect to '/oops'
+$app->nope('/nope'); // 403 : redirect to '/nope'
 
 
 /**
@@ -121,12 +107,3 @@ $app->on(403, function() use($app) {
  * well done !
  */
 $app->handle();
-
-
-/**
- * Then, get the tracker data to
- * see elapsed time and memory.
- * But you know, Craft is fast ;)
- */
-
-echo $tracker->end('app')->report();
