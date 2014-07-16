@@ -29,7 +29,7 @@ $app->handle();
 ```
 
 You can add params to your url : `/url/:with/:param`, your method will receive `$with` and `$param`.
-For exemple, the rule `/user/:id` will catches `/user/18` and the method will receive `$id = 18`.
+For exemple, the rule `/user/:id` will catch `/user/18` and the method will receive `$id = 18`.
 
 
 ## Database
