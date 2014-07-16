@@ -13,21 +13,28 @@ All start in your 'index.php' :
 
 require 'vendor/autoload.php';
 
+// forge your app
 $app = new Forge\App([
     '/'         => 'My\Logic\Front::hello', // landing page
     '/lost'     => 'My\Logic\Error::lost',  // 404 route
-    '/nope'     => 'My\Logic\Error::nope'   // 403 route
 ]);
 
+// catch 404
+$app->on(404, function() use($app) {
+    $app->to('/lost');
+});
+
+// let's go !
 $app->handle();
 ```
 
-You can add params to your url : '/url/with/:param', your method will receive `$param`.
+You can add params to your url : `/url/:with/:param, your method will receive `$with` and `$param`.
+For exemple, the rule `/user/:id` will catches `/user/18` and the method will receive `$id = 18`.
 
 
 ## Database
 
-You can use `Syn`, the embeded orm, and map your own models :
+You can use `Syn`, the inner orm, and map your own models :
 
 ```php
 <?php
