@@ -28,7 +28,7 @@ $app->on(404, function() use($app) {
 $app->handle();
 ```
 
-You can add params to your url : `/url/:with/:param, your method will receive `$with` and `$param`.
+You can add params to your url : `/url/:with/:param`, your method will receive `$with` and `$param`.
 For exemple, the rule `/user/:id` will catches `/user/18` and the method will receive `$id = 18`.
 
 
@@ -99,4 +99,4 @@ $foo = Forge\Session::get('foo');
 Forge\Session::drop('foo');
 ```
 
-### Simple, isn't it ?
+#### Simple, isn't it ?
