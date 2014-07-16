@@ -1,14 +1,12 @@
 # Craft 2.2
 
-Craft est un framework PHP5.4+ simple, précis et efficace pour construire des webapps performantes.
-Cet outil ne fournit que le strict nécessaire et utile, le reste dépend de votre créativité !
+Craft is a small & efficient PHP5.4+ framework that helps you to quickly build webapps.
+It only provides mere tools and libs, the rest is up to your creativity !
 
-### Aperçu
 
-Créer une app en 2min ? Facile : déployez le package sur votre serveur local ou distant,
-pointez votre sous-domaine éventuel vers la racine et vérifiez bien que PHP 5.4 est activé.
+## Quickstart
 
-le fichier `index.php` est configurer par défaut pour une utilisation basique :
+All start in your 'index.php' :
 
 ```php
 <?php
@@ -16,98 +14,82 @@ le fichier `index.php` est configurer par défaut pour une utilisation basique :
 require 'vendor/autoload.php';
 
 $app = new Forge\App([
-    '/'         => 'My\Logic\Front::hello',
-    '/lost'     => 'My\Logic\Error::lost',
-    '/sorry'    => 'My\Logic\Error::sorry'
+    '/'         => 'My\Logic\Front::hello', // landing page
+    '/lost'     => 'My\Logic\Error::lost',  // 404 route
+    '/nope'     => 'My\Logic\Error::nope'   // 403 route
 ]);
 
 $app->handle();
 ```
 
-Ici, l'app est initialisée avec 3 routes :
-- la landing page
-- l'erreur 404
-- l'erreur 403
-
-A vous de customisez et d'ajouter vos routes vers vos actions !
+You can add params to your url : '/url/with/:param', your method will receive `$param`.
 
 
-### Plus loin
+## Database
 
-Si vous souhaitez créer votre app personalisée et non utiliser le bundle,
-il est possible d'utiliser directement le coeur, et d'ajouter vos propres plugins (voir la classe `Craft\App\Layer`) :
-
-```php
-<?php
-
-require 'vendor/autoload.php';
-
-$app = new Craft\App\Kernel;
-
-// ajout d'un router
-$app->plug(new Craft\App\Layer\Routing([
-    '/'         => 'My\Logic\Front::hello',
-    '/lost'     => 'My\Logic\Error::lost',
-    '/sorry'    => 'My\Logic\Error::sorry'
-]);
-
-// utilisation des templates
-$app->plug(new Craft\App\Layer\Html);
-
-$app->handle();
-```
-
-
-### Et la base de données ?
-
-Vous utilisez une base de dev en local ainsi que des classes pour mapper vos entités ?
+You can use `Syn`, the embeded orm, and map your own models :
 
 ```php
 <?php
 
 use Forge\Syn;
 
-Syn::MySQL('nomdeladb')
-    ->map('user', 'Your\User')
-    ->build(); // créer la table user en fonction de votre classe
+Syn::MySQL('dbname')        // or Syn::SQLite(dbfile)
+    ->map('My\Entity\User')
+    ->build();              // deploy structure
 
-$users = Syn::all('user');
-$users = Syn::all('user', ['id =' => 10]); // or
-$users = Syn::get('user')->where('age =', 10)->all();
+$users = User::all();
+$users = User::all(['id =' => 10]); // or
+$users = User::get()->where('age =', 10)->all();
 
-$user = Syn::one('user', ['id =' => 10]); // or
-$user = new Your\User;
+$user = User::one(['id =' => 10]); // or
+$user = new My\Entity\User;
 $user->age = 15;
 
-Syn::save('user', $user);
+User::save($user);
 
-Syn::get('user')->where('id =', 2)->drop();
+User::get()->where('id =', 2)->drop();
 ```
 
-Votre MySQL est sur un serveur distant ?
+## Session & Auth
+
+Let's manage your users, shall we ?
 
 ```php
-Syn::MySQL('nomdeladb', [
-    'host' => '123.12.12',
-    'username' => 'Foo',
-    'password' => 'Bar',
-    'prefix' => 'app_'
-]);
+<?php
+
+// tell the auth object the model you want to use
+Forge\Auth::seek('My\Entity\User');
+
+// attempt a login
+if(Forge\Auth::attempt($username, $password)) {
+    // logged in
+}
+else {
+    // failed
+}
+
+// or manually login the user
+Forge\Auth::login($rank, $user); // rank number, user object
+
+// get rank
+$rank = Forge\Auth::rank();
+
 ```
 
-SQLite peut-être ?
+You want to keep some data in memory ?
 
 ```php
-Syn::SQLite('votrefichier.db');
+<?php
+
+// write
+Forge\Session::set('foo', 'bar');
+
+// read
+$foo = Forge\Session::get('foo');
+
+// clear
+Forge\Session::drop('foo');
 ```
 
-Non vraiment, vous souhaitez utiliser votre propre driver `PDO` :
-
-```php
-$pdo = new \PDO(...);
-$db = new Craft\Orm\Database($pdo);
-
-Syn::load($db);
-```
-
-Aussi simple que ça !
+### Simple, isn't it ?
