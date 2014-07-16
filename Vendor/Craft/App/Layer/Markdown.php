@@ -21,7 +21,9 @@ class Markdown extends Layer
      */
     public function after(Request $request, Response $response)
     {
-        $response->content = Parser::forge($response->content);
+        $response->content = Parser::make($response->content);
+        $response->stamp('markdown.parsed');
+
         return $response;
     }
 

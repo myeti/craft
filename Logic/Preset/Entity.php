@@ -3,7 +3,7 @@
 namespace My\Logic\Preset;
 
 use Craft\Box\Flash;
-use Craft\Error\Abort;
+use Craft\Error\NotFound;
 use \stdClass as YourModel;
 
 
@@ -40,7 +40,7 @@ class Entity
 
         // does not exist
         if(!$item) {
-            throw new Abort('Entity #' . $id .' not found.', 404);
+            throw new NotFound('Entity #' . $id .' not found.');
         }
 
         return ['entity' => $item];
@@ -61,7 +61,7 @@ class Entity
 
         // does not exist
         if($id and !$model) {
-            throw new Abort('Entity #' . $id .' not found.', 404);
+            throw new NotFound('Entity #' . $id .' not found.', 404);
         }
         // form attempt
         elseif($data = post()) {

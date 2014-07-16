@@ -11,7 +11,7 @@ namespace Craft\View\Helper;
 
 use Craft\View\Helper;
 
-class Asset extends Helper
+class Markup extends Helper
 {
 
     /** @var string */
@@ -68,6 +68,31 @@ class Asset extends Helper
             $js[] = '<script type="text/javascript" src="' . $this->asset($file) . '"></script>';
         }
         return implode("\n", $js);
+    }
+
+
+    /**
+     * Basic meta
+     * @return string
+     */
+    public function meta()
+    {
+        $meta = [
+            '<meta charset="UTF-8">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1" />'
+        ];
+        return implode("\n", $meta);
+    }
+
+
+    /**
+     * Escape string
+     * @param $string
+     * @return string
+     */
+    public function e($string)
+    {
+        return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
 }

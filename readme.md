@@ -1,4 +1,4 @@
-# Craft 2.1.1
+# Craft 2.2
 
 Craft est un framework PHP5.4+ simple, précis et efficace pour construire des webapps performantes.
 Cet outil ne fournit que le strict nécessaire et utile, le reste dépend de votre créativité !
@@ -15,7 +15,7 @@ le fichier `index.php` est configurer par défaut pour une utilisation basique :
 
 require 'vendor/autoload.php';
 
-$app = new Craft\App\Ready([
+$app = new Forge\App([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'
@@ -45,14 +45,14 @@ require 'vendor/autoload.php';
 $app = new Craft\App\Kernel;
 
 // ajout d'un router
-$app->plug(new Craft\App\Layer\Router([
+$app->plug(new Craft\App\Layer\Routing([
     '/'         => 'My\Logic\Front::hello',
     '/lost'     => 'My\Logic\Error::lost',
     '/sorry'    => 'My\Logic\Error::sorry'
 ]);
 
 // utilisation des templates
-$app->plug(new Craft\App\Layer\Templates);
+$app->plug(new Craft\App\Layer\Html);
 
 $app->handle();
 ```
@@ -65,7 +65,7 @@ Vous utilisez une base de dev en local ainsi que des classes pour mapper vos ent
 ```php
 <?php
 
-use Craft\Orm\Syn;
+use Forge\Syn;
 
 Syn::MySQL('nomdeladb')
     ->map('user', 'Your\User')

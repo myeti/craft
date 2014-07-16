@@ -2,10 +2,10 @@
 
 namespace Craft\App\Layer;
 
-use Craft\App\Event\Forbidden;
+use Craft\Error\Forbidden;
 use Craft\App\Layer;
 use Craft\App\Request;
-use Craft\Box\Auth;
+use Forge\Auth;
 
 /**
  * Check if user is allowed to execute
@@ -19,14 +19,20 @@ class Firewall extends Layer
     /**
      * Handle request
      * @param Request $request
-     * @throws \Craft\App\Event\Forbidden
+     * @throws \Craft\Error\Forbidden
      * @return Request
      */
     public function before(Request $request)
     {
-        if(isset($request->meta['auth']) and Auth::rank() < $request->meta['auth']) {
+        if(!isset($request->meta['auth'])) {
+            $request->meta['auth'] = 0;
+        }
+
+        if(!Auth::allowed($request->meta['auth'])) {
             throw new Forbidden('User not allowed for query "' . $request->query . '"');
         }
+
+        $request->stamp(('auth.checked'));
 
         return $request;
     }

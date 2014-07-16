@@ -9,16 +9,16 @@
  */
 namespace Craft\Data\Provider\Container;
 
-use Craft\Data\Provider;
+use Craft\Data\ProviderInterface;
 
 trait Swap
 {
 
     /**
      * Change provider
-     * @param Provider $provider
+     * @param ProviderInterface $provider
      */
-    public static function swap(Provider $provider)
+    public static function swap(ProviderInterface $provider)
     {
         static::instance($provider);
     }

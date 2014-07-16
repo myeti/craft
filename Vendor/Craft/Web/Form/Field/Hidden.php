@@ -27,7 +27,7 @@ class Hidden extends Field
      */
     public function input()
     {
-        return Engine::forge(dirname(__DIR__) . '/templates/hidden.input', ['field' => $this]);
+        return Engine::make(dirname(__DIR__) . '/templates/hidden.input', ['field' => $this]);
     }
 
 

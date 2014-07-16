@@ -1,30 +1,64 @@
 <?php
-/**
- * This file is part of the Craft package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
+
 namespace Craft\Box;
 
-use Craft\Data\Provider;
-use Craft\Data\Provider\Container;
-use Craft\Data\Provider\Container\Swap;
+use Craft\Data\Repository;
 
-abstract class Env extends Container
+class Env extends Repository
 {
-
-    use Swap;
 
     /**
      * Create provider instance
-     * @return Provider
      */
-    protected static function bind()
+    public function __construct()
     {
-        return new Native\Env();
+        parent::__construct($_ENV);
+    }
+
+
+    /**
+     * Set and save
+     * @param $key
+     * @param $value
+     * @return bool|void
+     */
+    public function set($key, $value)
+    {
+        parent::set($key, $value);
+        $this->save();
+    }
+
+
+    /**
+     * Drop and save
+     * @param $key
+     * @return bool|void
+     */
+    public function drop($key)
+    {
+        parent::drop($key);
+        $this->save();
+    }
+
+
+    /**
+     * Clear and save
+     * @return bool|void
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->save();
+    }
+
+
+    /**
+     * Replicate inner data into external source
+     * @return mixed
+     */
+    protected function save()
+    {
+        $_ENV = $this->all();
     }
 
 
@@ -35,7 +69,11 @@ abstract class Env extends Container
      */
     public static function timezone($timezone = null)
     {
-        return static::instance()->timezone($timezone);
+        if($timezone) {
+            date_default_timezone_set($timezone);
+        }
+
+        return date_default_timezone_get();
     }
 
 
@@ -46,7 +84,12 @@ abstract class Env extends Container
      */
     public static function locale($lang = null)
     {
-        return static::instance()->locale($lang);
+        if($lang) {
+            setlocale(LC_ALL, $lang);
+            locale_set_default($lang);
+        }
+
+        return locale_get_default();
     }
 
-} 
+}

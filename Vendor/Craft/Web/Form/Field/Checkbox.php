@@ -14,7 +14,7 @@ class Checkbox extends Field
      */
     public function input()
     {
-        return Engine::forge(dirname(__DIR__) . '/templates/checkbox.input', ['field' => $this]);
+        return Engine::make(dirname(__DIR__) . '/templates/checkbox.input', ['field' => $this]);
     }
 
 } 

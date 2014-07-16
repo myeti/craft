@@ -9,6 +9,8 @@
  */
 namespace Craft\Data\Provider;
 
+use Craft\Data\ProviderInterface;
+
 class ProviderObject extends \ArrayObject implements ProviderInterface
 {
 

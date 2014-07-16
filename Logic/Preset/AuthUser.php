@@ -2,9 +2,9 @@
 
 namespace My\Logic\Preset;
 
-use Craft\Box\Auth;
-use Craft\Box\Flash;
-use My\Model\User;
+use Forge\Auth;
+use Forge\Flash;
+use My\Entity\User;
 
 class AuthUser
 {
@@ -19,25 +19,14 @@ class AuthUser
         // login submitted
         if(post())
         {
-            // extract env
-            $username = post('username');
-            $password = post('username');
-
-            // find user
-            $user = User::one([
-                'username' => $username,
-                'password' => sha1($password)
-            ]);
-
-            // user exists
-            if($user) {
+            // login attempt
+            if($user = Auth::attempt(post('username'), post('password'))) {
 
                 // remove password for security
                 $user->password = null;
 
-                // login
-                Auth::login(1, $user);
-                Flash::set('login.success', 'Welcome ' . $username . ' !');
+                // redirect
+                Flash::set('login.success', 'Welcome ' . $user->username . ' !');
                 go('/');
 
             }

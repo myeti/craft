@@ -32,7 +32,7 @@ class Select extends Field
      */
     public function input()
     {
-        return Engine::forge(dirname(__DIR__) . '/templates/select.input', ['field' => $this]);
+        return Engine::make(dirname(__DIR__) . '/templates/select.input', ['field' => $this]);
     }
 
 } 

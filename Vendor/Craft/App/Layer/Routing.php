@@ -2,7 +2,7 @@
 
 namespace Craft\App\Layer;
 
-use Craft\App\Event\NotFound;
+use Craft\Error\NotFound;
 use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\Map\Router;
@@ -30,7 +30,7 @@ class Routing extends Layer
     /**
      * Handle request
      * @param Request $request
-     * @throws \Craft\App\Event\NotFound
+     * @throws \Craft\Error\NotFound
      * @return Request
      */
     public function before(Request $request)
@@ -47,6 +47,7 @@ class Routing extends Layer
         $request->action = $route->to;
         $request->args = $route->data;
         $request->meta = array_merge($request->meta, $route->meta);
+        $request->stamp('routed');
 
         return $request;
     }

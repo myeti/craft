@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Box\Native\Session;
+namespace Craft\Box\Session;
 
-use Craft\Box\Provider\SessionInterface;
+use Craft\Box\SessionInterface;
 use Craft\Data\Serializer;
 use Craft\Data\Repository;
 

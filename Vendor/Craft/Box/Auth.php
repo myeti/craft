@@ -9,19 +9,98 @@
  */
 namespace Craft\Box;
 
-use Craft\Box\Provider\AuthProvider;
-use Craft\Data\Provider\Container;
+use Craft\Orm\Syn;
 
-abstract class Auth extends Container
+class Auth implements AuthInterface
 {
 
+    /** @var SessionInterface */
+    protected $session;
+
+    /** @var callable */
+    protected $seeker;
+
+
     /**
-     * Create provider instance
-     * @return AuthProvider
+     * Bind to session
+     * @param string|callable $seeker
      */
-    protected static function bind()
+    public function __construct($seeker = null)
     {
-        return new Native\Auth();
+        // set session storage strategy
+        $this->session = new Session\Storage('craft/auth');
+
+        // define authenticator
+        if($seeker) {
+            $this->how($seeker);
+        }
+    }
+
+
+    /**
+     * Define authenticator
+     * @param string|callable $seeker
+     * @return mixed|void
+     * @throws \InvalidArgumentException
+     */
+    public function seek($seeker)
+    {
+        // custom callable
+        if(is_callable($seeker)) {
+            $this->seeker = $seeker;
+        }
+        // handle user class
+        elseif(class_exists($seeker)) {
+            $this->seeker = function($username, $password, array $opts = []) use($seeker) {
+
+                // get user
+                return Syn::one($seeker, [
+                    'username' => $username,
+                    'password' => sha1($password)
+                ]);
+
+            };
+        }
+        else {
+            throw new \InvalidArgumentException('Invalid callable or class');
+        }
+    }
+
+
+    /**
+     * Attempt login
+     * @param string $username
+     * @param string $password
+     * @param array $opts
+     * @return bool|object
+     */
+    public function attempt($username, $password, array $opts = [])
+    {
+        // use authenticator
+        if(is_callable($this->seeker)) {
+
+            // login
+            if($user = call_user_func_array($this->seeker, [$username, $password, $opts])) {
+                $this->login($user->rank ?: 1, $user);
+                return $user;
+            }
+
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Log user in
+     * @param int $rank
+     * @param mixed $user
+     * @return bool
+     */
+    public function login($rank = 1, $user = null)
+    {
+        $this->session->set('rank', $rank);
+        $this->session->set('user', $user);
     }
 
 
@@ -29,39 +108,39 @@ abstract class Auth extends Container
      * Get rank
      * @return int
      */
-    public static function rank()
+    public function rank()
     {
-        return static::instance()->rank();
+        return (int)$this->session->get('rank');
     }
 
 
     /**
-     * Get stored user
+     * Get user
      * @return mixed
      */
-    public static function user()
+    public function user()
     {
-        return static::instance()->user();
-    }
-
-
-    /**
-     * Log user in
-     * @param int  $rank
-     * @param mixed $user
-     */
-    public static function login($rank = 1, $user = null)
-    {
-        static::instance()->login($rank, $user);
+        return $this->session->get('user');
     }
 
 
     /**
      * Log user out
+     * @return bool
      */
-    public static function logout()
+    public function logout()
     {
-        static::instance()->logout();
+        $this->session->clear();
     }
 
+
+    /**
+     * Check if current user is allowed
+     * @param int $rank
+     * @return bool
+     */
+    public function allowed($rank)
+    {
+        return $this->rank() >= $rank;
+    }
 }

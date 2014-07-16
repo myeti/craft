@@ -88,7 +88,7 @@ class Markdown
      * @param string $text
      * @return string
      */
-    public static function forge($text)
+    public static function make($text)
     {
         $parser = new self;
         return $parser->perform($text);

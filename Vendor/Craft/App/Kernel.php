@@ -89,7 +89,7 @@ class Kernel extends Dispatcher
         catch(Abort $e) {
 
             // error as event (if no listener registered, then raise error)
-            $done = $this->fire('error.' . $e->getCode(), [$request, $e->getMessage()]);
+            $done = $this->fire($e->getCode(), [$request, $e->getMessage()]);
             if(!$done) {
                 throw $e;
             }
@@ -110,6 +110,30 @@ class Kernel extends Dispatcher
     {
         $request = new Request($query);
         return $this->handle($request);
+    }
+
+
+    /**
+     * 404 Not found
+     * @param string $to
+     */
+    public function oops($to)
+    {
+        $this->on(404, function() use($to) {
+            $this->to($to);
+        });
+    }
+
+
+    /**
+     * 403 Forbidden
+     * @param string $to
+     */
+    public function nope($to)
+    {
+        $this->on(403, function() use($to) {
+            $this->to($to);
+        });
     }
 
 }

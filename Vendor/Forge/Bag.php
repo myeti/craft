@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Box;
+namespace Forge;
 
 use Craft\Data\Provider\Container;
 use Craft\Data\Provider\ProviderObject;
@@ -14,7 +14,7 @@ abstract class Bag extends Container
      */
     protected static function bind()
     {
-        return new ProviderObject();
+        return new ProviderObject;
     }
 
 } 

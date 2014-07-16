@@ -29,8 +29,7 @@ class Engine extends \ArrayObject implements EngineInterface
         $this->ext = '.' . ltrim($ext, '.');
 
         // default helpers
-        $this->mount(new Helper\Asset);
-        $this->mount(new Helper\Html);
+        $this->mount(new Helper\Markup);
         $this->mount(new Helper\Box);
 
         $this->helper('partial', [$this, 'render']);
@@ -114,7 +113,7 @@ class Engine extends \ArrayObject implements EngineInterface
      * @param array $data
      * @return string
      */
-    public static function forge($template, array $data = [])
+    public static function make($template, array $data = [])
     {
         // parse path
         $dirname = dirname($template);

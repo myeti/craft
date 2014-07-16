@@ -9,30 +9,89 @@
  */
 namespace Craft\Box;
 
-use Craft\Box\Provider\AuthProvider;
-use Craft\Data\Provider;
-use Craft\Data\Provider\Container;
+use Craft\Data\Provider\ProviderInterface;
 
-abstract class Flash extends Container
+class Flash implements ProviderInterface
 {
 
+    /** @var SessionInterface */
+    protected $session;
+
+
     /**
-     * Create provider instance
-     * @return Provider
+     * Bind to session
      */
-    protected static function bind()
+    public function __construct()
     {
-        return new Native\Flash();
+        $this->session = new Session\Storage('craft/flash');
     }
 
 
     /**
-     * Change session provider
-     * @param AuthProvider $provider
+     * Get all elements
+     * @return array
      */
-    public static function swap(AuthProvider $provider)
+    public function all()
     {
-        static::instance($provider);
+        return $this->session->all();
+    }
+
+
+    /**
+     * Check if element exists
+     * @param $key
+     * @return bool
+     */
+    public function has($key)
+    {
+        return $this->session->has($key);
+    }
+
+
+    /**
+     * Consume element
+     * @param $key
+     * @param null $fallback
+     * @return mixed
+     */
+    public function get($key, $fallback = null)
+    {
+        $message = $this->session->get($key, $fallback);
+        $this->drop($key);
+        return $message;
+    }
+
+
+    /**
+     * Set element by key with value
+     * @param $key
+     * @param $value
+     * @return bool
+     */
+    public function set($key, $value)
+    {
+        $this->session->set($key, $value);
+    }
+
+
+    /**
+     * Drop element by key
+     * @param $key
+     * @return bool
+     */
+    public function drop($key)
+    {
+        $this->session->drop($key);
+    }
+
+
+    /**
+     * Clear all elements
+     * @return bool
+     */
+    public function clear()
+    {
+        $this->session->clear();
     }
 
 }

@@ -56,7 +56,7 @@ abstract class Field
      */
     public function label()
     {
-        return Engine::forge(__DIR__ . '/templates/default.label', ['field' => $this]);
+        return Engine::make(__DIR__ . '/templates/default.label', ['field' => $this]);
     }
 
 
@@ -66,7 +66,7 @@ abstract class Field
      */
     public function input()
     {
-        return Engine::forge(__DIR__ . '/templates/default.input', ['field' => $this]);
+        return Engine::make(__DIR__ . '/templates/default.input', ['field' => $this]);
     }
 
 
@@ -76,7 +76,7 @@ abstract class Field
      */
     public function helper()
     {
-        return Engine::forge(__DIR__ . '/templates/default.helper', ['field' => $this]);
+        return Engine::make(__DIR__ . '/templates/default.helper', ['field' => $this]);
     }
 
 
@@ -86,7 +86,7 @@ abstract class Field
      */
     public function __toString()
     {
-        return Engine::forge(__DIR__ . '/templates/default', ['field' => $this]);
+        return Engine::make(__DIR__ . '/templates/default', ['field' => $this]);
     }
 
 } 

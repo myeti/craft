@@ -18,6 +18,8 @@ use Craft\Box\Mog;
 class Request
 {
 
+    use Stamp;
+
     /** @var string */
     public $query;
 

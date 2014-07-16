@@ -9,7 +9,7 @@
  */
 namespace Craft\Data;
 
-class Repository extends \ArrayObject implements Provider\ProviderInterface
+class Repository extends \ArrayObject implements ProviderInterface
 {
 
     /** @var string */

@@ -37,6 +37,7 @@ class Metadata extends Layer
         $action = $this->resolver->resolve($request->action);
         $request->action = $action->callable;
         $request->meta = array_merge($request->meta, $action->meta);
+        $request->stamp('meta.parsed');
 
         return $request;
     }

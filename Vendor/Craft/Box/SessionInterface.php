@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Box\Provider;
+namespace Craft\Box;
 
-use Craft\Data\Provider\ProviderInterface;
+use Craft\Data\ProviderInterface;
 
 interface SessionInterface extends ProviderInterface
 {

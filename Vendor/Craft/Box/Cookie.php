@@ -9,22 +9,43 @@
  */
 namespace Craft\Box;
 
-use Craft\Data\Provider;
-use Craft\Data\Provider\Container;
-use Craft\Data\Provider\Container\Swap;
+use Craft\Data\Provider\ProviderObject;
 
-abstract class Cookie extends Container
+class Cookie extends ProviderObject
 {
-
-    use Swap;
 
     /**
      * Create provider instance
-     * @return Provider
      */
-    protected static function bind()
+    public function __construct()
     {
-        return new Native\Cookie();
+        parent::__construct($_COOKIE);
     }
 
-} 
+
+    /**
+     * Set cookie
+     * @param string $key
+     * @param mixed $value
+     * @param int $expire
+     * @return $this|void
+     */
+    public function set($key, $value, $expire = 0)
+    {
+        setcookie($key, $value, time() + $expire);
+        return parent::set($key, $value);
+    }
+
+
+    /**
+     * Drop value to 0
+     * @param $key
+     * @return bool|void
+     */
+    public function drop($key)
+    {
+        setcookie($key, null);
+        return parent::drop($key);
+    }
+
+}

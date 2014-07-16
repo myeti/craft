@@ -2,7 +2,7 @@
 
 namespace Craft\App\Layer;
 
-use Craft\App\Event\NotFound;
+use Craft\Error\NotFound;
 use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\Orm\Syn;

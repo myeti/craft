@@ -20,10 +20,11 @@ class Json extends Layer
      */
     public function after(Request $request, Response $response)
     {
-        // format content to json
-        if(isset($request->meta['json'])) {
+        // check behavior
+        if(!$response->is('rendered')) {
             $response->format = 'application/json';
             $response->content = json_encode($response->data, JSON_PRETTY_PRINT);
+            $response->stamp('rendered', 'json');
         }
 
         return $response;

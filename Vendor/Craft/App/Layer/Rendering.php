@@ -8,8 +8,7 @@ use Craft\App\Response;
 use Craft\Box\Mog;
 use Craft\View\Engine;
 use Craft\View\EngineInterface;
-use Craft\View\Helper\Asset;
-use Craft\View\Helper\Html as HtmlHelper;
+use Craft\View\Helper\Markup;
 
 /**
  * Render view using the html engine
@@ -17,7 +16,7 @@ use Craft\View\Helper\Html as HtmlHelper;
  *
  * Needs Layer\Metadata
  */
-class Html extends Layer
+class Rendering extends Layer
 {
 
     /** @var Engine */
@@ -35,8 +34,7 @@ class Html extends Layer
         }
         else {
             $this->engine = new Engine($root ?: Mog::path());
-            $this->engine->mount(new HtmlHelper);
-            $this->engine->mount(new Asset(Mog::base()));
+            $this->engine->mount(new Markup(Mog::base()));
         }
     }
 
@@ -50,8 +48,9 @@ class Html extends Layer
     public function after(Request $request, Response $response = null)
     {
         // render if metadata provided
-        if(!empty($request->meta['render'])) {
+        if(!empty($request->meta['render']) and !$response->is('rendered')) {
             $response->content = $this->engine->render($request->meta['render'], $response->data);
+            $response->stamp('rendered', 'html');
         }
 
         return $response;

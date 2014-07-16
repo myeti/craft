@@ -1,31 +1,31 @@
 <?php
 
-namespace Forge;
+namespace Forge\App;
 
 use Craft\App\Kernel;
 use Craft\App\Layer;
-use Craft\App\Layer\Firewall;
 use Craft\App\Layer\Rendering;
 use Craft\App\Layer\Metadata;
 use Craft\App\Layer\Routing;
-use Craft\Map\RouterInterface;
+use Craft\Map\Router;
 
 /**
  * Ready to use app
  */
-class App extends Kernel
+class Flat extends Kernel
 {
 
     /**
      * Init app with routes and views dir
-     * @param array|RouterInterface $routes
      * @param string $views
      */
-    public function __construct($routes = [], $views = null)
+    public function __construct($views = null)
     {
-        $this->plug(new Routing($routes));
+        $this->plug(
+            new Routing(Router::files($views))
+        );
+
         $this->plug(new Metadata);
-        $this->plug(new Firewall);
         $this->plug(new Rendering($views));
     }
 

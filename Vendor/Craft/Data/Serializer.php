@@ -9,18 +9,18 @@
  */
 namespace Craft\Data;
 
-class Serializer implements Provider\ProviderInterface
+class Serializer implements ProviderInterface
 {
 
-    /** @var Provider\ProviderInterface */
+    /** @var ProviderInterface */
     protected $provider;
 
 
     /**
      * Set subject provider
-     * @param Provider\ProviderInterface $provider
+     * @param ProviderInterface $provider
      */
-    public function __construct(Provider\ProviderInterface $provider)
+    public function __construct(ProviderInterface $provider)
     {
         $this->provider = $provider;
     }

@@ -9,49 +9,95 @@
  */
 namespace Craft\Box;
 
-use Craft\Box\Provider\SessionProvider;
-use Craft\Data\Provider\Container;
-
-abstract class Session extends Container
+class Session implements SessionInterface
 {
 
-    /**
-     * Create provider instance
-     * @return SessionProvider
-     */
-    protected static function bind()
-    {
-        return new Native\Session();
-    }
+    /** @var SessionInterface */
+    protected $provider;
 
 
     /**
-     * Change session provider
-     * @param SessionProvider $provider
+     * Setup session
      */
-    public static function swap(SessionProvider $provider)
+    public function __construct()
     {
-        static::instance($provider);
+        $this->provider = new Session\Storage('craft/session');
     }
 
 
     /**
      * Get session id
-     * @return mixed
+     * @return string
      */
-    public static function id()
+    public function id()
     {
-        return static::instance()->id();
+        return $this->provider->id();
     }
 
 
     /**
-     * Clear session
+     * Get all data
      * @return mixed
      */
-    public static function clear()
+    public function all()
     {
-        static::instance()->clear();
+        $this->provider->all();
     }
 
-} 
+
+    /**
+     * Check if element exists
+     * @param $key
+     * @return bool
+     */
+    public function has($key)
+    {
+        return $this->provider->has($key);
+    }
+
+
+    /**
+     * Get element by key, fallback on error
+     * @param $key
+     * @param null $fallback
+     * @return mixed
+     */
+    public function get($key, $fallback = null)
+    {
+        return $this->provider->get($key, $fallback);
+    }
+
+
+    /**
+     * Set element by key with value
+     * @param $key
+     * @param $value
+     * @return bool
+     */
+    public function set($key, $value)
+    {
+        return $this->provider->set($key, $value);
+    }
+
+
+    /**
+     * Drop element by key
+     * @param $key
+     * @return bool
+     */
+    public function drop($key)
+    {
+        return $this->provider->drop($key);
+    }
+
+
+    /**
+     * Destroy session
+     * @return mixed
+     */
+    public function clear()
+    {
+        $this->provider->clear();
+    }
+
+}
