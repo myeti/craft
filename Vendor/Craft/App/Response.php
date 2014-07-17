@@ -17,8 +17,6 @@ namespace Craft\App;
 class Response
 {
 
-    use Stamp;
-
     /** @var int */
     public $code = 200;
 

@@ -28,4 +28,16 @@ interface TrackerInterface extends LoggerInterface
      */
     public function end($process);
 
+    /**
+     * Get all tasks
+     * @return Task[]
+     */
+    public function tasks();
+
+    /**
+     * Get all logs
+     * @return Log[]
+     */
+    public function logs();
+
 } 

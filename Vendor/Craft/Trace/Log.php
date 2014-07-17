@@ -41,7 +41,7 @@ class Log
     {
         list($time, $micro) = explode('.', $this->time);
         $date = date('Y-m-d H:i:s.', $time) . str_pad($micro, 4, 0);
-        return '[' . $date . '] ' . $this->level . ' - ' . $this->content;
+        return $date . ' <b>[ ' . strtoupper($this->level) . ' ]</b> ' . $this->content;
     }
 
 } 

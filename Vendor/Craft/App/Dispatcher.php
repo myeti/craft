@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 namespace Craft\App;
+use Craft\Trace\Logger;
 
 /**
  * The most basic class :
@@ -25,9 +26,11 @@ class Dispatcher implements Handler
      */
     public function handle(Request $request)
     {
+        Logger::info('App : dispatcher start');
+
         // not a valid callable
         if(!is_callable($request->action)) {
-            throw new \BadMethodCallException('Request->action must be a valid callable.');
+            throw new \BadMethodCallException('Request::action must be a valid callable.');
         }
 
         // add request as last (and optional) method arg
@@ -36,10 +39,12 @@ class Dispatcher implements Handler
 
         // run
         $data = call_user_func_array($request->action, $args);
+        Logger::info('App : request executed');
 
         // create response
         $response = new Response();
         $response->data = $data;
+        Logger::info('App : response created, dispatcher end');
 
         return $response;
     }

@@ -6,6 +6,7 @@ use Craft\Error\NotFound;
 use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\Orm\Syn;
+use Craft\Trace\Logger;
 
 /**
  * Inject a model when @map is specified.
@@ -14,6 +15,23 @@ use Craft\Orm\Syn;
  */
 class Mapping extends Layer
 {
+
+    /** @var callable[] */
+    protected $seekers = [];
+
+
+    /**
+     * Define model seeker
+     * @param $model
+     * @param callable $seeker
+     * @return $this
+     */
+    public function define($model, callable $seeker)
+    {
+        $this->seekers[$model] = $seeker;
+        return $this;
+    }
+
 
     /**
      * Handle request
@@ -24,39 +42,30 @@ class Mapping extends Layer
      */
     public function before(Request $request)
     {
+        Logger::info('App : mapping layer');
+
         // mapping requested
-        if(isset($request->meta['map'])) {
+        if(!empty($request->meta['map'])) {
 
-            // get class
-            $class = $request->meta['map'];
+            // parse meta (@map My\Model:prop)
+            list($model, $property) = explode(':', $request->meta['map']);
 
-            // error
-            if(!class_exists($class)) {
-                throw new \InvalidArgumentException('Class "' . $class . '" for mapping not found.');
+            // get entity
+            $entity = isset($this->seekers[$model])
+                ? call_user_func_array($this->seekers[$model], [$request, $property])
+                : Syn::one($model, [$property => $request->args[$property]]);
+
+            // not found
+            if(!$entity) {
+                throw new NotFound($model . '[' . $property . ':' . $request->args[$property] . '] not found.');
             }
 
-            // init model with id
-            if(isset($request->args['id'])) {
-
-                // load
-                $model = Syn::one($class, $request->args['id']);
-
-                // not found
-                if(!$model) {
-                    throw new NotFound('Model #' . $request->args['id'] . ' not found.');
-                }
-
-            }
-            // without
-            else {
-                $model = new $class;
-            }
-
-            // replace as id
-            $request->args['id'] = $model;
+            // replace property with entity
+            $request->args[$property] = $entity;
+            Logger::info('App : map model ' . $model . ' into $' . $property);
         }
 
         return $request;
     }
 
-} 
+}

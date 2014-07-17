@@ -6,6 +6,7 @@ use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\App\Response;
 use Craft\Box\Mog;
+use Craft\Trace\Logger;
 use Craft\View\Engine;
 use Craft\View\EngineInterface;
 use Craft\View\Helper\Markup;
@@ -47,10 +48,12 @@ class Rendering extends Layer
      */
     public function after(Request $request, Response $response = null)
     {
+        Logger::info('App : html rendering layer');
+
         // render if metadata provided
-        if(!empty($request->meta['render']) and !$response->is('rendered')) {
+        if(!empty($request->meta['render'])) {
             $response->content = $this->engine->render($request->meta['render'], $response->data);
-            $response->stamp('rendered', 'html');
+            Logger::info('App : render template "' . $request->meta['render'] . '" as html');
         }
 
         return $response;

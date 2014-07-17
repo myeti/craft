@@ -9,7 +9,7 @@ class Error
      * 404 Not found
      * @render views/error.404
      */
-    public function oops()
+    public function lost()
     {
 
     }

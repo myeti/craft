@@ -5,6 +5,7 @@ namespace Craft\App\Layer;
 use Craft\Error\Forbidden;
 use Craft\App\Layer;
 use Craft\App\Request;
+use Craft\Trace\Logger;
 use Forge\Auth;
 
 /**
@@ -24,6 +25,8 @@ class Firewall extends Layer
      */
     public function before(Request $request)
     {
+        Logger::info('App : firewall layer');
+
         if(!isset($request->meta['auth'])) {
             $request->meta['auth'] = 0;
         }
@@ -32,7 +35,7 @@ class Firewall extends Layer
             throw new Forbidden('User not allowed for query "' . $request->query . '"');
         }
 
-        $request->stamp(('auth.checked'));
+        Logger::info('App : user is allowed');
 
         return $request;
     }

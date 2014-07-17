@@ -21,6 +21,7 @@ class Tracker extends AbstractLogger implements TrackerInterface
     /** @var Task[] */
     protected $tasks = [];
 
+
     /**
      * System is unusable.
      *

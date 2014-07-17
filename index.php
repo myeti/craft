@@ -33,7 +33,7 @@ Forge\Auth::seek('My\Entity\User');
 
 $app = new Forge\App([
     '/'          => 'My\Logic\Front::hello',
-    '/oops'      => 'My\Logic\Error::oops',
+    '/lost'      => 'My\Logic\Error::lost',
     '/nope'      => 'My\Logic\Error::nope'
 ]);
 
@@ -42,7 +42,7 @@ $app = new Forge\App([
  * Sometimes, something wrong happen
  * and you might need to use these error.
  */
-$app->oops('/oops'); // 404 : redirect to '/oops'
+$app->lost('/lost'); // 404 : redirect to '/oops'
 $app->nope('/nope'); // 403 : redirect to '/nope'
 
 
@@ -51,3 +51,4 @@ $app->nope('/nope'); // 403 : redirect to '/nope'
  * well done !
  */
 $app->handle();
+echo \Craft\Trace\Logger::tracker();
