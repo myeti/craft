@@ -14,7 +14,6 @@ interface RouterInterface
      */
     public function map($from, $to, array $customs = []);
 
-
     /**
      * Add route
      * @param Route $route
@@ -22,13 +21,19 @@ interface RouterInterface
      */
     public function add(Route $route);
 
+    /**
+     * Group routes
+     * @param string $base
+     * @param callable $group
+     * @return $this
+     */
+    public function group($base, callable $group);
 
     /**
      * Get all routes
      * @return Route[]
      */
     public function routes();
-
 
     /**
      * Find route

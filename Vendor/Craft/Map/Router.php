@@ -12,6 +12,9 @@ class Router implements RouterInterface
     protected $routes = [];
 
     /** @var array */
+    protected $prefixes = [];
+
+    /** @var array */
     protected $verbs = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'];
 
 
@@ -52,23 +55,23 @@ class Router implements RouterInterface
      */
     public function add(Route $route)
     {
+        $route->from = implode(null, $this->prefixes) . $route->from;
         $this->routes[$route->from] = $route;
         return $this;
     }
 
 
     /**
-     * Bind an inner router
+     * Group routes
      * @param string $base
-     * @param RouterInterface $matcher
+     * @param callable $group
      * @return $this
      */
-    public function bind($base, RouterInterface $matcher)
+    public function group($base, callable $group)
     {
-        foreach($matcher->routes() as $route) {
-            $route->from = $base . $route->from;
-            $this->add($route);
-        }
+        array_push($this->prefixes, $base);
+        call_user_func($group, $this);
+        array_pop($this->prefixes);
         return $this;
     }
 
@@ -350,16 +353,13 @@ class Router implements RouterInterface
     /**
      * Setup routes from files
      * @param string $dir
-     * @throws \InvalidArgumentException
+     * @param string|callable $action
      * @return Router
      */
-    public static function files($dir)
+    public static function files($dir, $action)
     {
         // get all files and sub files
         $files = new GlobFinder($dir, '*');
-
-        // null action
-        $null = function(){};
 
         // make routes
         $routes = [];
@@ -376,7 +376,7 @@ class Router implements RouterInterface
             }
 
             // make route
-            $route = new Route($path, $null);
+            $route = new Route($path, $action);
             $route->meta['render'] = $template;
             $routes[] = $route;
         }
