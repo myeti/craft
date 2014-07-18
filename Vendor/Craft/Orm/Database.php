@@ -2,6 +2,8 @@
 
 namespace Craft\Orm;
 
+use Forge\Logger;
+
 class Database
 {
 
@@ -45,6 +47,7 @@ class Database
     {
         foreach(func_get_args() as $entity) {
             $this->entities[$entity] = new Database\Entity($this, $entity);
+            Logger::info('Syn.Database : map entity "' . $entity . '"');
         }
 
         return $this;
@@ -116,6 +119,7 @@ class Database
             $valid &= $this->query($sql);
         }
 
+        Logger::info('Syn.Database : build schema');
         return $valid;
     }
 

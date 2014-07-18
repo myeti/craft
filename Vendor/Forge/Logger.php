@@ -1,14 +1,30 @@
 <?php
 
-namespace Craft\Trace;
+namespace Forge;
 
-use Psr\Log\LogLevel;
+use Craft\Trace\Logger as Writer;
+use Craft\Trace\LoggerInterface;
 
-class Logger implements LoggerInterface
+abstract class Logger
 {
 
-    /** @var Log[] */
-    protected $logs = [];
+    /**
+     * Get writer instance
+     * @param LoggerInterface $writer
+     * @return LoggerInterface
+     */
+    public static function writer(LoggerInterface $writer = null)
+    {
+        static $instance;
+        if($writer) {
+            $instance = $writer;
+        }
+        if(!$instance) {
+            $instance = new Writer;
+        }
+
+        return $instance;
+    }
 
 
     /**
@@ -18,11 +34,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function emergency($message, array $context = [])
+    public static function emergency($message, array $context = [])
     {
-        $this->log(LogLevel::EMERGENCY, $message, $context);
+        static::writer()->emergency($message, $context);
     }
-
 
     /**
      * Action must be taken immediately.
@@ -34,11 +49,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function alert($message, array $context = [])
+    public static function alert($message, array $context = [])
     {
-        $this->log(LogLevel::ALERT, $message, $context);
+        static::writer()->alert($message, $context);
     }
-
 
     /**
      * Critical conditions.
@@ -49,11 +63,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function critical($message, array $context = [])
+    public static function critical($message, array $context = [])
     {
-        $this->log(LogLevel::CRITICAL, $message, $context);
+        static::writer()->critical($message, $context);
     }
-
 
     /**
      * Runtime errors that do not require immediate action but should typically
@@ -63,11 +76,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function error($message, array $context = [])
+    public static function error($message, array $context = [])
     {
-        $this->log(LogLevel::ERROR, $message, $context);
+        static::writer()->error($message, $context);
     }
-
 
     /**
      * Exceptional occurrences that are not errors.
@@ -79,11 +91,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function warning($message, array $context = [])
+    public static function warning($message, array $context = [])
     {
-        $this->log(LogLevel::WARNING, $message, $context);
+        static::writer()->warning($message, $context);
     }
-
 
     /**
      * Normal but significant events.
@@ -92,11 +103,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function notice($message, array $context = [])
+    public static function notice($message, array $context = [])
     {
-        $this->log(LogLevel::NOTICE, $message, $context);
+        static::writer()->notice($message, $context);
     }
-
 
     /**
      * Interesting events.
@@ -107,11 +117,10 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function info($message, array $context = [])
+    public static function info($message, array $context = [])
     {
-        $this->log(LogLevel::INFO, $message, $context);
+        static::writer()->info($message, $context);
     }
-
 
     /**
      * Detailed debug information.
@@ -120,23 +129,22 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return null
      */
-    public function debug($message, array $context = [])
+    public static function debug($message, array $context = [])
     {
-        $this->log(LogLevel::DEBUG, $message, $context);
+        static::writer()->debug($message, $context);
     }
 
 
     /**
-     * Logs with an arbitrary level.
+     * Write log
      *
-     * @param mixed $level
+     * @param int $level
      * @param string $message
      * @param array $context
-     * @return null
      */
-    public function log($level, $message, array $context = [])
+    public static function log($level, $message, array $context = [])
     {
-        $this->logs[] = new Log($level, $message, $context);
+        static::writer()->log($level, $message, $context);
     }
 
 
@@ -144,22 +152,9 @@ class Logger implements LoggerInterface
      * Get all logs
      * @return string
      */
-    public function logs()
+    public static function logs()
     {
-        $string = '';
-        foreach($this->logs as $log) {
-
-            list($time, $micro) = explode('.', $log->time);
-
-            $string .= '<br/>';
-            $string .= date('Y-m-d H:i:s.', $time) . str_pad($micro, 4, 0);
-            $string .= ' (' . $log->elapsed. 's)';
-            $string .= ' <b>[ ' . strtoupper($log->level) . ' ]</b> ';
-            $string .= $log->content;
-
-        }
-
-        return $string;
+        return static::writer()->logs();
     }
 
-} 
+}

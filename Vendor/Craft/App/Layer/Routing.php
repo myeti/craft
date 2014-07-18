@@ -7,7 +7,7 @@ use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\Map\Router;
 use Craft\Map\RouterInterface;
-use Craft\Trace\Logger;
+use Forge\Logger;
 
 class Routing extends Layer
 {
@@ -36,14 +36,12 @@ class Routing extends Layer
      */
     public function before(Request $request)
     {
-        Logger::info('App : routing layer');
-
         // route query
         $route = $this->router->find($request->query);
 
         // 404
         if(!$route) {
-            throw new NotFound('Route "' . $request->query . '" not found.');
+            throw new NotFound('Route "' . $request->query . '" not found');
         }
 
         // update request
@@ -51,7 +49,7 @@ class Routing extends Layer
         $request->args = $route->data;
         $request->meta = array_merge($request->meta, $route->meta);
 
-        Logger::info('App : request created from route "' . $route->from . '".');
+        Logger::info('App.Routing : route "' . $route->from . '" found, request created');
 
         return $request;
     }

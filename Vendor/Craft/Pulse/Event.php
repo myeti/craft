@@ -2,6 +2,8 @@
 
 namespace Craft\Pulse;
 
+use Forge\Logger;
+
 trait Event
 {
 
@@ -54,12 +56,13 @@ trait Event
         }
 
         // trigger all listeners
+        $count = count($this->listeners[$event]);
+        Logger::info('Event : fire "' . $event . '", ' . $count . ' listeners');
         foreach($this->listeners[$event] as $callable){
             call_user_func_array($callable, $params);
         }
 
-        // total triggered
-        return count($this->listeners[$event]);
+        return $count;
     }
 
 }

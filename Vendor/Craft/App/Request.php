@@ -18,6 +18,9 @@ use Craft\Box\Mog;
 class Request
 {
 
+    /** @var float */
+    public $start;
+
     /** @var string */
     public $query;
 
@@ -40,6 +43,7 @@ class Request
      */
     public function __construct($query = null, $args = [], $action = null, $meta = [])
     {
+        $this->start = microtime(true);
         $this->query = $query;
         $this->args = $args;
         $this->action = $action;

@@ -9,11 +9,16 @@
  */
 namespace Craft\Trace;
 
+use Forge\Mog;
+
 class Log
 {
 
     /** @var float */
     public $time;
+
+    /** @var float */
+    public $elapsed;
 
     /** @var string */
     public $level;
@@ -21,27 +26,23 @@ class Log
     /** @var string */
     public $content;
 
-    /**
-     * Create new log
-     * @param $level
-     * @param $content
-     */
-    public function __construct($level, $content)
-    {
-        $this->time = microtime(true);
-        $this->level = $level;
-        $this->content = $content;
-    }
+    /** @var array */
+    public $context = [];
+
 
     /**
-     * Format log message
-     * @return string
+     * Create new log
+     * @param int $level
+     * @param string $content
+     * @param string $context
      */
-    public function __toString()
+    public function __construct($level, $content, $context)
     {
-        list($time, $micro) = explode('.', $this->time);
-        $date = date('Y-m-d H:i:s.', $time) . str_pad($micro, 4, 0);
-        return $date . ' <b>[ ' . strtoupper($this->level) . ' ]</b> ' . $this->content;
+        $this->time = microtime(true);
+        $this->elapsed = Mog::elapsed();
+        $this->level = $level;
+        $this->content = $content;
+        $this->context = $context;
     }
 
 } 

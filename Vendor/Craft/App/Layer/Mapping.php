@@ -6,7 +6,7 @@ use Craft\Error\NotFound;
 use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\Orm\Syn;
-use Craft\Trace\Logger;
+use Forge\Logger;
 
 /**
  * Inject a model when @map is specified.
@@ -42,8 +42,6 @@ class Mapping extends Layer
      */
     public function before(Request $request)
     {
-        Logger::info('App : mapping layer');
-
         // mapping requested
         if(!empty($request->meta['map'])) {
 
@@ -62,7 +60,7 @@ class Mapping extends Layer
 
             // replace property with entity
             $request->args[$property] = $entity;
-            Logger::info('App : map model ' . $model . ' into $' . $property);
+            Logger::info('App.Mapping : map model ' . $model . ' into $' . $property);
         }
 
         return $request;

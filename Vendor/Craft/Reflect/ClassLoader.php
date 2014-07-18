@@ -40,7 +40,7 @@ class ClassLoader
     public function vendors(array $vendors)
     {
         foreach($vendors as $prefix => $path) {
-            static::vendor($prefix, $path);
+            $this->vendor($prefix, $path);
         }
     }
 
@@ -63,7 +63,7 @@ class ClassLoader
     public function aliases(array $aliases)
     {
         foreach($aliases as $alias => $class) {
-            static::alias($alias, $class);
+            $this->alias($alias, $class);
         }
     }
 
@@ -125,8 +125,8 @@ class ClassLoader
 
         // error
         if(!isset($this->vendors[$vendor])) {
-            throw new \RuntimeException('Vendor "' . $vendor . '" does not exists.');
-        }
+        throw new \RuntimeException('Vendor "' . $vendor . '" does not exists.');
+    }
 
         return $this->vendors[$vendor];
     }

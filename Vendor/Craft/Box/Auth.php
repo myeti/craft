@@ -10,6 +10,7 @@
 namespace Craft\Box;
 
 use Craft\Orm\Syn;
+use Forge\Logger;
 
 class Auth implements AuthInterface
 {
@@ -32,7 +33,7 @@ class Auth implements AuthInterface
 
         // define authenticator
         if($seeker) {
-            $this->how($seeker);
+            $this->seek($seeker);
         }
     }
 
@@ -64,6 +65,8 @@ class Auth implements AuthInterface
         else {
             throw new \InvalidArgumentException('Invalid callable or class');
         }
+
+        Logger::info('Auth : change user model seeker');
     }
 
 

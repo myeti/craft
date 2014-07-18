@@ -2,7 +2,7 @@
 
 namespace Craft\Web\Form\Field;
 
-use Craft\View\Engine;
+use Forge\Engine;
 use Craft\Web\Form\Field;
 
 class Text extends Field
@@ -14,7 +14,7 @@ class Text extends Field
      */
     public function input()
     {
-        return Engine::make(dirname(__DIR__) . '/templates/text.input', ['field' => $this]);
+        return Engine::render(dirname(__DIR__) . '/templates/text.input', ['field' => $this]);
     }
 
 } 

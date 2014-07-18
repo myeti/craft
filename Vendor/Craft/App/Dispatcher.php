@@ -8,7 +8,8 @@
  * file that was distributed with this source code.
  */
 namespace Craft\App;
-use Craft\Trace\Logger;
+
+use Forge\Logger;
 
 /**
  * The most basic class :
@@ -26,7 +27,7 @@ class Dispatcher implements Handler
      */
     public function handle(Request $request)
     {
-        Logger::info('App : dispatcher start');
+        Logger::info('App.Dispatcher : dispatcher start');
 
         // not a valid callable
         if(!is_callable($request->action)) {
@@ -39,12 +40,12 @@ class Dispatcher implements Handler
 
         // run
         $data = call_user_func_array($request->action, $args);
-        Logger::info('App : request executed');
+        Logger::info('App.Dispatcher : request executed');
 
         // create response
         $response = new Response();
         $response->data = $data;
-        Logger::info('App : response created, dispatcher end');
+        Logger::info('App.Dispatcher : response created, dispatcher end');
 
         return $response;
     }

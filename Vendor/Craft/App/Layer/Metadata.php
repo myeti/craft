@@ -6,7 +6,7 @@ use Craft\App\Layer;
 use Craft\App\Request;
 use Craft\Reflect\Resolver;
 use Craft\Reflect\ResolverInterface;
-use Craft\Trace\Logger;
+use Forge\Logger;
 
 /**
  * Resolve action and read metadata.
@@ -35,13 +35,11 @@ class Metadata extends Layer
      */
     public function before(Request $request)
     {
-        Logger::info('App : metadata layer');
-
         $action = $this->resolver->resolve($request->action);
         $request->action = $action->callable;
         $request->meta = array_merge($request->meta, $action->meta);
 
-        Logger::info('App : request metadata parsed');
+        Logger::info('App.Metadata : request metadata parsed');
 
         return $request;
     }

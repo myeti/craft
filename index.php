@@ -51,4 +51,4 @@ $app->nope('/nope'); // 403 : redirect to '/nope'
  * well done !
  */
 $app->handle();
-echo \Craft\Trace\Logger::tracker();
+echo Forge\Logger::logs();

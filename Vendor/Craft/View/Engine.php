@@ -14,9 +14,6 @@ class Engine extends \ArrayObject implements EngineInterface
     /** @var Helper[] */
     protected $helpers = [];
 
-    /** @var Engine[] */
-    protected static $instances = [];
-
 
     /**
      * Setup root path
@@ -104,29 +101,6 @@ class Engine extends \ArrayObject implements EngineInterface
         }
 
         return $content;
-    }
-
-
-    /**
-     * Quick render
-     * @param $template
-     * @param array $data
-     * @return string
-     */
-    public static function make($template, array $data = [])
-    {
-        // parse path
-        $dirname = dirname($template);
-        $filename = basename($template);
-
-        // stock instance
-        if(!isset(static::$instances[$dirname])) {
-            static::$instances[$dirname] = new self($dirname);
-        }
-
-        // return engine
-        $engine = static::$instances[$dirname];
-        return $engine->render($filename, $data);
     }
 
 }
