@@ -42,7 +42,7 @@ $app = new Forge\App([
  * Sometimes, something wrong happen
  * and you might need to use these error.
  */
-$app->lost('/lost'); // 404 : redirect to '/oops'
+$app->lost('/lost'); // 404 : redirect to '/lost'
 $app->nope('/nope'); // 403 : redirect to '/nope'
 
 

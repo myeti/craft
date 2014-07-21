@@ -1,19 +1,26 @@
 <?php
 
 /**
- * Setup autoloader
+ * Setup AutoLoader
  */
 
+require __DIR__ . '/Craft/Reflect/ClassLoaderInterface.php';
 require __DIR__ . '/Craft/Reflect/ClassLoader.php';
-require __DIR__ . '/Forge/Autoloader.php';
+require __DIR__ . '/Forge/Loader.php';
 
-Forge\Autoloader::register();
-Forge\Autoloader::vendors([
-    'Craft' => __DIR__ . '/Craft',
-    'Forge' => __DIR__ . '/Forge',
-    'Psr'   => __DIR__ . '/Psr',
-    'My'    => dirname($_SERVER['SCRIPT_FILENAME'])
-]);
+Forge\Loader::set(
+    new Craft\Reflect\ClassLoader(true)
+);
+
+Forge\Loader::add('Craft'   , __DIR__ . '/Craft');
+Forge\Loader::add('Forge'   , __DIR__ . '/Forge');
+Forge\Loader::add('Psr'     , __DIR__ . '/Psr');
+Forge\Loader::add('My'      , dirname($_SERVER['SCRIPT_FILENAME']));
+
+
+/**
+ * Start logger
+ */
 
 Forge\Logger::info('Hello :)');
 
@@ -22,4 +29,4 @@ Forge\Logger::info('Hello :)');
  * Load helpers
  */
 
-require __DIR__ . '/helpers.php';
+require __DIR__ . '/Craft/helpers.php';
