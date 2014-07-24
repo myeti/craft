@@ -127,6 +127,19 @@ class Router implements RouterInterface
 
 
     /**
+     * Get route
+     * @param $path
+     * @return Route
+     */
+    public function route($path)
+    {
+        return isset($this->routes[$path])
+            ? $this->routes[$path]
+            : false;
+    }
+
+
+    /**
      * Get all routes
      * @return Route[]
      */
