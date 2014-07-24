@@ -19,10 +19,4 @@ interface RouterInterface
      */
     public function find($query, array $context = []);
 
-    /**
-     * Get all routes
-     * @return Route[]
-     */
-    public function routes();
-
-} 
+}
