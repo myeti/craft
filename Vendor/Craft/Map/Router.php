@@ -12,7 +12,13 @@ class Router implements RouterInterface
     protected $routes = [];
 
     /** @var array */
-    protected $prefixes = [];
+    protected $prefix = [];
+
+    /** @var callable[] */
+    protected $before = [];
+
+    /** @var callable[] */
+    protected $after = [];
 
     /** @var array */
     protected $verbs = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'];
@@ -24,12 +30,12 @@ class Router implements RouterInterface
      */
     public function __construct(array $routes = [])
     {
-        foreach($routes as $from => $to) {
-            if($to instanceof Route) {
-                $this->add($to);
+        foreach($routes as $from => $action) {
+            if($action instanceof Route) {
+                $this->add($action);
             }
             else {
-                $this->map($from, $to);
+                $this->map($from, $action);
             }
         }
     }
@@ -38,13 +44,25 @@ class Router implements RouterInterface
     /**
      * Make route from path
      * @param string $from
-     * @param mixed $to
-     * @param array $customs
+     * @param mixed $action
+     * @param array $context
+     * @param callable $before
+     * @param callable $after
      * @return $this
      */
-    public function map($from, $to, array $customs = [])
+    public function map($from, $action, array $context = [], callable $before = null, callable $after = null)
     {
-        return $this->add(new Route($from, $to, $customs));
+        $route = new Route($from, $action, $context);
+
+        if($before) {
+            $route->before($before);
+        }
+
+        if($after) {
+            $route->after($after);
+        }
+
+        return $this->add($route);
     }
 
 
@@ -55,7 +73,19 @@ class Router implements RouterInterface
      */
     public function add(Route $route)
     {
-        $route->from = implode(null, $this->prefixes) . $route->from;
+        // add prefixes
+        $route->from = implode(null, $this->prefix) . $route->from;
+
+        // add before callbacks
+        foreach($this->before as $before) {
+            $route->before($before);
+        }
+
+        // add after callbacks
+        foreach($this->after as $after) {
+            $route->after($after);
+        }
+
         $this->routes[$route->from] = $route;
         return $this;
     }
@@ -65,13 +95,33 @@ class Router implements RouterInterface
      * Group routes
      * @param string $base
      * @param callable $group
+     * @param callable $before
+     * @param callable $after
      * @return $this
      */
-    public function group($base, callable $group)
+    public function group($base, callable $group, callable $before = null, callable $after = null)
     {
-        array_push($this->prefixes, $base);
+        // add grouped prefix and callbacks
+        array_push($this->prefix, $base);
+        if($before){
+            array_push($this->before, $before);
+        }
+        if($after){
+            array_push($this->after, $after);
+        }
+
+        // execute group
         call_user_func($group, $this);
-        array_pop($this->prefixes);
+
+        // add grouped prefix and callbacks
+        array_pop($this->prefix);
+        if($before){
+            array_pop($this->before);
+        }
+        if($after){
+            array_pop($this->after);
+        }
+
         return $this;
     }
 
@@ -89,14 +139,13 @@ class Router implements RouterInterface
     /**
      * Find route
      * @param string $query
-     * @param array $customs
-     * @param mixed $fallback
+     * @param array $context
      * @return Route
      */
-    public function find($query, array $customs = [], $fallback = false)
+    public function find($query, array $context = [])
     {
         // prepare query
-        list($query, $customs) = $this->prepare($query, $customs);
+        list($query, $context) = $this->prepare($query, $context);
 
         // search in all routes
         foreach($this->routes as $route)
@@ -110,8 +159,8 @@ class Router implements RouterInterface
             // compare
             if(preg_match($pattern, $query, $data)){
 
-                // check customs
-                if(!$this->check($route, $customs)) {
+                // check context
+                if(!$this->check($route, $context)) {
                     continue;
                 }
 
@@ -123,30 +172,30 @@ class Router implements RouterInterface
             }
         }
 
-        return $fallback;
+        return false;
     }
 
 
     /**
      * Find route
      * @param string $query
-     * @param array $customs
+     * @param array $context
      * @return string
      */
-    protected function prepare($query, array $customs = [])
+    protected function prepare($query, array $context = [])
     {
         // resolve path
         list($verb, $query) = $this->resolve($query);
 
-        // update customs
+        // update context
         if($verb) {
-            $customs['method'] = $verb;
+            $context['method'] = $verb;
         }
 
         // clean query
         $query = '/' . trim($query, '/');
 
-        return [$query, $customs];
+        return [$query, $context];
     }
 
 
@@ -160,9 +209,9 @@ class Router implements RouterInterface
         // resolve path
         list($verb, $query) = $this->resolve($route->from);
 
-        // update customs
+        // update context
         if($verb) {
-            $route->customs['method'] = $verb;
+            $route->context['method'] = $verb;
         }
 
         // clean query
@@ -180,8 +229,8 @@ class Router implements RouterInterface
     protected function compile($path)
     {
         $pattern = str_replace('/', '\/', $path);
-        $pattern = preg_replace('#\:(\w+)#', '(?P<arg__$1>(.+))', $pattern);
-        $pattern = preg_replace('#\+(\w+)#', '(?P<env__$1>(.+))', $pattern);
+        $pattern = preg_replace('#\:(\w+)#', '(?P<data__$1>(.+))', $pattern);
+        $pattern = preg_replace('#\+(\w+)#', '(?P<meta__$1>(.+))', $pattern);
         $pattern = '#^' . $pattern . '$#';
 
         return $pattern;
@@ -189,14 +238,14 @@ class Router implements RouterInterface
 
 
     /**
-     * Check customs
+     * Check context
      * @param Route $route
-     * @param array $customs
+     * @param array $context
      * @return bool
      */
-    protected function check(Route $route, array $customs = [])
+    protected function check(Route $route, array $context = [])
     {
-        return (array_intersect_assoc($customs, $route->customs) == $route->customs);
+        return (array_intersect_assoc($context, $route->context) == $route->context);
     }
 
 
@@ -210,22 +259,22 @@ class Router implements RouterInterface
     {
         // default values
         $parsed = [
-            'args' => [],
-            'envs' => []
+            'data' => [],
+            'meta' => []
         ];
 
         // parse
         foreach($data as $key => $value) {
-            if(substr($key, 0, 5) == 'arg__' or substr($key, 0, 5) == 'env__') {
-                $group = substr($key, 0, 3) . 's';
-                $label = substr($key, 5);
+            if(substr($key, 0, 6) == 'data__' or substr($key, 0, 6) == 'meta__') {
+                $group = substr($key, 0, 4);
+                $label = substr($key, 6);
                 $parsed[$group][$label] = $value;
             }
         }
 
         // update route
-        $route->data = $parsed['args'];
-        $route->meta = $parsed['args'];
+        $route->data = $parsed['data'];
+        $route->meta = $parsed['meta'];
 
         return $route;
     }
@@ -353,7 +402,7 @@ class Router implements RouterInterface
     /**
      * Setup routes from files
      * @param string $dir
-     * @param string|callable $action
+     * @param mixed $action
      * @return Router
      */
     public static function files($dir, $action)
@@ -384,4 +433,4 @@ class Router implements RouterInterface
         return new self($routes);
     }
 
-} 
+}

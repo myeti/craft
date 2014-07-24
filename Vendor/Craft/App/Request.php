@@ -27,8 +27,14 @@ class Request
     /** @var array */
     public $args = [];
 
+    /** @var callable[] */
+    public $before;
+
     /** @var callable */
     public $action;
+
+    /** @var callable[] */
+    public $after;
 
     /** @var array */
     public $meta = [];
@@ -37,16 +43,16 @@ class Request
     /**
      * Init request
      * @param string $query
-     * @param array $args
      * @param string|callable $action
+     * @param array $args
      * @param array $meta
      */
-    public function __construct($query = null, $args = [], $action = null, $meta = [])
+    public function __construct($query = null, $action = null, $args = [], $meta = [])
     {
         $this->start = microtime(true);
         $this->query = $query;
-        $this->args = $args;
         $this->action = $action;
+        $this->args = $args;
         $this->meta = $meta;
     }
 

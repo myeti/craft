@@ -13,7 +13,7 @@ class Routing extends Layer
 {
 
     /** @var RouterInterface */
-    protected $router;
+    public $router;
 
 
     /**
@@ -45,7 +45,9 @@ class Routing extends Layer
         }
 
         // update request
-        $request->action = $route->to;
+        $request->before = $route->before;
+        $request->action = $route->action;
+        $request->after = $route->after;
         $request->args = $route->data;
         $request->meta = array_merge($request->meta, $route->meta);
 

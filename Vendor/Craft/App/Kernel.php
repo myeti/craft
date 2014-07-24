@@ -3,7 +3,7 @@
 namespace Craft\App;
 
 use Craft\Error\Abort;
-use Craft\Pulse\Event;
+use Craft\Event\Subject;
 use Forge\Logger;
 
 /**
@@ -14,7 +14,7 @@ use Forge\Logger;
 class Kernel extends Dispatcher
 {
 
-    use Event;
+    use Subject;
 
     /** @var Layer[] */
     protected $layers = [];
@@ -26,34 +26,40 @@ class Kernel extends Dispatcher
     /**
      * Add layer
      * @param Layer $layer
-     * @param string $as
      * @return $this
      */
-    public function plug(Layer $layer, $as = null)
+    public function plug(Layer $layer)
     {
-        // unique layer
-        if($as) {
-            $this->layers[$as] = $layer;
-            Logger::info('App.Kernel : layer "' . get_class($layer) . '" plugged as "' . $as . '"');
-        }
-        // anonymous layer
-        else {
-            $this->layers[] = $layer;
-            Logger::info('App.Kernel : layer "' . get_class($layer) . '" plugged');
-        }
+        $class = get_class($layer);
+        $this->layers[$class] = $layer;
+        Logger::info('App.Kernel : layer "' . $class . '" plugged');
 
         return $this;
     }
 
 
     /**
+     * Get inner layer
+     * @param string $class
+     * @return bool|Layer
+     */
+    public function layer($class)
+    {
+        return isset($this->layers[$class])
+            ? $this->layers[$class]
+            : false;
+    }
+
+
+    /**
      * Handle context request
      * @param Request $request
-     * @throws \Craft\Error\Abort
+     * @param Response $response
+     * @throws Abort
      * @throws \Exception
      * @return bool
      */
-    public function handle(Request $request = null)
+    public function handle(Request $request = null, Response $response = null)
     {
         Logger::info('App.Kernel : kernel ' . ($this->running ? 'restart' : 'start'));
         $this->running = true;
@@ -75,7 +81,7 @@ class Kernel extends Dispatcher
             }
 
             // dispatch
-            $response = parent::handle($request);
+            $response = parent::handle($request, $response);
 
             // execute 'after' layer
             foreach($this->layers as $after) {

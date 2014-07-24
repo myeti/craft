@@ -15,11 +15,17 @@ class Route
     /** @var string */
     public $from;
 
-    /** @var mixed */
-    public $to;
+    /** @var callable[] */
+    public $before = [];
+
+    /** @var callable */
+    public $action;
+
+    /** @var callable[] */
+    public $after = [];
 
     /** @var array */
-    public $customs = [];
+    public $context = [];
 
     /** @var array */
     public $data = [];
@@ -31,14 +37,38 @@ class Route
     /**
      * Define route
      * @param string $from
-     * @param mixed $to
-     * @param array $customs
+     * @param string|callable $action
+     * @param array $context
      */
-    public function __construct($from, $to, array $customs = [])
+    public function __construct($from, $action, array $context = [])
     {
         $this->from = $from;
-        $this->to = $to;
-        $this->customs = $customs;
+        $this->action = $action;
+        $this->context = $context;
+    }
+
+
+    /**
+     * Add target before
+     * @param callable $callback
+     * @return $this
+     */
+    public function before(callable $callback)
+    {
+        $this->before[] = $callback;
+        return $this;
+    }
+
+
+    /**
+     * Add target after
+     * @param callable $callback
+     * @return $this
+     */
+    public function after(callable $callback)
+    {
+        $this->after[] = $callback;
+        return $this;
     }
 
 } 

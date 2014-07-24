@@ -28,7 +28,7 @@ Forge\Auth::seek('My\Entity\User');
 /**
  * You can now create your app with the routes.
  * You can define params /url/with/:id, then the action will receive $id
- * Or you can define env config /+lang/url, then you can retrieve with Forge\Env::get('lang')
+ * Or you can define env config /+lang/url, then you can retrieve with Forge\Mog::env('lang')
  */
 
 $app = new Forge\App([

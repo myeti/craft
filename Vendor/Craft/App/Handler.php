@@ -20,8 +20,9 @@ interface Handler
     /**
      * Handle context request
      * @param Request $request
+     * @param Response $response
      * @return Response
      */
-    public function handle(Request $request);
+    public function handle(Request $request, Response $response = null);
 
 } 

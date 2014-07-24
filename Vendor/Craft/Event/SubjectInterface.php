@@ -1,17 +1,22 @@
 <?php
 
-namespace Craft\Pulse;
+namespace Craft\Event;
 
-interface EventInterface
+interface SubjectInterface
 {
 
     /**
-     * Attach listener
+     * Attach callback
      * @param string $event
-     * @param callable $listener
+     * @param callable $callback
      */
-    public function on($event, callable $listener);
+    public function on($event, callable $callback);
 
+    /**
+     * Attach listener
+     * @param Listener $listener
+     */
+    public function attach(Listener $listener);
 
     /**
      * Detach all event listeners
@@ -20,9 +25,8 @@ interface EventInterface
      */
     public function off($event);
 
-
     /**
-     * Pulse event
+     * Event event
      * @param string $event
      * @param array $params
      * @return int

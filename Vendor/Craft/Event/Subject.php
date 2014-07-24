@@ -1,10 +1,8 @@
 <?php
 
-namespace Craft\Pulse;
+namespace Craft\Event;
 
-use Forge\Logger;
-
-trait Event
+trait Subject
 {
 
     /** @var array */
@@ -20,6 +18,18 @@ trait Event
     public function on($event, callable $callable)
     {
         $this->listeners[$event][] = $callable;
+        return $this;
+    }
+
+
+    /**
+     * Attach listener
+     * @param Listener $listener
+     * @return $this
+     */
+    public function attach(Listener $listener)
+    {
+        $listener->subscribe($this);
         return $this;
     }
 
@@ -44,25 +54,17 @@ trait Event
      */
     public function fire($event, array $params = [])
     {
-        // fire * event
-        if($event != '*') {
-            array_unshift($params, $event);
-            $this->fire('*', $params);
-        }
-
         // no listeners
         if(!isset($this->listeners[$event])) {
             return false;
         }
 
         // trigger all listeners
-        $count = count($this->listeners[$event]);
-        Logger::info('Event : fire "' . $event . '", ' . $count . ' listeners');
         foreach($this->listeners[$event] as $callable){
             call_user_func_array($callable, $params);
         }
 
-        return $count;
+        return count($this->listeners[$event]);
     }
 
 }

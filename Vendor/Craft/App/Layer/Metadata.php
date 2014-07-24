@@ -35,9 +35,12 @@ class Metadata extends Layer
      */
     public function before(Request $request)
     {
-        $action = $this->resolver->resolve($request->action);
-        $request->action = $action->callable;
-        $request->meta = array_merge($request->meta, $action->meta);
+        // resolve
+        $parsed = $this->resolver->resolve($request->action);
+
+        // update request
+        $request->action = $parsed->callable;
+        $request->meta = array_merge($request->meta, $parsed->meta);
 
         Logger::info('App.Metadata : request metadata parsed');
 

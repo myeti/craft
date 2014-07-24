@@ -183,7 +183,7 @@ abstract class Mog
 
 
     /**
-     * $SERVER value
+     * $_SERVER value
      * @param  string $key
      * @param  string $fallback
      * @return mixed
@@ -200,7 +200,7 @@ abstract class Mog
 
 
     /**
-     * headers value
+     * Headers value
      * @param string $key
      * @param null $fallback
      * @return mixed
@@ -216,6 +216,23 @@ abstract class Mog
         }
 
         return $key ? $headers[$key] : $headers;
+    }
+
+
+    /**
+     * Env value
+     * @param string $key
+     * @param null $fallback
+     * @return mixed
+     */
+    public static function env($key = null, $fallback = null)
+    {
+        // fallback
+        if($key and !isset($_ENV[$key])) {
+            return $fallback;
+        }
+
+        return $key ? $_ENV[$key] : $_ENV;
     }
 
 
@@ -309,6 +326,37 @@ abstract class Mog
         $start = static::server('REQUEST_TIME_FLOAT');
         $now = microtime(true);
         return number_format($now - $start, 4);
+    }
+
+
+    /**
+     * Get or set timezone
+     * @param string $timezone
+     * @return string
+     */
+    public static function timezone($timezone = null)
+    {
+        if($timezone) {
+            date_default_timezone_set($timezone);
+        }
+
+        return date_default_timezone_get();
+    }
+
+
+    /**
+     * Get or set locale
+     * @param $lang
+     * @return string
+     */
+    public static function locale($lang = null)
+    {
+        if($lang) {
+            setlocale(LC_ALL, $lang);
+            locale_set_default($lang);
+        }
+
+        return locale_get_default();
     }
 
 
