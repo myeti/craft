@@ -65,6 +65,18 @@ function post($key = null, $fallback = null)
 
 
 /**
+ * Env helper
+ * @param null $key
+ * @param string $fallback
+ * @return null
+ */
+function env($key = null, $fallback = null)
+{
+    return Craft\Box\Mog::env($key, $fallback);
+}
+
+
+/**
  * Alias of Lang::translate()
  * @param  string $text
  * @param  array $vars
