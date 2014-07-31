@@ -9,7 +9,7 @@
  */
 namespace Craft\Box;
 
-use Craft\Data\Provider\ProviderInterface;
+use Craft\Data\ProviderInterface;
 
 class Flash implements ProviderInterface
 {

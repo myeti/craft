@@ -30,3 +30,4 @@ Forge\Logger::info('Hello :)');
  */
 
 require __DIR__ . '/Craft/helpers.php';
+require __DIR__ . '/Forge/helpers.php';
