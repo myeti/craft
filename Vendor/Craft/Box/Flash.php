@@ -1,97 +1,67 @@
 <?php
-/**
- * This file is part of the Craft package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
+
 namespace Craft\Box;
 
-use Craft\Data\ProviderInterface;
-
-class Flash implements ProviderInterface
+abstract class Flash
 {
 
-    /** @var SessionInterface */
-    protected $session;
-
-
     /**
-     * Bind to session
-     */
-    public function __construct()
-    {
-        $this->session = new Session\Storage('craft/flash');
-    }
-
-
-    /**
-     * Get all elements
-     * @return array
-     */
-    public function all()
-    {
-        return $this->session->all();
-    }
-
-
-    /**
-     * Check if element exists
-     * @param $key
+     * Check if data exists
+     * @param string $key
      * @return bool
      */
-    public function has($key)
+    public static function has($key)
     {
-        return $this->session->has($key);
+        return static::storage()->has($key);
     }
 
 
     /**
-     * Consume element
+     * Get data
      * @param $key
-     * @param null $fallback
+     * @param mixed $fallback
      * @return mixed
      */
-    public function get($key, $fallback = null)
+    public static function get($key, $fallback = null)
     {
-        $message = $this->session->get($key, $fallback);
-        $this->drop($key);
-        return $message;
+        $value = static::storage()->get($key, $fallback);
+        static::storage()->drop($key);
+        return $value;
     }
 
 
     /**
-     * Set element by key with value
-     * @param $key
-     * @param $value
-     * @return bool
+     * Store value
+     * @param string $key
+     * @param mixed $value
      */
-    public function set($key, $value)
+    public static function set($key, $value)
     {
-        $this->session->set($key, $value);
+        static::storage()->set($key, $value);
     }
 
 
     /**
-     * Drop element by key
-     * @param $key
-     * @return bool
+     * Clear all data
      */
-    public function drop($key)
+    public static function clear()
     {
-        $this->session->drop($key);
+        static::storage()->clear();
     }
 
 
     /**
-     * Clear all elements
-     * @return bool
+     * Singleton session instance
+     * @return Session\Storage
      */
-    public function clear()
+    protected static function storage()
     {
-        $this->session->clear();
+        static $instance;
+        if(!$instance) {
+            $instance = new Session\Storage('app/flash');
+        }
+
+        return $instance;
     }
 
 }

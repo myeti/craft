@@ -2,7 +2,10 @@
 
 namespace Craft\Box;
 
-abstract class Session
+use Craft\Data\Provider;
+use Craft\Data\ProviderInterface;
+
+abstract class Bag
 {
 
     /**
@@ -24,16 +27,7 @@ abstract class Session
      */
     public static function get($key, $fallback = null)
     {
-        // unserialize
-        $value = static::storage()->get($key, $fallback);
-        if(is_string($value)) {
-            $decrypted = @unserialize($value);
-            if($decrypted !== false or $value == 'b:0;') {
-                $value = $decrypted;
-            }
-        }
-
-        return $value;
+        return static::storage()->get($key, $fallback);
     }
 
 
@@ -44,11 +38,6 @@ abstract class Session
      */
     public static function set($key, $value)
     {
-        // serialize
-        if(!is_scalar($value)) {
-            $value = serialize($value);
-        }
-
         static::storage()->set($key, $value);
     }
 
@@ -73,23 +62,14 @@ abstract class Session
 
 
     /**
-     * Save data in session
-     */
-    public static function save()
-    {
-        static::storage()->save();
-    }
-
-
-    /**
-     * Singleton session instance
-     * @return Session\Storage
+     * Singleton instance
+     * @return ProviderInterface
      */
     protected static function storage()
     {
         static $instance;
         if(!$instance) {
-            $instance = new Session\Storage('app/data');
+            $instance = new Provider;
         }
 
         return $instance;

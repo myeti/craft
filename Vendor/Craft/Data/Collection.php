@@ -9,7 +9,7 @@
  */
 namespace Craft\Data;
 
-class ArrayList extends Provider\ProviderObject
+class Collection extends Provider
 {
 
     /**
@@ -69,9 +69,20 @@ class ArrayList extends Provider\ProviderObject
      * @param $value
      * @return mixed
      */
-    public function find($value)
+    public function search($value)
     {
         return array_search($value, $this);
+    }
+
+
+    /**
+     * Find element using dot notation
+     * @param $key
+     * @return mixed
+     */
+    public function find($key)
+    {
+        return static::resolve($key, $this);
     }
 
 
@@ -124,7 +135,7 @@ class ArrayList extends Provider\ProviderObject
      * @param $element
      * @return $this
      */
-    public function pushEnd($element)
+    public function unshift($element)
     {
         foreach(func_get_args() as $element) {
             array_unshift($this, $element);
@@ -137,7 +148,7 @@ class ArrayList extends Provider\ProviderObject
      * Shift element
      * @return mixed
      */
-    public function popEnd()
+    public function shift()
     {
         return array_shift($this);
     }
@@ -352,6 +363,45 @@ class ArrayList extends Provider\ProviderObject
         $ouput = call_user_func_array('array_multisort', $args);
 
         return new self($ouput);
+    }
+
+
+    /**
+     * Find flat key in array
+     * @param string $key
+     * @param array $in
+     * @param string $separator
+     * @param bool $dig
+     * @return array
+     */
+    public static function resolve($key, array &$in, $separator = '.', $dig = false)
+    {
+        // resolve item
+        $key = trim($key, $separator);
+        $segments = explode($separator, $key);
+        $last = end($segments);
+
+        // one does not simply walk into Mordor
+        foreach($segments as $segment) {
+
+            // is last segment ?
+            if($segment == $last) {
+                break;
+            }
+
+            // namespace does not exist, dig it
+            if(!isset($in[$segment]) and $dig) {
+                $in[$segment] = [];
+            }
+            elseif(!$dig) {
+                break;
+            }
+
+            // next segment
+            $in = &$in[$segment];
+        }
+
+        return [$in, $last];
     }
 
 }

@@ -18,41 +18,42 @@ interface ProviderInterface
      */
     public function all();
 
+
     /**
      * Check if element exists
-     * @param $key
+     * @param string $key
      * @return bool
      */
     public function has($key);
 
+
     /**
      * Get element by key, fallback on error
-     * @param $key
-     * @param null $fallback
+     * @param string $key
+     * @param mixed $fallback
      * @return mixed
      */
     public function get($key, $fallback = null);
 
+
     /**
      * Set element by key with value
-     * @param $key
-     * @param $value
-     * @return bool
+     * @param string $key
+     * @param mixed $value
      */
     public function set($key, $value);
 
+
     /**
      * Drop element by key
-     * @param $key
-     * @return bool
+     * @param string $key
      */
     public function drop($key);
 
 
     /**
-     * Clear all elements
-     * @return bool
+     * Clear data
      */
     public function clear();
 
-} 
+}

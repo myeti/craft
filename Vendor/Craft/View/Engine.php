@@ -103,4 +103,21 @@ class Engine extends \ArrayObject implements EngineInterface
         return $content;
     }
 
+
+    /**
+     * Static instance rendering
+     * @param string $template
+     * @param array $data
+     * @return string
+     */
+    public static function make($template, $data = [])
+    {
+        static $instance;
+        if(!$instance) {
+            $instance = new self;
+        }
+
+        return $instance->render($template, $data);
+    }
+
 }

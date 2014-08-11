@@ -7,11 +7,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Data\Provider;
+namespace Craft\Data;
 
-use Craft\Data\ProviderInterface;
-
-class ProviderObject extends \ArrayObject implements ProviderInterface
+class Provider extends \ArrayObject implements ProviderInterface
 {
 
     /**
@@ -26,23 +24,19 @@ class ProviderObject extends \ArrayObject implements ProviderInterface
 
     /**
      * Check if element exists
-     * @param $key
+     * @param string $key
      * @return bool
      */
     public function has($key)
     {
-        $has = true;
-        foreach(func_get_args() as $key) {
-            $has &= isset($this[$key]);
-        }
-        return $has;
+        return isset($this[$key]);
     }
 
 
     /**
      * Get element by key, fallback on error
-     * @param $key
-     * @param null $fallback
+     * @param string $key
+     * @param mixed $fallback
      * @return mixed
      */
     public function get($key, $fallback = null)
@@ -53,28 +47,26 @@ class ProviderObject extends \ArrayObject implements ProviderInterface
 
     /**
      * Set element by key with value
-     * @param $key
-     * @param $value
-     * @return bool
+     * @param string $key
+     * @param mixed $value
+     * @return $this
      */
     public function set($key, $value)
     {
         $this[$key] = $value;
-        return true;
+        return $this;
     }
 
 
     /**
      * Drop element by key
-     * @param $key
-     * @return bool
+     * @param string $key
+     * @return $this
      */
     public function drop($key)
     {
-        foreach(func_get_args() as $key) {
-            unset($this[$key]);
-        }
-        return true;
+        unset($this[$key]);
+        return $this;
     }
 
 

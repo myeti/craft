@@ -1,21 +1,26 @@
 <?php
 
 /**
+ * Define constants
+ */
+
+define('__APP__', dirname($_SERVER['SCRIPT_FILENAME']));
+define('__NOW__', time());
+
+
+/**
  * Setup AutoLoader
  */
 
-require __DIR__ . '/Craft/Reflect/ClassLoaderInterface.php';
 require __DIR__ . '/Craft/Reflect/ClassLoader.php';
-require __DIR__ . '/Forge/Loader.php';
 
-Forge\Loader::set(
-    new Craft\Reflect\ClassLoader(true)
-);
+$loader = new Craft\Reflect\ClassLoader;
+$loader->register();
 
-Forge\Loader::add('Craft'   , __DIR__ . '/Craft');
-Forge\Loader::add('Forge'   , __DIR__ . '/Forge');
-Forge\Loader::add('Psr'     , __DIR__ . '/Psr');
-Forge\Loader::add('My'      , dirname($_SERVER['SCRIPT_FILENAME']));
+$loader->add('Craft', __DIR__ . '/Craft');
+$loader->add('Forge', __DIR__ . '/Forge');
+$loader->add('Psr',   __DIR__ . '/Psr');
+$loader->add('My',    __APP__);
 
 
 /**
@@ -30,4 +35,3 @@ Forge\Logger::info('Hello :)');
  */
 
 require __DIR__ . '/Craft/helpers.php';
-require __DIR__ . '/Forge/helpers.php';

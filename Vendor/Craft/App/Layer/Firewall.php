@@ -17,6 +17,35 @@ use Forge\Auth;
 class Firewall extends Layer
 {
 
+    /** @var callable */
+    protected $strategy;
+
+    /**
+     * Set firewall strategy
+     * @param callable $strategy
+     */
+    public function strategy(callable $strategy)
+    {
+        $this->strategy = $strategy;
+    }
+
+
+    /**
+     * Basic strategy
+     * @param Request $request
+     * @return bool
+     */
+    protected function basic(Request $request)
+    {
+        // check rank
+        if(Auth::rank($request->meta['auth'])) {
+            Auth::login(1);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Handle request
      * @param Request $request
@@ -25,11 +54,16 @@ class Firewall extends Layer
      */
     public function before(Request $request)
     {
+        // default value
         if(!isset($request->meta['auth'])) {
             $request->meta['auth'] = 0;
         }
 
-        if(!Auth::allowed($request->meta['auth'])) {
+        // strategy callable
+        $attempt = $this->strategy ?: [$this, 'basic'];
+
+        // attempt
+        if(!$attempt) {
             throw new Forbidden('User not allowed for query "' . $request->query . '"');
         }
 

@@ -8,6 +8,7 @@ use Craft\App\Layer\Rendering;
 use Craft\App\Layer\Metadata;
 use Craft\App\Layer\Routing;
 use Craft\App\Layer\Stats;
+use Craft\App\Request;
 use Craft\Map\Router;
 
 /**
@@ -23,7 +24,7 @@ class Flat extends Kernel
     public function __construct($views = null)
     {
         $this->plug(
-            new Routing(Router::files($views))
+            new Routing(Router::files($views, function(){}))
         );
 
         $this->plug(new Metadata);

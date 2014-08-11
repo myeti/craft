@@ -9,20 +9,4 @@
  */
 namespace Forge;
 
-use Craft\Box\Flash as FlashProvider;
-use Craft\Data\Provider;
-use Craft\Data\Provider\Container;
-
-abstract class Flash extends Container
-{
-
-    /**
-     * Create provider instance
-     * @return FlashProvider
-     */
-    protected static function bind()
-    {
-        return new FlashProvider;
-    }
-
-}
+abstract class Flash extends \Craft\Box\Flash {}

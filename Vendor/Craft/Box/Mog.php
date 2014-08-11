@@ -132,7 +132,7 @@ abstract class Mog
 
 
     /**
-     * $GET value
+     * $_GET value
      * @param  string $key
      * @param  string $fallback
      * @return mixed
@@ -149,7 +149,7 @@ abstract class Mog
 
 
     /**
-     * $POST value
+     * $_POST value
      * @param  string $key
      * @param  string $fallback
      * @return mixed
@@ -166,7 +166,7 @@ abstract class Mog
 
 
     /**
-     * $FILES value
+     * $_FILES value
      * @param  string $key
      * @param  string $fallback
      * @return array|object

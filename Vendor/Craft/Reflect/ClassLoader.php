@@ -9,7 +9,7 @@
  */
 namespace Craft\Reflect;
 
-class ClassLoader implements ClassLoaderInterface
+class ClassLoader
 {
 
     /** @var array */
@@ -17,15 +17,13 @@ class ClassLoader implements ClassLoaderInterface
 
 
     /**
-     * Setup class loader
-     * @param bool $register
+     * Register as loader
+     * @return $this
      */
-    public function __construct($register = false)
+    public function register()
     {
-        // register as spl loader
-        if($register) {
-            spl_autoload_register([$this, 'load']);
-        }
+        spl_autoload_register([$this, 'load']);
+        return $this;
     }
 
 

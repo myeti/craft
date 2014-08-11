@@ -1,149 +1,64 @@
 <?php
-/**
- * This file is part of the Craft package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
+
 namespace Craft\Box;
 
-use Craft\Orm\Syn;
-use Forge\Logger;
-
-class Auth implements AuthInterface
+abstract class Auth
 {
-
-    /** @var SessionInterface */
-    protected $session;
-
-    /** @var callable */
-    protected $seeker;
-
-
-    /**
-     * Bind to session
-     * @param string|callable $seeker
-     */
-    public function __construct($seeker = null)
-    {
-        // set session storage strategy
-        $this->session = new Session\Storage('craft/auth');
-
-        // define authenticator
-        if($seeker) {
-            $this->seek($seeker);
-        }
-    }
-
-
-    /**
-     * Define authenticator
-     * @param string|callable $seeker
-     * @return mixed|void
-     * @throws \InvalidArgumentException
-     */
-    public function seek($seeker)
-    {
-        // custom callable
-        if(is_callable($seeker)) {
-            $this->seeker = $seeker;
-        }
-        // handle user class
-        elseif(class_exists($seeker)) {
-            $this->seeker = function($username, $password, array $opts = []) use($seeker) {
-
-                // get user
-                return Syn::one($seeker, [
-                    'username' => $username,
-                    'password' => sha1($password)
-                ]);
-
-            };
-        }
-        else {
-            throw new \InvalidArgumentException('Invalid callable or class');
-        }
-
-        Logger::info('Auth : change user model seeker');
-    }
-
-
-    /**
-     * Attempt login
-     * @param string $username
-     * @param string $password
-     * @param array $opts
-     * @return bool|object
-     */
-    public function attempt($username, $password, array $opts = [])
-    {
-        // use authenticator
-        if(is_callable($this->seeker)) {
-
-            // login
-            if($user = call_user_func_array($this->seeker, [$username, $password, $opts])) {
-                $this->login($user->rank ?: 1, $user);
-                return $user;
-            }
-
-        }
-
-        return false;
-    }
-
 
     /**
      * Log user in
-     * @param int $rank
-     * @param mixed $user
-     * @return bool
      */
-    public function login($rank = 1, $user = null)
+    public static function login($rank = 1, $user = null)
     {
-        $this->session->set('rank', $rank);
-        $this->session->set('user', $user);
+        static::storage()->set('rank', $rank);
+        static::storage()->set('user', $user);
     }
 
 
     /**
      * Get rank
-     * @return int
+     * @param int $compare
+     * @return int|bool
      */
-    public function rank()
+    public static function rank($compare = 0)
     {
-        return (int)$this->session->get('rank');
+        $rank = static::storage()->get('rank', 0);
+        return $compare ? ($compare >= $rank) : $rank;
     }
 
 
     /**
-     * Get user
+     * Get user object
      * @return mixed
      */
-    public function user()
+    public static function user()
     {
-        return $this->session->get('user');
+        return static::storage()->get('user');
     }
 
 
     /**
      * Log user out
-     * @return bool
      */
-    public function logout()
+    public static function logout()
     {
-        $this->session->clear();
+        static::storage()->drop('rank');
+        static::storage()->drop('user');
     }
 
 
     /**
-     * Check if current user is allowed
-     * @param int $rank
-     * @return bool
+     * Singleton session instance
+     * @return Session\Storage
      */
-    public function allowed($rank)
+    protected static function storage()
     {
-        return $this->rank() >= $rank;
+        static $instance;
+        if(!$instance) {
+            $instance = new Session\Storage('app/auth');
+        }
+
+        return $instance;
     }
+
 }

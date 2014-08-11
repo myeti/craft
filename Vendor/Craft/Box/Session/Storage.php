@@ -1,31 +1,28 @@
 <?php
-/**
- * This file is part of the Craft package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
+
 namespace Craft\Box\Session;
 
-use Craft\Box\SessionInterface;
-use Craft\Data\Serializer;
-use Craft\Data\Repository;
+use Craft\Data\Collection;
 
-class Storage extends Serializer implements SessionInterface
+class Storage implements StorageInterface
 {
 
     /** @var string */
     protected $name;
 
+    /** @var array */
+    protected $data = [];
+
+
     /**
-     * init session storage
+     * Start session
      * @param string $name
      */
     public function __construct($name)
     {
-        // start
+        $this->name = $name;
+
+        // config
         if(!session_id()) {
             ini_set('session.use_trans_sid', 0);
             ini_set('session.use_only_cookies', 1);
@@ -35,67 +32,96 @@ class Storage extends Serializer implements SessionInterface
             session_start();
         }
 
-        // init storage provider
-        $this->name = $name;
-        $session = isset($_SESSION[$name]) ? $_SESSION[$name] : [];
-
-        parent::__construct(new Repository($session));
+        // get data
+        $this->data = isset($_SESSION[$name]) ? $_SESSION[$name] : [];
     }
 
 
     /**
-     * Get session id
-     * @return string
+     * Get all data
+     * @return array
      */
-    public function id()
+    public function all()
     {
-        return session_id();
+        return $this->data;
     }
 
 
     /**
-     * Set and save
+     * Check if data exists
+     * @param string $key
+     * @return bool
+     */
+    public function has($key)
+    {
+        list($item, $key) = Collection::resolve($key, $this->data);
+        return isset($item[$key]);
+    }
+
+
+    /**
+     * Get data
      * @param $key
-     * @param $value
-     * @return bool|void
+     * @param mixed $fallback
+     * @return mixed
+     */
+    public function get($key, $fallback = null)
+    {
+        list($item, $key) = Collection::resolve($key, $this->data);
+        return isset($item[$key]) ? $item[$key] : $fallback;
+    }
+
+
+    /**
+     * Store value
+     * @param string $key
+     * @param mixed $value
      */
     public function set($key, $value)
     {
-        parent::set($key, $value);
-        $this->save();
+        list($item, $key) = Collection::resolve($key, $this->data, true);
+        $item[$key] = $value;
     }
 
 
     /**
-     * Drop and save
-     * @param $key
-     * @return bool|void
+     * Delete data
+     * @param string $key
      */
     public function drop($key)
     {
-        parent::drop($key);
-        $this->save();
+        list($item, $key) = Collection::resolve($key, $this->data);
+
+        if(isset($item[$key])) {
+            unset($item[$key]);
+        }
     }
 
 
     /**
-     * Destroy session
-     * @return bool
+     * Clear all data
      */
     public function clear()
     {
-        parent::clear();
-        $this->save();
+        $this->data = [];
     }
 
 
     /**
-     * Replicate inner data into external source
-     * @return mixed
+     * Save data in session
      */
-    protected function save()
+    public function save()
     {
-        $_SESSION[$this->name] = $this->all();
+        $_SESSION[$this->name] = $this->data;
     }
 
-}
+
+    /**
+     * At last, save
+     */
+    public function __destruct()
+    {
+        $this->save();
+    }
+
+} 
