@@ -9,7 +9,7 @@
  */
 namespace Craft\Reflect;
 
-abstract class Annotation
+abstract class Meta
 {
 
     /**

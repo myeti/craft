@@ -2,7 +2,7 @@
 
 namespace Craft\Orm\Database;
 
-use Craft\Reflect\Annotation;
+use Craft\Reflect\Meta;
 
 class Builder
 {
@@ -52,7 +52,7 @@ class Builder
         foreach($fields as $field => $null) {
 
             // resolve type
-            $type = Annotation::property($entity, $field, 'var') ?: 'string';
+            $type = Meta::property($entity, $field, 'var') ?: 'string';
 
             // define opts
             $opts = ['type' => trim($type)] + $this->defaults;
@@ -123,7 +123,7 @@ class Builder
     public static function resolve($entity)
     {
         if(!isset(static::$resolved[$entity])) {
-            static::$resolved[$entity] = Annotation::object($entity, 'entity') ?: end(explode('\\', $entity));
+            static::$resolved[$entity] = Meta::object($entity, 'entity') ?: end(explode('\\', $entity));
         }
 
         return static::$resolved[$entity];

@@ -2,7 +2,7 @@
 
 namespace Craft\Event;
 
-interface SubjectInterface
+interface EventInterface
 {
 
     /**
@@ -14,19 +14,18 @@ interface SubjectInterface
 
     /**
      * Attach listener
-     * @param Listener $listener
+     * @param ListenerInterface $listener
      */
-    public function attach(Listener $listener);
+    public function attach(ListenerInterface $listener);
 
     /**
-     * Detach all event listeners
-     * @param $event
-     * @return mixed
+     * Detach all event callbacks
+     * @param string $event
      */
     public function off($event);
 
     /**
-     * Event event
+     * Fire event
      * @param string $event
      * @param array $params
      * @return int

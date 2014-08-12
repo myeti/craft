@@ -6,7 +6,7 @@ use Craft\App\Kernel;
 use Craft\App\Layer;
 use Craft\App\Layer\Firewall;
 use Craft\App\Layer\Json;
-use Craft\App\Layer\Metadata;
+use Craft\App\Layer\Resolver;
 use Craft\App\Layer\Routing;
 use Craft\App\Layer\Stats;
 use Craft\Map\Router;
@@ -27,7 +27,7 @@ class Service extends Kernel
             new Routing(Router::annotations($classes))
         );
 
-        $this->plug(new Metadata);
+        $this->plug(new Resolver);
         $this->plug(new Firewall);
         $this->plug(new Json);
         $this->plug(new Stats);

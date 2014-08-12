@@ -24,12 +24,12 @@ trait Subject
 
     /**
      * Attach listener
-     * @param Listener $listener
+     * @param ListenerInterface $listener
      * @return $this
      */
-    public function attach(Listener $listener)
+    public function attach(ListenerInterface $listener)
     {
-        $listener->subscribe($this);
+        $listener->listen($this);
         return $this;
     }
 

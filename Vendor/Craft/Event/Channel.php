@@ -2,7 +2,7 @@
 
 namespace Craft\Event;
 
-class Channel implements SubjectInterface
+class Channel implements EventInterface
 {
     use Subject;
 }

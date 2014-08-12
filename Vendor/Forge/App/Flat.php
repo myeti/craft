@@ -5,10 +5,9 @@ namespace Forge\App;
 use Craft\App\Kernel;
 use Craft\App\Layer;
 use Craft\App\Layer\Rendering;
-use Craft\App\Layer\Metadata;
+use Craft\App\Layer\Resolver;
 use Craft\App\Layer\Routing;
 use Craft\App\Layer\Stats;
-use Craft\App\Request;
 use Craft\Map\Router;
 
 /**
@@ -27,7 +26,7 @@ class Flat extends Kernel
             new Routing(Router::files($views, function(){}))
         );
 
-        $this->plug(new Metadata);
+        $this->plug(new Resolver);
         $this->plug(new Rendering($views));
         $this->plug(new Stats);
     }

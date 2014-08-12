@@ -2,7 +2,7 @@
 
 namespace Craft\Map;
 
-use Craft\Reflect\Annotation;
+use Craft\Reflect\Meta;
 use Craft\Storage\Finder\GlobFinder;
 
 class Router implements RouterInterface
@@ -400,7 +400,7 @@ class Router implements RouterInterface
             foreach(get_class_methods($class) as $method) {
 
                 // @route specified
-                if($url = Annotation::method($class, $method, 'route')) {
+                if($url = Meta::method($class, $method, 'route')) {
                     $routes[$url] = [$class, $method];
                 }
 

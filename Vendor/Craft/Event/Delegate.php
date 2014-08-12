@@ -5,7 +5,7 @@ namespace Craft\Event;
 trait Delegate
 {
 
-    /** @var SubjectInterface */
+    /** @var EventInterface */
     protected $subject;
 
 
@@ -24,12 +24,12 @@ trait Delegate
 
     /**
      * Attach callback
-     * @param Listener $listener
+     * @param ListenerInterface $listener
      * @return $this
      */
-    public function attach(Listener $listener)
+    public function attach(ListenerInterface $listener)
     {
-        $this->subject->attach($listener);
+        $listener->listen($this->subject);
         return $this;
     }
 
