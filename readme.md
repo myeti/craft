@@ -19,8 +19,8 @@ $routes = [
     '/lost' => 'My\Logic\Error::lost'
 ];
 
-// forge your app with routes and templates
-$app = new Forge\App($routes, __APP__ . '/views);
+// forge your app with routes and templates dir
+$app = new Forge\App($routes, __APP__ . '/views');
 
 // catch 404
 $app->lost(404, '/lost');
