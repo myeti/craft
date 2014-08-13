@@ -13,16 +13,17 @@ All start in your 'index.php' :
 
 require 'vendor/autoload.php';
 
-// forge your app
-$app = new Forge\App([
-    '/'         => 'My\Logic\Front::hello', // landing page
-    '/lost'     => 'My\Logic\Error::lost',  // 404 route
-]);
+// create your routes
+$routes = [
+    '/'     => 'My\Logic\Front::hello',
+    '/lost' => 'My\Logic\Error::lost'
+];
+
+// forge your app with routes and templates
+$app = new Forge\App($routes, __APP__ . '/views);
 
 // catch 404
-$app->on(404, function() use($app) {
-    $app->to('/lost');
-});
+$app->lost(404, '/lost');
 
 // let's go !
 $app->handle();
