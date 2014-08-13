@@ -1,4 +1,4 @@
-<?php self::layout('views/layout') ?>
+<?php self::layout('layout') ?>
 
 <h1>Entity #<?= $entity->id ?></h1>
 

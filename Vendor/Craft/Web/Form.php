@@ -2,7 +2,7 @@
 
 namespace Craft\Web;
 
-use Forge\Engine;
+use Craft\View\Engine;
 
 class Form implements \IteratorAggregate
 {
@@ -77,7 +77,7 @@ class Form implements \IteratorAggregate
      */
     public function open()
     {
-        return Engine::render(__DIR__ . '/Form/templates/form.open', ['form' => $this]);
+        return Engine::make(__DIR__ . '/Form/templates/form.open', ['form' => $this]);
     }
 
 
@@ -87,7 +87,7 @@ class Form implements \IteratorAggregate
      */
     public function close()
     {
-        return Engine::render(__DIR__ . '/Form/templates/form.close');
+        return Engine::make(__DIR__ . '/Form/templates/form.close');
     }
 
 
@@ -97,7 +97,7 @@ class Form implements \IteratorAggregate
      */
     public function __toString()
     {
-        return Engine::render(__DIR__ . '/Form/templates/form', ['form' => $this]);
+        return Engine::make(__DIR__ . '/Form/templates/form', ['form' => $this]);
     }
 
 }

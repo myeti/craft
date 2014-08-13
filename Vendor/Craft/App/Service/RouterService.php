@@ -1,15 +1,14 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
 use Craft\Error\NotFound;
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
-use Craft\Map\Router;
 use Craft\Map\RouterInterface;
-use Forge\Logger;
+use Craft\Log\Logger;
 
-class Routing extends Layer
+class RouterService extends Service
 {
 
     /** @var RouterInterface */
@@ -18,13 +17,11 @@ class Routing extends Layer
 
     /**
      * Init with routes or router
-     * @param $routes
+     * @param RouterInterface $router
      */
-    public function __construct($routes)
+    public function __construct(RouterInterface $router)
     {
-        $this->router = ($routes instanceof RouterInterface)
-            ? $routes
-            : new Router($routes);
+        $this->router = $router;
     }
 
 

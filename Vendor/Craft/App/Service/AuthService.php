@@ -1,20 +1,20 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
 use Craft\Error\Forbidden;
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
-use Forge\Logger;
-use Forge\Auth;
+use Craft\Log\Logger;
+use Craft\Box\Auth;
 
 /**
  * Check if user is allowed to execute
  * the requested action when @auth is specified.
  *
- * Needs Layer\Metadata
+ * Needs Service\ResolverService
  */
-class Firewall extends Layer
+class AuthService extends Service
 {
 
     /** @var callable */
@@ -49,7 +49,7 @@ class Firewall extends Layer
     /**
      * Handle request
      * @param Request $request
-     * @throws \Craft\Error\Forbidden
+     * @throws Forbidden
      * @return Request
      */
     public function before(Request $request)

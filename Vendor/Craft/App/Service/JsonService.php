@@ -1,17 +1,19 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
 use Craft\App\Response;
-use Forge\Logger;
-use Forge\Mog;
+use Craft\Log\Logger;
+use Craft\Box\Mog;
 
 /**
  * Render data as json.
+ *
+ * Needs Service\ResolverService
  */
-class Json extends Layer
+class JsonService extends Service
 {
 
     /**

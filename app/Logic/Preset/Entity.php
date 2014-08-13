@@ -16,7 +16,7 @@ class Entity
 
     /**
      * Get all items
-     * @render views\entity.all
+     * @render entity.all
      * @return array
      */
     public function all()
@@ -28,9 +28,9 @@ class Entity
 
     /**
      * Get one item
-     * @render views\entity.one
+     * @render entity.one
      * @param  string $id
-     * @throws \Craft\Error\Abort
+     * @throws NotFound
      * @return array
      */
     public function one($id)
@@ -49,9 +49,9 @@ class Entity
 
     /**
      * Create or edit entity
-     * @param null $id
-     * @throws \Craft\Error\Abort
-     * @render views/entity.form
+     * @param int $id
+     * @throws NotFound
+     * @render entity.form
      * @return array
      */
     public function form($id = null)
@@ -81,7 +81,7 @@ class Entity
 
     /**
      * Delete item
-     * @render views\entity.delete
+     * @render entity.delete
      * @param  string $id
      */
     public function delete($id)

@@ -2,7 +2,7 @@
 
 namespace Craft\Orm;
 
-use Forge\Logger;
+use Craft\Log\Logger;
 
 class Database
 {

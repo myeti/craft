@@ -3,13 +3,14 @@
 namespace Forge;
 
 use Craft\App\Kernel;
-use Craft\App\Layer;
-use Craft\App\Layer\Firewall;
-use Craft\App\Layer\Rendering;
-use Craft\App\Layer\Resolver;
-use Craft\App\Layer\Routing;
-use Craft\App\Layer\Stats;
-use Craft\Map\RouterInterface;
+use Craft\App\Service;
+use Craft\App\Service\AuthService;
+use Craft\App\Service\RenderService;
+use Craft\App\Service\ResolverService;
+use Craft\App\Service\RouterService;
+use Craft\Map\Router;
+use Craft\View\Engine;
+use Craft\View\Helper\Markup;
 
 /**
  * Ready to use app
@@ -19,16 +20,20 @@ class App extends Kernel
 
     /**
      * Init app with routes and views dir
-     * @param array|RouterInterface $routes
+     * @param array $routes
      * @param string $views
      */
-    public function __construct($routes = [], $views = null)
+    public function __construct(array $routes = [], $views = null)
     {
-        $this->plug(new Routing($routes));
-        $this->plug(new Resolver);
-        $this->plug(new Firewall);
-        $this->plug(new Rendering($views));
-        $this->plug(new Stats);
+        $router = new Router($routes);
+        $this->plug(new RouterService($router));
+
+        $this->plug(new ResolverService);
+        $this->plug(new AuthService);
+
+        $engine = new Engine($views ?: Mog::path());
+        $engine->mount(new Markup(Mog::base()));
+        $this->plug(new RenderService($engine));
     }
 
 }

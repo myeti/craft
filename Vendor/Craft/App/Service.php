@@ -3,16 +3,11 @@
 namespace Craft\App;
 
 /**
- * A layer is a middleware
- * that operates before and/or after
- * the action is called
+ * A service operates before
+ * and/or after the action is called
  */
-abstract class Layer
+abstract class Service
 {
-
-    const ROUTER = 'router';
-    const AUTH = 'auth';
-    const VIEW = 'view';
 
     /**
      * Handle request
@@ -41,5 +36,17 @@ abstract class Layer
      * @param Response $response
      */
     public function finish(Request $request, Response $response) {}
+
+    /**
+     * Handle error
+     * @param \Exception $e
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function error(\Exception $e, Request $request, Response $response)
+    {
+        return $response;
+    }
 
 } 

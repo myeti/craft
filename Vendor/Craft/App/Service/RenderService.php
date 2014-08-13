@@ -1,23 +1,21 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
 use Craft\App\Response;
-use Craft\Box\Mog;
-use Forge\Logger;
+use Craft\Log\Logger;
 use Craft\View\Engine;
 use Craft\View\EngineInterface;
-use Craft\View\Helper\Markup;
 
 /**
  * Render view using the html engine
  * when @render in specified.
  *
- * Needs Layer\Metadata
+ * Needs Service\ResolverService
  */
-class Rendering extends Layer
+class RenderService extends Service
 {
 
     /** @var Engine */
@@ -26,17 +24,20 @@ class Rendering extends Layer
 
     /**
      * Setup engine
-     * @param string $root
+     * @param EngineInterface $engine
      */
-    public function __construct($root = null)
+    public function __construct(EngineInterface $engine)
     {
-        if($root instanceof EngineInterface) {
-            $this->engine = $root;
-        }
-        else {
-            $this->engine = new Engine($root ?: Mog::path());
-            $this->engine->mount(new Markup(Mog::base()));
-        }
+        $this->engine = $engine;
+    }
+
+
+    /**
+     * Set views dir
+     */
+    public function dir($dir)
+    {
+        $this->engine->dir($dir);
     }
 
 

@@ -3,32 +3,35 @@
 namespace Forge\App;
 
 use Craft\App\Kernel;
-use Craft\App\Layer;
-use Craft\App\Layer\Rendering;
-use Craft\App\Layer\Resolver;
-use Craft\App\Layer\Routing;
-use Craft\App\Layer\Stats;
+use Craft\App\Service;
+use Craft\App\Service\RenderService;
+use Craft\App\Service\ResolverService;
+use Craft\App\Service\RouterService;
+use Craft\Box\Mog;
 use Craft\Map\Router;
+use Craft\View\Engine;
+use Craft\View\Helper\Markup;
 
 /**
  * Ready to use app
  */
-class Flat extends Kernel
+class App extends Kernel
 {
 
     /**
-     * Init app with routes and views dir
+     * Init app with views dir
      * @param string $views
      */
     public function __construct($views = null)
     {
-        $this->plug(
-            new Routing(Router::files($views, function(){}))
-        );
+        $router = Router::files($views, function(){});
+        $this->plug(new RouterService($router));
 
-        $this->plug(new Resolver);
-        $this->plug(new Rendering($views));
-        $this->plug(new Stats);
+        $this->plug(new ResolverService);
+
+        $engine = new Engine($views ?: Mog::path());
+        $engine->mount(new Markup(Mog::base()));
+        $this->plug(new RenderService($engine));
     }
 
 }

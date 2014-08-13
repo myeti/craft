@@ -9,7 +9,7 @@
  */
 namespace Craft\App;
 
-use Forge\Logger;
+use Craft\Log\Logger;
 
 /**
  * The most basic class :
@@ -28,6 +28,11 @@ class Dispatcher implements Handler
      */
     public function handle(Request $request, Response $response = null)
     {
+        // create response if not provided
+        if(!$response) {
+            $response = new Response;
+        }
+
         // not a valid callable
         if(!is_callable($request->action)) {
             throw new \BadMethodCallException('Request::action must be a valid callable.');
@@ -48,7 +53,6 @@ class Dispatcher implements Handler
         Logger::info('App.Dispatcher : request executed');
 
         // create response
-        $response = $response ?: new Response();
         $response->data = $data;
         Logger::info('App.Dispatcher : response generated');
 

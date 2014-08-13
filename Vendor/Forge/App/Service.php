@@ -3,18 +3,17 @@
 namespace Forge\App;
 
 use Craft\App\Kernel;
-use Craft\App\Layer;
-use Craft\App\Layer\Firewall;
-use Craft\App\Layer\Json;
-use Craft\App\Layer\Resolver;
-use Craft\App\Layer\Routing;
-use Craft\App\Layer\Stats;
+use Craft\App\Service;
+use Craft\App\Service\AuthService;
+use Craft\App\Service\ResolverService;
+use Craft\App\Service\RouterService;
+use Craft\App\Service\JsonService;
 use Craft\Map\Router;
 
 /**
  * Ready to use app
  */
-class Service extends Kernel
+class App extends Kernel
 {
 
     /**
@@ -23,14 +22,13 @@ class Service extends Kernel
      */
     public function __construct(array $classes)
     {
-        $this->plug(
-            new Routing(Router::annotations($classes))
-        );
+        $router = Router::annotations($classes);
+        $this->plug(new RouterService($router));
 
-        $this->plug(new Resolver);
-        $this->plug(new Firewall);
-        $this->plug(new Json);
-        $this->plug(new Stats);
+        $this->plug(new ResolverService);
+        $this->plug(new AuthService);
+
+        $this->plug(new JsonService);
     }
 
 }

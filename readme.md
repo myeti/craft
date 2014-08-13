@@ -65,11 +65,8 @@ Let's manage your users, shall we ?
 ```php
 <?php
 
-// tell the auth object the model you want to use
-Forge\Auth::seek('My\Entity\User');
-
-// attempt a login
-if(Forge\Auth::attempt($username, $password)) {
+// attempt a basic login
+if(Forge\Auth::basic('My\Model\User', $username, $password)) {
     // logged in
 }
 else {

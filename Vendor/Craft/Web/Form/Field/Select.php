@@ -2,7 +2,7 @@
 
 namespace Craft\Web\Form\Field;
 
-use Forge\Engine;
+use Craft\View\Engine;
 use Craft\Web\Form\Field;
 
 class Select extends Field
@@ -32,7 +32,7 @@ class Select extends Field
      */
     public function input()
     {
-        return Engine::render(dirname(__DIR__) . '/templates/select.input', ['field' => $this]);
+        return Engine::make(dirname(__DIR__) . '/templates/select.input', ['field' => $this]);
     }
 
 } 

@@ -2,9 +2,9 @@
 
 namespace Craft\View\Helper;
 
-use Forge\Auth;
-use Forge\Flash;
-use Forge\Session;
+use Craft\Box\Auth;
+use Craft\Box\Flash;
+use Craft\Box\Session;
 use Craft\View\Helper;
 
 class Box extends Helper

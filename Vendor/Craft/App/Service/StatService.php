@@ -1,17 +1,17 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
 use Craft\App\Response;
-use Forge\Logger;
-use Forge\Session;
+use Craft\Log\Logger;
+use Craft\Box\Session;
 
 /**
  * Keep elapsed time in memory
  */
-class Stats extends Layer
+class StatService extends Service
 {
 
     /**

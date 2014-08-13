@@ -4,7 +4,7 @@ namespace Craft\Orm;
 
 use Craft\Orm\Adapter\MySQL;
 use Craft\Orm\Adapter\SQLite;
-use Forge\Logger;
+use Craft\Log\Logger;
 
 abstract class Syn
 {

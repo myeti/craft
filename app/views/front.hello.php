@@ -1,4 +1,4 @@
-<?php self::layout('views/layout'); ?>
+<?php self::layout('layout'); ?>
 
 <div id="craft-welcome">
 

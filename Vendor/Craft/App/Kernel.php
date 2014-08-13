@@ -4,7 +4,7 @@ namespace Craft\App;
 
 use Craft\Error\Abort;
 use Craft\Event\Subject;
-use Forge\Logger;
+use Craft\Log\Logger;
 
 /**
  * Advanced Dispatcher :
@@ -16,8 +16,8 @@ class Kernel extends Dispatcher
 
     use Subject;
 
-    /** @var Layer[] */
-    protected $layers = [];
+    /** @var Service[] */
+    protected $services = [];
 
     /** @var bool */
     protected $running = false;
@@ -25,13 +25,13 @@ class Kernel extends Dispatcher
 
     /**
      * Add layer
-     * @param Layer $layer
+     * @param Service $layer
      * @return $this
      */
-    public function plug(Layer $layer)
+    public function plug(Service $layer)
     {
         $class = get_class($layer);
-        $this->layers[$class] = $layer;
+        $this->services[$class] = $layer;
         Logger::info('App.Kernel : layer "' . $class . '" plugged');
 
         return $this;
@@ -41,12 +41,12 @@ class Kernel extends Dispatcher
     /**
      * Get inner layer
      * @param string $class
-     * @return bool|Layer
+     * @return bool|Service
      */
     public function layer($class)
     {
-        return isset($this->layers[$class])
-            ? $this->layers[$class]
+        return isset($this->services[$class])
+            ? $this->services[$class]
             : false;
     }
 
@@ -72,8 +72,8 @@ class Kernel extends Dispatcher
         // safe
         try {
 
-            // execute 'before' layer
-            foreach($this->layers as $before) {
+            // execute 'before' services
+            foreach($this->services as $before) {
                 $return = $before->before($request);
                 if($return instanceof Request) {
                     $request = $return;
@@ -83,8 +83,8 @@ class Kernel extends Dispatcher
             // dispatch
             $response = parent::handle($request, $response);
 
-            // execute 'after' layer
-            foreach($this->layers as $after) {
+            // execute 'after' services
+            foreach($this->services as $after) {
                 $return = $after->after($request, $response);
                 if($return instanceof Response) {
                     $response = $return;
@@ -95,24 +95,44 @@ class Kernel extends Dispatcher
             echo $response;
             Logger::info('App.Kernel : response sent with code ' . $response->code);
 
-            // finish process
-            foreach($this->layers as $finish) {
+            // finisher services
+            foreach($this->services as $finish) {
                 $finish->finish($request, $response);
             }
 
         }
-        // abort
-        catch(Abort $e) {
+        // error
+        catch(\Exception $e) {
 
             Logger::error('App.Kernel : ' . $e->getCode() . ' ' . $e->getMessage());
 
-            // error as event (if no listener registered, then raise error)
+            // dispatch to custom events
             $done = $this->fire($e->getCode(), [$request, $e->getMessage()]);
+
+            // no custom events
             if(!$done) {
-                throw $e;
+
+                // try error services
+                $handled = false;
+                foreach($this->services as $error) {
+
+                    // proceed
+                    $response = $error->error($e, $request, $response);
+
+                    // response returned : stop
+                    if($response instanceof Response) {
+                        echo $response;
+                        $handled = true;
+                    }
+                }
+
+                // no error services
+                if(!$handled) {
+                    throw $e;
+                }
+
             }
 
-            return false;
         }
 
         $this->running = false;
@@ -142,7 +162,7 @@ class Kernel extends Dispatcher
     public function lost($to)
     {
         $this->on(404, function() use($to) {
-            Logger::info('App.Kernel : error 404, redirect to "' . $to . '"');
+            Logger::info('App.Kernel : 404, redirect to "' . $to . '"');
             $this->to($to);
         });
 
@@ -158,7 +178,7 @@ class Kernel extends Dispatcher
     public function nope($to)
     {
         $this->on(403, function() use($to) {
-            Logger::info('App.Kernel : error 403, redirect to "' . $to . '"');
+            Logger::info('App.Kernel : 403, redirect to "' . $to . '"');
             $this->to($to);
         });
 

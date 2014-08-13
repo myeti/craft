@@ -2,6 +2,8 @@
 
 namespace Craft\Box;
 
+use Craft\Orm\Syn;
+
 abstract class Auth
 {
 
@@ -44,6 +46,29 @@ abstract class Auth
     {
         static::storage()->drop('rank');
         static::storage()->drop('user');
+    }
+
+
+    /**
+     * Attempt native basic login
+     * @param string $model
+     * @param string $username
+     * @param string $password
+     * @return bool|mixed
+     */
+    public static function basic($model, $username, $password)
+    {
+        // prepare data
+        $data = compact('username', 'password');
+        $data['password'] = sha1($data['password']);
+
+        // get user from syn
+        if($user = Syn::one($model, $data)) {
+            static::login(1, $user);
+            return $user;
+        }
+
+        return false;
     }
 
 

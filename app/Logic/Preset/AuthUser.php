@@ -11,7 +11,7 @@ class AuthUser
 
     /**
      * Attempt login
-     * @render views/auth.login
+     * @render auth.login
      * @return mixed
      */
     public function login()
@@ -20,7 +20,7 @@ class AuthUser
         if(post())
         {
             // login attempt
-            if($user = Auth::attempt(post('username'), post('password'))) {
+            if($user = Auth::basic('My\Model\User', post('username'), post('password'))) {
 
                 // remove password for security
                 $user->password = null;
@@ -50,7 +50,7 @@ class AuthUser
 
     /**
      * Register new user
-     * @render views/auth.register
+     * @render auth.register
      * @return array
      */
     public function register()

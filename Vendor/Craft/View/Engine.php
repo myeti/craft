@@ -22,8 +22,8 @@ class Engine extends \ArrayObject implements EngineInterface
      */
     public function __construct($root = null, $ext = 'php')
     {
-        $this->root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->ext = '.' . ltrim($ext, '.');
+        // set bases
+        $this->dir($root, $ext);
 
         // default helpers
         $this->mount(new Helper\Markup);
@@ -32,6 +32,18 @@ class Engine extends \ArrayObject implements EngineInterface
         $this->helper('partial', [$this, 'render']);
 
         parent::__construct();
+    }
+
+
+    /**
+     * Set views dir
+     * @param string $dir
+     * @param string $ext
+     */
+    public function dir($dir, $ext = 'php')
+    {
+        $this->root = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->ext = '.' . ltrim($ext, '.');
     }
 
 

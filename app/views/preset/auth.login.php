@@ -1,4 +1,4 @@
-<?php self::layout('views/layout') ?>
+<?php self::layout('layout') ?>
 
 <div class="form login-form">
     <form action="/auth/login" method="post">

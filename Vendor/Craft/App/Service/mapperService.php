@@ -1,19 +1,19 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
 use Craft\Error\NotFound;
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
 use Craft\Orm\Syn;
-use Forge\Logger;
+use Craft\Log\Logger;
 
 /**
  * Inject a model when @map is specified.
  *
- * Needs Layer\Metadata
+ * Needs Service\ResolverService
  */
-class Mapping extends Layer
+class MapperService extends Service
 {
 
     /** @var callable[] */

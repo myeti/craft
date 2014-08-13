@@ -7,7 +7,7 @@ class Error
 
     /**
      * 404 Not found
-     * @render views/error.404
+     * @render error.404
      */
     public function lost()
     {
@@ -16,7 +16,7 @@ class Error
 
     /**
      * 403 Forbidden
-     * @render views/error.403
+     * @render error.403
      */
     public function nope()
     {

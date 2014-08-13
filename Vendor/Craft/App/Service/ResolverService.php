@@ -1,17 +1,17 @@
 <?php
 
-namespace Craft\App\Layer;
+namespace Craft\App\Service;
 
-use Craft\App\Layer;
+use Craft\App\Service;
 use Craft\App\Request;
 use Craft\Reflect\Action;
 use Craft\Reflect\InjectorInterface;
-use Forge\Logger;
+use Craft\Log\Logger;
 
 /**
  * Resolve action and read metadata.
  */
-class Resolver extends Layer
+class ResolverService extends Service
 {
 
     /** @var InjectorInterface */

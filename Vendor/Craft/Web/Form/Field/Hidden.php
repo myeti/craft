@@ -2,7 +2,7 @@
 
 namespace Craft\Web\Form\Field;
 
-use Forge\Engine;
+use Craft\View\Engine;
 use Craft\Web\Form\Field;
 
 class Hidden extends Field
@@ -27,7 +27,7 @@ class Hidden extends Field
      */
     public function input()
     {
-        return Engine::render(dirname(__DIR__) . '/templates/hidden.input', ['field' => $this]);
+        return Engine::make(dirname(__DIR__) . '/templates/hidden.input', ['field' => $this]);
     }
 
 

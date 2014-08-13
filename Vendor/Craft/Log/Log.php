@@ -9,7 +9,7 @@
  */
 namespace Craft\Trace;
 
-use Forge\Mog;
+use Craft\Box\Mog;
 
 class Log
 {

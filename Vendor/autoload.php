@@ -4,8 +4,11 @@
  * Define constants
  */
 
-define('__APP__', dirname($_SERVER['SCRIPT_FILENAME']));
-define('__NOW__', time());
+define('__ROOT__',   dirname($_SERVER['SCRIPT_FILENAME']));
+define('__VENDOR__', __ROOT__ . '/vendor');
+define('__PUBLIC__', __ROOT__ . '/public');
+define('__APP__',    __ROOT__ . '/app');
+define('__NOW__',    time());
 
 
 /**
@@ -17,9 +20,9 @@ require __DIR__ . '/Craft/Reflect/ClassLoader.php';
 $loader = new Craft\Reflect\ClassLoader;
 $loader->register();
 
-$loader->add('Craft', __DIR__ . '/Craft');
-$loader->add('Forge', __DIR__ . '/Forge');
-$loader->add('Psr',   __DIR__ . '/Psr');
+$loader->add('Craft', __VENDOR__ . '/Craft');
+$loader->add('Forge', __VENDOR__ . '/Forge');
+$loader->add('Psr',   __VENDOR__ . '/Psr');
 $loader->add('My',    __APP__);
 
 
