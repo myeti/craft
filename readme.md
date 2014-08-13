@@ -23,7 +23,7 @@ $routes = [
 $app = new Forge\App($routes, __APP__ . '/views');
 
 // catch 404
-$app->lost(404, '/lost');
+$app->lost('/lost');
 
 // let's go !
 $app->handle();
