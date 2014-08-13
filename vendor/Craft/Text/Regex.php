@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the Craft package.
  *
@@ -9,7 +10,7 @@
  */
 namespace Craft\Text;
 
-use Craft\Data\ArrayList;
+use Craft\Data\Collection;
 
 abstract class Regex
 {
@@ -32,7 +33,7 @@ abstract class Regex
 
             // filter string keys
             if($string_keys) {
-                $matches = new ArrayList($matches);
+                $matches = new Collection($matches);
                 $matches->filterKey(function($key){
                     return !is_int($key);
                 });

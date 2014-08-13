@@ -1,3 +1,0 @@
-# Craft\View
-
-Coming soon...

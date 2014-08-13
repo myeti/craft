@@ -77,18 +77,6 @@ function env($key = null, $fallback = null)
 
 
 /**
- * Flash helper
- * @param string $key
- * @param string $fallback
- * @return string
- */
-function flash($key, $fallback = null)
-{
-    return Craft\Box\Flash::get($key, $fallback);
-}
-
-
-/**
  * Alias of Lang::translate()
  * @param  string $text
  * @param  array $vars

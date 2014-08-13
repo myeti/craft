@@ -8,18 +8,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Text\Lipsum;
+namespace Craft\Error;
 
-interface Source
+class HellYeah extends \Exception
 {
-
-    /**
-     * Generate random text
-     * @param int $words
-     * @param int $lines
-     * @param int $texts
-     * @return string
-     */
-    public function generate($words, $lines, $texts);
 
 } 
