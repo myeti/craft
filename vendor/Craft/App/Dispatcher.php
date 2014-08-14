@@ -29,11 +29,6 @@ class Dispatcher implements Handler
      */
     public function handle(Request $request, Response $response = null)
     {
-        // create response if not provided
-        if(!$response) {
-            $response = new Response;
-        }
-
         // not a valid callable
         if(!is_callable($request->action)) {
             throw new \BadMethodCallException('Request::action must be a valid callable.');
@@ -53,8 +48,20 @@ class Dispatcher implements Handler
         $data = call_user_func_array($request->action, $args);
         Logger::info('App.Dispatcher : request executed');
 
-        // create response
-        $response->data = $data;
+        // user returned response object
+        if($data instanceof Response) {
+            $response = $data;
+        }
+        // user returned printable content
+        elseif(is_string($data)) {
+            $response = new Response($data);
+        }
+        // user returned mixed data
+        else {
+            $response = new Response;
+            $response->data = $data;
+        }
+
         Logger::info('App.Dispatcher : response generated');
 
         // run after callbacks

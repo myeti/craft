@@ -32,15 +32,32 @@ class Kernel extends Dispatcher
 
 
     /**
-     * Add layer
-     * @param Service $layer
+     * Add/replace service
+     * @param Service $service
+     * @param string $insteadof
      * @return $this
      */
-    public function plug(Service $layer)
+    public function plug(Service $service, $insteadof = null)
     {
-        $class = get_class($layer);
-        $this->services[$class] = $layer;
-        Logger::info('App.Kernel : layer "' . $class . '" plugged');
+        $class = get_class($service);
+
+        // replace service
+        if($insteadof) {
+            $keys = array_keys($this->services);
+            $index = array_search($insteadof, $keys);
+            if($index !== false) {
+                $keys[$index] = $class;
+                $this->services = array_combine($keys, $this->services);
+            }
+            else {
+                throw new \InvalidArgumentException('Service "' . $insteadof . '" not found.');
+            }
+        }
+        // just add
+        else {
+            $this->services[$class] = $service;
+            Logger::info('App.Kernel : layer "' . $class . '" plugged');
+        }
 
         return $this;
     }

@@ -30,8 +30,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function has($key)
     {
-        list($item, $key) = Collection::resolve($key, $this);
-        return isset($item[$key]);
+        return Flat::has($this, $key);
     }
 
 
@@ -43,8 +42,9 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function get($key, $fallback = null)
     {
-        list($item, $key) = Collection::resolve($key, $this);
-        return isset($item[$key]) ? $item[$key] : $fallback;
+        return Flat::has($this, $key)
+            ? Flat::get($this, $key)
+            : $fallback;
     }
 
 
@@ -56,8 +56,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function set($key, $value)
     {
-        list($item, $key) = Collection::resolve($key, $this, '.', true);
-        $item[$key] = $value;
+        Flat::set($this, $key, $value);
         return $this;
     }
 
@@ -69,11 +68,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function drop($key)
     {
-        list($item, $key) = Collection::resolve($key, $this);
-        if(isset($item[$key])) {
-            unset($item[$key]);
-        }
-
+        Flat::drop($this, $key);
         return $this;
     }
 

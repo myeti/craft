@@ -19,390 +19,181 @@ class Collection extends Provider
      */
     public function first()
     {
-        return reset($this);
+        return Set::first($this);
     }
 
 
     /**
      * Get first key
-     * @return mixed
+     * 
+     * @return string
      */
     public function firstKey()
     {
-        reset($this);
-        return key($this);
+        return Set::firstKey($this);
     }
 
 
     /**
      * Get last element
+     * 
      * @return mixed
      */
     public function last()
     {
-        return end($this);
+        return Set::last($this);
     }
 
 
     /**
-     * Get last element
-     * @return mixed
+     * Get last key
+     * 
+     * @return string
      */
     public function lastKey()
     {
-        end($this);
-        return key($this);
+        return Set::lastKey($this);
     }
 
 
     /**
-     * Count all elements
+     * Find first key of matched value
+     * 
+     * @param mixed $value
      * @return int
      */
-    public function count()
+    public function keyOf($value)
     {
-        return count($this);
+       return Set::keyOf($this, $value);
     }
 
 
     /**
-     * Find element and return key
-     * @param $value
-     * @return mixed
+     * Find all keys of matched value
+     * 
+     * @param mixed $value
+     * @return array
      */
-    public function search($value)
+    public function keysOf($value)
     {
-        return array_search($value, $this);
+        return Set::keysOf($this, $value);
     }
 
 
     /**
-     * Find element using dot notation
-     * @param $key
-     * @return mixed
+     * Replace all value
+     * 
+     * @param mixed $value
+     * @param mixed $replacement
+     * @return $this
      */
-    public function find($key)
+    public function replace($value, $replacement)
     {
-        return static::resolve($key, $this);
+        $this->exchangeArray(Set::replace($this, $value, $replacement));
+        return $this;
+    }
+
+
+    /**
+     * Replace key and keep order
+     * 
+     * @param mixed $key
+     * @param mixed $replacement
+     * @return $this
+     */
+    public function replaceKey($key, $replacement)
+    {
+        $this->exchangeArray(Set::replaceKey($this, $key, $replacement));
+        return $this;
     }
 
 
     /**
      * Get keys
+     * 
      * @return array
      */
     public function keys()
     {
-        return array_keys($this);
+        return Set::keys($this);
     }
 
 
     /**
      * Get values
+     * 
      * @return array
      */
     public function values()
     {
-        return array_values($this);
+        return Set::values($this);
     }
 
 
     /**
-     * Push element
-     * @param $element
+     * Insert element at specific position
+     * 
+     * @param mixed $value
+     * @param string $at
      * @return $this
      */
-    public function push($element)
+    public function insert($value, $at)
     {
-        foreach(func_get_args() as $element) {
-            array_push($this, $element);
-        }
+        $this->exchangeArray(Set::insert($this, $value, $at));
         return $this;
     }
 
 
     /**
-     * Pop element
-     * @return mixed
-     */
-    public function pop()
-    {
-        return array_pop($this);
-    }
-
-
-    /**
-     * Unshift element
-     * @param $element
-     * @return $this
-     */
-    public function unshift($element)
-    {
-        foreach(func_get_args() as $element) {
-            array_unshift($this, $element);
-        }
-        return $this;
-    }
-
-
-    /**
-     * Shift element
-     * @return mixed
-     */
-    public function shift()
-    {
-        return array_shift($this);
-    }
-
-
-    /**
-     * Insert element
-     * @param $element
-     * @param $after
-     * @return $this
-     */
-    public function insert($element, $after)
-    {
-        $before = array_slice($this, 0, $after);
-        $after = array_slice($this, $after);
-        $before[] = $element;
-        $array = array_merge($before, array_values($after));
-        $this->exchangeArray($array);
-        return $this;
-    }
-
-
-    /**
-     * Slice array in many part
-     * @param $from
-     * @param null $to
-     * @return $this
-     */
-    public function slice($from, $to = null)
-    {
-        $array = array_slice($this, $from, $to, true);
-        $this->exchangeArray($array);
-        return $this;
-    }
-
-
-    /**
-     * Divide array into small arrays
-     * @param $size
-     * @return array
-     */
-    public function split($size)
-    {
-        $chunks = array_chunk($this, $size, true);
-        foreach($chunks as $key => $value) {
-            $chunks[$key] = new self($value);
-        }
-        return $chunks;
-    }
-
-
-    /**
-     * Apply a callback to all elements
+     * Filter values
+     * 
      * @param callable $callback
      * @return $this
      */
-    public function map(\Closure $callback)
+    public function filter(callable $callback)
     {
-        // parse args
-        $args = func_get_args();
-        $callback = array_pop($args);
-        array_push($args, $this);
-        array_push($args, $callback);
-
-        $array = call_user_func_array('array_map', $args);
-        $this->exchangeArray($array);
+        $this->exchangeArray(Set::filter($this, $callback));
         return $this;
     }
 
 
     /**
-     * Remove element from callback
+     * Filter keys
+     * 
      * @param callable $callback
      * @return $this
      */
-    public function filter(\Closure $callback)
+    public function filterKey(callable $callback)
     {
-        $array = array_filter($this, $callback);
-        $this->exchangeArray($array);
+        $this->exchangeArray(Set::filterKey($this, $callback));
         return $this;
     }
 
 
     /**
-     * Remove key from callback
-     * @param callable $callback
-     * @return $this
-     */
-    public function filterKey(\Closure $callback)
-    {
-        $array = array_flip($this);
-        $array = array_filter($array, $callback);
-        $array = array_flip($array);
-        $this->exchangeArray($array);
-        return $this;
-    }
-
-
-    /**
-     * Get random key(s)
+     * Get random element(s)
+     * 
      * @param int $num
-     * @return mixed
-     */
-    public function randKey($num = 1)
-    {
-        return array_rand($this, $num);
-    }
-
-
-    /**
-     * Get random value
-     * @param int $num
-     * @return array
+     * @return mixed|array
      */
     public function random($num = 1)
     {
-        $rand = array_rand($this, $num);
-        if(!is_array($rand)) {
-            $rand = [$rand];
-        }
-
-        $values = new self();
-        foreach($rand as $key => $index) {
-            $values[$index] = $this[$index];
-        }
-
-        return $values;
+        return Set::random($this, $num);
     }
 
 
     /**
-     * Mix randomly elements
-     * @return mixed
-     */
-    public function shuffle()
-    {
-        array_shift($this);
-        return $this;
-    }
-
-
-    /**
-     * Reverse rows
-     * @return $this
-     */
-    public function reverse()
-    {
-        $array = array_reverse($this, true);
-        $this->exchangeArray($array);
-        return $this;
-    }
-
-
-    /**
-     * Merge with other arrays
-     * @param array $array
-     * @return $this
-     */
-    public function merge(array $array)
-    {
-        $array = array_merge($this, func_get_args());
-        $this->exchangeArray($array);
-        return $this;
-    }
-
-
-    /**
-     * Get column
-     * @param $column
-     */
-    public function column($column)
-    {
-        // todo
-    }
-
-
-    /**
-     * Sort array by column names and directions
-     * Ex : $sorted = $array->sort(['name' => SORT_DESC]);
+     * Sort array by columns
+     * - [column => SORT_ASC] let you decide
+     * - [column1, column2] will sort ASC
+     * 
      * @param array $by
-     * @return mixed
+     * @return $this
      */
     public function sort(array $by)
     {
-        // init
-        $columns = [];
-        foreach($by as $column => $dir) {
-            $columns[$column] = [];
-        }
-
-        // sort
-        foreach($this as $key => $line) {
-            foreach($line as $column => $value) {
-
-                // apply sort ?
-                if(isset($by[$column])) {
-                    $columns[$column][$key] = $value;
-                }
-
-            }
-        }
-
-        // create full args
-        $args = [];
-        foreach($columns as $name => $data) {
-            $args[] = $data;        // column name
-            $args[] = $by[$name];  // direction
-        }
-        $args[] = $this;
-
-        // apply multisort
-        $ouput = call_user_func_array('array_multisort', $args);
-
-        return new self($ouput);
-    }
-
-
-    /**
-     * Find flat key in array
-     * @param string $key
-     * @param array $in
-     * @param string $separator
-     * @param bool $dig
-     * @return array
-     */
-    public static function resolve($key, array &$in, $separator = '.', $dig = false)
-    {
-        // resolve item
-        $key = trim($key, $separator);
-        $segments = explode($separator, $key);
-        $last = end($segments);
-
-        // one does not simply walk into Mordor
-        foreach($segments as $segment) {
-
-            // is last segment ?
-            if($segment == $last) {
-                break;
-            }
-
-            // namespace does not exist, dig it
-            if(!isset($in[$segment]) and $dig) {
-                $in[$segment] = [];
-            }
-            elseif(!$dig) {
-                break;
-            }
-
-            // next segment
-            $in = &$in[$segment];
-        }
-
-        return [$in, $last];
+        $this->exchangeArray(Set::sort($this, $by));
+        return $this;
     }
 
 }

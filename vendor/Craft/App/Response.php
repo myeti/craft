@@ -166,18 +166,4 @@ class Response
             : false;
     }
 
-
-    /**
-     * Create json response
-     * @param array $data
-     * @return \Craft\App\Response
-     */
-    public static function json(array $data = [])
-    {
-        $response = new self(json_encode($data));
-        $response->format = 'application/json';
-
-        return $response;
-    }
-
 } 
