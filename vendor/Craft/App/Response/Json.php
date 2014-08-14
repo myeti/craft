@@ -4,10 +4,9 @@ namespace Craft\App\Response;
 
 use Craft\App\Response;
 
-class JsonResponse extends Response
+class Json extends Response
 {
 
-    /** @var string */
     public $format = 'application/json';
 
     /**

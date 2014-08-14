@@ -35,6 +35,7 @@ class Kernel extends Dispatcher
      * Add/replace service
      * @param Service $service
      * @param string $insteadof
+     * @throws \InvalidArgumentException
      * @return $this
      */
     public function plug(Service $service, $insteadof = null)
@@ -117,7 +118,7 @@ class Kernel extends Dispatcher
             }
 
             // send response
-            echo $response;
+            $response->send();
             Logger::info('App.Kernel : response sent with code ' . $response->code);
 
             // finisher services
@@ -146,7 +147,7 @@ class Kernel extends Dispatcher
 
                     // response returned : stop
                     if($response instanceof Response) {
-                        echo $response;
+                        $response->send();
                         $handled = true;
                     }
                 }

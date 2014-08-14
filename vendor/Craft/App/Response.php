@@ -125,16 +125,17 @@ class Response
 
     /**
      * Send response
-     * @return string
+     * @return bool
      */
-    public function __toString()
+    public function send()
     {
-        // can send headers
-        if(!headers_sent()) {
+        // header already sent ?
+        $sent = headers_sent();
+        if(!$sent) {
 
             // set content type
             if(!isset($this->headers['Content-Type'])) {
-                $this->header('Content-Type', $this->format . '; charset=UTF-8');
+                header('Content-Type: ' . $this->format . '; charset=UTF-8');
             }
 
             // set http code
@@ -145,12 +146,14 @@ class Response
 
             // compile header
             foreach($this->headers as $name => $value) {
-                header($name . ': ' . $value, false, $this->code);
+                header($name . ': ' . $value);
             }
 
         }
 
-        return $this->content ?: '';
+        // send content
+        echo (string)$this->content;
+        return $sent;
     }
 
 

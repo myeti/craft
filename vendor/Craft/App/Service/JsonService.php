@@ -13,7 +13,6 @@ namespace Craft\App\Service;
 use Craft\App\Service;
 use Craft\App\Request;
 use Craft\App\Response;
-use Craft\App\Response\JsonResponse;
 use Craft\Log\Logger;
 use Craft\Box\Mog;
 
@@ -38,7 +37,7 @@ class JsonService extends Service
 
             // always or async
             if($request->meta['json'] != 'async' xor ($request->meta['json'] == 'async' and Mog::async())) {
-                $response = new JsonResponse($response->data);
+                $response = new Response\Json($response->data);
                 Logger::info('App.Json : render response as json');
             }
 
