@@ -10,57 +10,69 @@
  */
 namespace Craft\Text;
 
+use Craft\Text\Lang\Indexer;
+use Craft\Text\Lang\IndexerInterface;
+
 abstract class Lang
 {
 
-	/** @var array */
-	protected static $table = [];
+    /**
+     * Set directory
+     * @param string $dir
+     */
+    public static function in($dir)
+    {
+        static::instance(new Indexer($dir));
+    }
+
+    /**
+     * Load locale
+     * @param $locale
+     */
+    public static function locale($locale)
+    {
+        static::instance()->locale($locale);
+    }
 
 
-	/**
-	 * Index table
-	 * @param array $table
-	 */
-	public static function index(array $table)
-	{
-		// create hash
-		foreach($table as $key => $value) {
-			static::$table[md5($key)] = $value;
-		}
-	}
+    /**
+     * Translate message
+     * @param string $text
+     * @param array $vars
+     * @return string
+     */
+    public static function translate($text, array $vars = [])
+    {
+        static::instance()->translate($text, $vars);
+    }
 
 
-	/**
-	 * Load indexed table
-	 * @param array $table
-	 */
-	public static function load(array $table)
-	{
-        static::$table = $table;
-	}
+    /**
+     * Save current table
+     */
+    public static function save()
+    {
+        static::instance()->save();
+    }
 
 
-	/**
-	 * Translate message
-	 * @param  string $text
-	 * @param  array $vars
-	 * @return string
-	 */
-	public static function translate($text, array $vars = [])
-	{
-		// clean
-		$text = trim($text);
+    /**
+     * Indexer instance
+     * @param IndexerInterface $indexer
+     * @throws \InvalidArgumentException
+     * @return IndexerInterface
+     */
+    public static function instance(IndexerInterface $indexer = null)
+    {
+        static $instance;
+        if($indexer) {
+            $instance = $indexer;
+        }
+        if(!$instance) {
+            throw new \InvalidArgumentException('You must define an Indexer class for the Lang tool.');
+        }
 
-		// get table text
-        $md5 = md5($text);
-		if(isset(static::$table[$md5])) {
-			$text = static::$table[$md5];
-		}
-
-		// compile cloze
-		$text = String::compose($text, $vars);
-
-		return $text;
-	}
+        return $instance;
+    }
 
 }
