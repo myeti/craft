@@ -4,7 +4,7 @@
  * Define constants
  */
 
-define('__ROOT__',   dirname($_SERVER['SCRIPT_FILENAME']));
+define('__ROOT__',   dirname(__DIR__));
 define('__VENDOR__', __ROOT__ . '/vendor');
 define('__PUBLIC__', __ROOT__ . '/public');
 define('__APP__',    __ROOT__ . '/app');
