@@ -63,8 +63,12 @@ class Request
      */
     public static function generate()
     {
-        // resolve query
-        $query = Mog::query();
+        // resolve query (priority to pathinfo)
+        $query = Mog::server('PATH_INFO') ?: Mog::query();
+        $query = trim($query, '/');
+        if(!$query) {
+            $query = '/';
+        }
 
         // create request
         return new self($query);
