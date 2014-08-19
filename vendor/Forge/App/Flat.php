@@ -18,7 +18,6 @@ use Craft\App\Service\RouterService;
 use Craft\Box\Mog;
 use Craft\Map\Router;
 use Craft\View\Engine;
-use Craft\View\Helper\Markup;
 
 /**
  * Ready to use app
@@ -27,19 +26,21 @@ class App extends Kernel
 {
 
     /**
-     * Init app with views dir
-     * @param string $views
+     * Ready-to-use static app
+     * @param array $routes
+     * @param string $templates
+     * @param string $assets
      */
-    public function __construct($views = null)
+    public function __construct(array $routes = [], $templates = null, $assets = '/')
     {
-        $router = Router::files($views, function(){});
+        $router = Router::files($templates, function(){});
         $this->plug(new RouterService($router));
 
         $this->plug(new ResolverService);
 
-        $engine = new Engine($views ?: Mog::path());
-        $engine->mount(new Markup(Mog::base()));
+        $engine = new Engine($templates ?: Mog::path(), Mog::base() . $assets);
         $this->plug(new RenderService($engine));
     }
+
 
 }

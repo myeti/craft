@@ -10,74 +10,66 @@
  */
 namespace Craft\View;
 
-class Engine extends \ArrayObject implements EngineInterface
+class Engine implements EngineInterface
 {
 
     /** @var string */
-    protected $root;
+    public $templates;
 
     /** @var string */
-    protected $ext = 'php';
+    public $assets;
 
-    /** @var Helper[] */
+    /** @var string */
+    protected $ext = '.php';
+
+    /** @var callable[] */
     protected $helpers = [];
 
+    /** @var Engine[] */
+    protected static $instances = [];
+
 
     /**
-     * Setup root path
-     * @param string $root
-     * @param string $ext
+     * Setup engine
+     * @param string $templates path
+     * @param string $assets url
      */
-    public function __construct($root = null, $ext = 'php')
+    public function __construct($templates, $assets = '/')
     {
-        // set bases
-        $this->dir($root, $ext);
+        // set directories
+        $this->templates = rtrim($templates, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->assets = rtrim($assets, '/') . '/';
 
-        // default helpers
-        $this->mount(new Helper\Markup);
-        $this->mount(new Helper\Box);
+        // text helper
+        $this->set('e', '\Craft\Text\String::escape');
+        $this->set('t', '\Craft\Text\Lang::translate');
 
-        $this->helper('partial', [$this, 'render']);
+        // box helper
+        $this->set('session', '\Craft\Box\Session::get');
+        $this->set('flash', '\Craft\Box\Flash::get');
+        $this->set('user', '\Craft\Box\Auth::user');
+        $this->set('rank', '\Craft\Box\Auth::rank');
 
-        parent::__construct();
+        // assets helper
+        $this->set('asset', [$this, 'asset']);
+        $this->set('css', [$this, 'css']);
+        $this->set('js', [$this, 'js']);
+
+        // engine helper
+        $this->set('partial', [$this, 'render']);
     }
 
 
     /**
-     * Set views dir
-     * @param string $dir
-     * @param string $ext
-     */
-    public function dir($dir, $ext = 'php')
-    {
-        $this->root = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->ext = '.' . ltrim($ext, '.');
-    }
-
-
-    /**
-     * Add helper function
-     * @param string $name
-     * @param callable $helper
+     * Set helper function
+     * @param string $fn
+     * @param callable $callback
      * @return $this
      */
-    public function helper($name, callable $helper)
+    public function set($fn, callable $callback)
     {
-        $this->helpers[$name] = $helper;
-        return $this;
-    }
+        $this->helpers[$fn] = $callback;
 
-
-    /**
-     * Mount helper object
-     * @param Helper $helper
-     * @return $this
-     */
-    public function mount(Helper $helper)
-    {
-        foreach($helper->register() as $name => $helper) {
-            $this->helper($name, $helper);
-        }
         return $this;
     }
 
@@ -97,13 +89,11 @@ class Engine extends \ArrayObject implements EngineInterface
         }
 
         // define data
-        $template = $this->root . $template . $this->ext;
+        $template = $this->templates . $template . $this->ext;
         $data = array_merge((array)$this, $data);
 
-        // create template
+        // create template & compile
         $template = new Engine\Template($this, $template, $data, $sections, $this->helpers);
-
-        // compile
         $content = $template->compile();
 
         // layout ?
@@ -112,15 +102,58 @@ class Engine extends \ArrayObject implements EngineInterface
             // extract layout data
             list($layout, $data, $sections) = $parent;
 
-            // define data
+            // define data & render layout
             $data = array_merge((array)$this, $data);
-
-            // render layout
             $content = $this->render($layout, $data, $sections);
 
         }
 
         return $content;
+    }
+
+
+    /**
+     * Get asset path
+     * @param string $filename
+     * @param string $ext
+     * @return string
+     */
+    public function asset($filename, $ext = null)
+    {
+        if($ext) {
+            $ext = '.' . ltrim($ext, '.');
+        }
+        return $this->assets . ltrim($filename, '/') . $ext;
+    }
+
+
+    /**
+     * Css tag
+     * @param string $filename
+     * @return string
+     */
+    public function css($filename)
+    {
+        $css = [];
+        foreach(func_get_args() as $file) {
+            $css[] = '<link type="text/css" href="' . $this->asset($file, '.css') . '" rel="stylesheet" />';
+        }
+        return implode("\n", $css);
+    }
+
+
+    /**
+     * Js tag
+     * @param string $filename
+     * @return string
+     */
+    public function js($filename)
+    {
+        $js = [];
+        foreach(func_get_args() as $file) {
+            $js[] = '<script type="text/javascript" src="' . $this->asset($file, '.js')  . '"></script>';
+        }
+        return implode("\n", $js);
     }
 
 
@@ -132,12 +165,17 @@ class Engine extends \ArrayObject implements EngineInterface
      */
     public static function make($template, $data = [])
     {
-        static $instance;
-        if(!$instance) {
-            $instance = new self;
+        // parse path
+        $dir = dirname($template);
+        $filename = basename($template);
+
+        // running engine on this directory ?
+        if(!isset(static::$instances[$dir])) {
+            static::$instances[$dir] = new self($dir);
         }
 
-        return $instance->render($template, $data);
+        // render
+        return static::$instances[$dir]->render($filename, $data);
     }
 
 }

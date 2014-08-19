@@ -25,7 +25,7 @@ class App extends Kernel
 {
 
     /**
-     * Init app with classes
+     * Ready-to-use API
      * @param array $classes
      */
     public function __construct(array $classes)
