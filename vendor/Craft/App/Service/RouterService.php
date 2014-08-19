@@ -19,6 +19,9 @@ use Craft\Log\Logger;
 class RouterService extends Service
 {
 
+    /** @var string */
+    public $name = 'Router';
+
     /** @var RouterInterface */
     public $router;
 

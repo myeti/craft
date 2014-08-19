@@ -17,6 +17,9 @@ namespace Craft\App;
 abstract class Service
 {
 
+    /** @var string */
+    public $name;
+
     /**
      * Handle request
      * @param Request $request

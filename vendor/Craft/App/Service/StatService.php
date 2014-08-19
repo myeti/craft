@@ -22,6 +22,9 @@ use Craft\Box\Session;
 class StatService extends Service
 {
 
+    /** @var string */
+    public $name = 'Stats';
+
     /**
      * End of execution
      * @param Request $request

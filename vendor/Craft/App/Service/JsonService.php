@@ -24,6 +24,9 @@ use Craft\Box\Mog;
 class JsonService extends Service
 {
 
+    /** @var string */
+    public $name = 'Render.Json';
+
     /**
      * Render data as json
      * @param Request $request

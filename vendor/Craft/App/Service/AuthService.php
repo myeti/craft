@@ -25,8 +25,12 @@ use Craft\Box\Auth;
 class AuthService extends Service
 {
 
+    /** @var string */
+    public $name = 'Auth';
+
     /** @var callable */
     protected $strategy;
+
 
     /**
      * Set firewall strategy

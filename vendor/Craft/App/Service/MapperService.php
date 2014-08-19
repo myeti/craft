@@ -24,6 +24,9 @@ use Craft\Log\Logger;
 class MapperService extends Service
 {
 
+    /** @var string */
+    public $name = 'Mapper';
+
     /** @var callable[] */
     protected $seekers = [];
 

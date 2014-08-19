@@ -32,32 +32,34 @@ class Kernel extends Dispatcher
 
 
     /**
-     * Add/replace service
+     * Add service
      * @param Service $service
-     * @param string $insteadof
      * @throws \InvalidArgumentException
      * @return $this
      */
-    public function plug(Service $service, $insteadof = null)
+    public function plug(Service $service)
     {
-        $class = get_class($service);
+        // resolve name
+        $name = $service->name ?: get_class($service);
 
-        // replace service
-        if($insteadof) {
-            $keys = array_keys($this->services);
-            $index = array_search($insteadof, $keys);
-            if($index !== false) {
-                $keys[$index] = $class;
-                $this->services = array_combine($keys, $this->services);
-            }
-            else {
-                throw new \InvalidArgumentException('Service "' . $insteadof . '" not found.');
-            }
-        }
-        // just add
-        else {
-            $this->services[$class] = $service;
-            Logger::info('App.Kernel : layer "' . $class . '" plugged');
+        // push service
+        $this->services[$name] = $service;
+        Logger::info('App.Kernel : service "' . $name . '" plugged');
+
+        return $this;
+    }
+
+
+    /**
+     * Drop service
+     * @param string $name
+     * @return $this
+     */
+    public function drop($name)
+    {
+        if(isset($this->services[$name])) {
+            unset($this->services[$name]);
+            Logger::info('App.Kernel : service "' . $name . '" unplugged');
         }
 
         return $this;
@@ -65,14 +67,14 @@ class Kernel extends Dispatcher
 
 
     /**
-     * Get inner layer
-     * @param string $class
+     * Get inner service
+     * @param string $name
      * @return bool|Service
      */
-    public function layer($class)
+    public function service($name)
     {
-        return isset($this->services[$class])
-            ? $this->services[$class]
+        return isset($this->services[$name])
+            ? $this->services[$name]
             : false;
     }
 

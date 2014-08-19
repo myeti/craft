@@ -26,6 +26,9 @@ use Craft\View\EngineInterface;
 class RenderService extends Service
 {
 
+    /** @var string */
+    public $name = 'Render.Engine';
+
     /** @var Engine */
     protected $engine;
 

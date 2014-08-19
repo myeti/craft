@@ -22,6 +22,9 @@ use Craft\Log\Logger;
 class ResolverService extends Service
 {
 
+    /** @var string */
+    public $name = 'Resolver';
+
     /** @var InjectorInterface */
     protected $injector;
 
