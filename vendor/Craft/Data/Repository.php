@@ -13,6 +13,7 @@ namespace Craft\Data;
 class Repository extends \ArrayObject implements ProviderInterface
 {
 
+
     /**
      * Get all elements
      * @return array
@@ -81,6 +82,17 @@ class Repository extends \ArrayObject implements ProviderInterface
     {
         $this->exchangeArray([]);
         return $this;
+    }
+
+
+    /**
+     * From array
+     * @param array $input
+     * @return Repository
+     */
+    public static function of(array &$input)
+    {
+        return new self($input);
     }
 
 }

@@ -10,16 +10,13 @@
  */
 namespace Craft\Box\Session;
 
-use Craft\Data\Collection;
+use Craft\Data\Repository;
 
-class Storage implements StorageInterface
+class Storage extends Repository implements StorageInterface
 {
 
     /** @var string */
     protected $name;
-
-    /** @var array */
-    protected $data = [];
 
 
     /**
@@ -28,6 +25,7 @@ class Storage implements StorageInterface
      */
     public function __construct($name)
     {
+        // session name
         $this->name = $name;
 
         // config
@@ -41,77 +39,8 @@ class Storage implements StorageInterface
         }
 
         // get data
-        $this->data = isset($_SESSION[$name]) ? $_SESSION[$name] : [];
-    }
-
-
-    /**
-     * Get all data
-     * @return array
-     */
-    public function all()
-    {
-        return $this->data;
-    }
-
-
-    /**
-     * Check if data exists
-     * @param string $key
-     * @return bool
-     */
-    public function has($key)
-    {
-        list($item, $key) = Collection::resolve($key, $this->data);
-        return isset($item[$key]);
-    }
-
-
-    /**
-     * Get data
-     * @param $key
-     * @param mixed $fallback
-     * @return mixed
-     */
-    public function get($key, $fallback = null)
-    {
-        list($item, $key) = Collection::resolve($key, $this->data);
-        return isset($item[$key]) ? $item[$key] : $fallback;
-    }
-
-
-    /**
-     * Store value
-     * @param string $key
-     * @param mixed $value
-     */
-    public function set($key, $value)
-    {
-        list($item, $key) = Collection::resolve($key, $this->data, true);
-        $item[$key] = $value;
-    }
-
-
-    /**
-     * Delete data
-     * @param string $key
-     */
-    public function drop($key)
-    {
-        list($item, $key) = Collection::resolve($key, $this->data);
-
-        if(isset($item[$key])) {
-            unset($item[$key]);
-        }
-    }
-
-
-    /**
-     * Clear all data
-     */
-    public function clear()
-    {
-        $this->data = [];
+        $data = isset($_SESSION[$name]) ? $_SESSION[$name] : [];
+        parent::__construct($data);
     }
 
 
@@ -120,7 +49,7 @@ class Storage implements StorageInterface
      */
     public function save()
     {
-        $_SESSION[$this->name] = $this->data;
+        $_SESSION[$this->name] = $this->getArrayCopy();
     }
 
 

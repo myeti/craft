@@ -23,26 +23,38 @@ abstract class Flat
 
     /**
      * Has key with flat search
-     * @param array $array
+     * @param array|\ArrayAccess $array
      * @param string $key
      * @param string $separator
+     * @throws \InvalidArgumentException
      * @return bool
      */
-    public static function has(array $array, $key, $separator = '.')
+    public static function has($array, $key, $separator = '.')
     {
+        // check
+        if(!is_array($array) and !($array instanceof \ArrayAccess)) {
+            throw new \InvalidArgumentException('Input $array must be a valid array or ArrayAccess.');
+        }
+
         return (bool)static::resolve($array, $key, $separator);
     }
 
 
     /**
      * Get value with flat search
-     * @param array $array
+     * @param array|\ArrayAccess $array
      * @param string $key
      * @param string $separator
+     * @throws \InvalidArgumentException
      * @return mixed
      */
-    public static function get(array $array, $key, $separator = '.')
+    public static function get($array, $key, $separator = '.')
     {
+        // check
+        if(!is_array($array) and !($array instanceof \ArrayAccess)) {
+            throw new \InvalidArgumentException('Input $array must be a valid array or ArrayAccess.');
+        }
+
         if($resolved = static::resolve($array, $key, $separator)) {
             list($item, $last) = $resolved;
             return $item[$last];
@@ -54,13 +66,19 @@ abstract class Flat
 
     /**
      * Set value with flat search
-     * @param array $array
+     * @param array|\ArrayAccess $array
      * @param string $key
      * @param mixed $value
      * @param string $separator
+     * @throws \InvalidArgumentException
      */
-    public static function set(array &$array, $key, $value, $separator = '.')
+    public static function set(&$array, $key, $value, $separator = '.')
     {
+        // check
+        if(!is_array($array) and !($array instanceof \ArrayAccess)) {
+            throw new \InvalidArgumentException('Input $array must be a valid array or ArrayAccess.');
+        }
+
         list($item, $last) = static::resolve($array, $key, $separator, true);
         $item[$last] = $value;
     }
@@ -68,13 +86,19 @@ abstract class Flat
 
     /**
      * Unset element with flat search
-     * @param array $array
+     * @param array|\ArrayAccess $array
      * @param string $key
      * @param string $separator
+     * @throws \InvalidArgumentException
      * @return bool
      */
-    public static function drop(array &$array, $key, $separator = '.')
+    public static function drop(&$array, $key, $separator = '.')
     {
+        // check
+        if(!is_array($array) and !($array instanceof \ArrayAccess)) {
+            throw new \InvalidArgumentException('Input $array must be a valid array or ArrayAccess.');
+        }
+
         if($resolved = static::resolve($array, $key, $separator)) {
             list($item, $last) = $resolved;
             unset($item[$last]);
@@ -93,7 +117,7 @@ abstract class Flat
      * @param bool $dig
      * @return array|bool
      */
-    public static function resolve(array &$array, $key, $separator = '.', $dig = false)
+    protected static function resolve(&$array, $key, $separator = '.', $dig = false)
     {
         // resolve item
         $key = trim($key, $separator);
