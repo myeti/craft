@@ -36,7 +36,10 @@ class App extends Kernel
         $this->plug(new ResolverService);
         $this->plug(new AuthService);
         $this->plug(new RenderService($engine));
-        $this->plug(new WhoopsService);
+
+        if(!Mog::env('prod')) {
+            $this->plug(new WhoopsService);
+        }
     }
 
 }

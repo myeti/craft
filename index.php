@@ -8,6 +8,12 @@ require 'vendor/autoload.php';
 
 
 /**
+ * First, let the mog knows that you are in development
+ */
+Forge\Mog::env('mode', 'prod');
+
+
+/**
  * First, you might need to setup you database.
  * Here is how to use a SQLite local base :
  */

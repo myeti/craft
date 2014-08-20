@@ -28,6 +28,8 @@ class WhoopsService extends Service
     {
         $this->whoops = new Whoops\Run;
         $this->whoops->pushHandler(new Whoops\Handler\PrettyPageHandler);
+        $this->whoops->writeToOutput(false);
+        $this->whoops->allowQuit(false);
         $this->whoops->register();
     }
 
@@ -41,11 +43,18 @@ class WhoopsService extends Service
      */
     public function error(\Exception $e, Request $request, Response $response = null)
     {
+        // create response
+        if(!$response) {
+            $response = new Response;
+            $response->code = $e->getCode() ?: 500;
+        }
+
         // new handler
         $handler = new Whoops\Handler\PrettyPageHandler;
 
         // add data
         $handler->addDataTable('Craft Request', (array)$request);
+        $handler->addDataTable('Craft Response', (array)$response);
         $handler->addDataTable('Craft Session', Session::all());
         $handler->addDataTable('Craft Auth', [
             'rank' => Auth::rank(),
@@ -75,16 +84,9 @@ class WhoopsService extends Service
         $this->whoops->clearHandlers();
         $this->whoops->pushHandler($handler);
 
-        // create response
-        if(!$response) {
-            $response = new Response;
-        }
-
         // process exception
         $response->content = $this->whoops->handleException($e);
-        $response->code = $e->getCode() ?: 500;
 
-        debug($response);
         return $response;
     }
 

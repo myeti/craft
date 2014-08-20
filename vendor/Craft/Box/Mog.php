@@ -221,9 +221,9 @@ abstract class Mog
 
 
     /**
-     * Env value
+     * Get env value
      * @param string $key
-     * @param null $fallback
+     * @param mixed $fallback
      * @return mixed
      */
     public static function env($key = null, $fallback = null)
@@ -234,6 +234,18 @@ abstract class Mog
         }
 
         return $key ? $_ENV[$key] : $_ENV;
+    }
+
+
+    /**
+     * Set env value
+     * @param string $env
+     * @param string $value
+     * @return mixed
+     */
+    public static function set($env, $value)
+    {
+        $_ENV[$env] = $value;
     }
 
 
