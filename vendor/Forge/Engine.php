@@ -10,4 +10,4 @@
  */
 namespace Forge;
 
-abstract class Engine extends \Craft\View\Engine {}
+class Engine extends \Craft\View\Engine {}

@@ -43,9 +43,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function get($key, $fallback = null)
     {
-        return Flat::has($this, $key)
-            ? Flat::get($this, $key)
-            : $fallback;
+        return Flat::get($this, $key, $fallback);
     }
 
 

@@ -30,10 +30,10 @@ abstract class Auth
      * @param int $compare
      * @return int|bool
      */
-    public static function rank($compare = 0)
+    public static function rank($compare = null)
     {
         $rank = static::storage()->get('rank', 0);
-        return $compare ? ($compare >= $rank) : $rank;
+        return is_null($compare) ? $rank : ($compare >= $rank);
     }
 
 
@@ -64,7 +64,7 @@ abstract class Auth
      * @param string $password
      * @return bool|mixed
      */
-    public static function basic($model, $username, $password)
+    public static function basic($username, $password, $model = '\My\Model\User')
     {
         // prepare data
         $data = compact('username', 'password');

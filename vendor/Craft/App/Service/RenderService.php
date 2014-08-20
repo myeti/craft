@@ -44,15 +44,6 @@ class RenderService extends Service
 
 
     /**
-     * Set views dir
-     */
-    public function dir($dir)
-    {
-        $this->engine->dir($dir);
-    }
-
-
-    /**
      * Handle response
      * @param Response $response
      * @param Request $request

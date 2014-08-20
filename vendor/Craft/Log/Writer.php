@@ -164,7 +164,7 @@ class Writer implements WriterInterface
             list($time, $micro) = explode('.', $log->time);
             $string .= '<br/>';
             $string .= date('Y-m-d H:i:s.', $time) . str_pad($micro, 4, 0);
-            $string .= ' <b>[ ' . strtoupper($log->level) . ' ]</b> ';
+            $string .= ' [ ' . strtoupper($log->level) . ' ] ';
             $string .= $log->message;
         }
 

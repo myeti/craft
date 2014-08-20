@@ -10,37 +10,58 @@
  */
 namespace Forge\App;
 
-use Craft\App\Kernel;
-use Craft\App\Service;
-use Craft\App\Service\RenderService;
-use Craft\App\Service\ResolverService;
-use Craft\App\Service\RouterService;
-use Craft\Box\Mog;
+use Forge\App;
+use Craft\App\Request;
+use Craft\App\Response;
+use Craft\Error\Abort;
+use Craft\View\Error\TemplateNotFound;
 use Craft\Map\Router;
 use Craft\View\Engine;
+use Craft\View\EngineInterface;
 
 /**
  * Ready to use app
  */
-class App extends Kernel
+class Flat extends App
 {
 
     /**
      * Ready-to-use static app
-     * @param array $routes
-     * @param string $templates
-     * @param string $assets
+     * @param EngineInterface $engine
      */
-    public function __construct(array $routes = [], $templates = null, $assets = '/')
+    public function __construct(EngineInterface $engine)
     {
-        $router = Router::files($templates, function(){});
-        $this->plug(new RouterService($router));
+        $router = new Router([
+            '/'        => function($request){ $request->meta['render'] = 'index'; },
+            '/:render' => function(){}
+        ]);
 
-        $this->plug(new ResolverService);
-
-        $engine = new Engine($templates ?: Mog::path(), Mog::base() . $assets);
-        $this->plug(new RenderService($engine));
+        parent::__construct($router, $engine);
     }
 
+
+    /**
+     * Handle context request
+     * @param Request $request
+     * @param Response $response
+     * @throws Abort
+     * @throws \Exception
+     * @return bool
+     */
+    public function handle(Request $request = null, Response $response = null)
+    {
+        // try rendering
+        try {
+            return parent::handle($request, $response);
+        }
+        // catch template not found as 404
+        catch(TemplateNotFound $e) {
+            if(!$this->fire(404)) {
+                throw $e;
+            }
+        }
+
+        return false;
+    }
 
 }

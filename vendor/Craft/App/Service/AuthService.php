@@ -28,36 +28,6 @@ class AuthService extends Service
     /** @var string */
     public $name = 'Auth';
 
-    /** @var callable */
-    protected $strategy;
-
-
-    /**
-     * Set firewall strategy
-     * @param callable $strategy
-     */
-    public function strategy(callable $strategy)
-    {
-        $this->strategy = $strategy;
-    }
-
-
-    /**
-     * Basic strategy
-     * @param Request $request
-     * @return bool
-     */
-    protected function basic(Request $request)
-    {
-        // check rank
-        if(Auth::rank($request->meta['auth'])) {
-            Auth::login(1);
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Handle request
      * @param Request $request
@@ -71,11 +41,8 @@ class AuthService extends Service
             $request->meta['auth'] = 0;
         }
 
-        // strategy callable
-        $attempt = $this->strategy ?: [$this, 'basic'];
-
         // attempt
-        if(!$attempt) {
+        if(!Auth::rank($request->meta['auth'])) {
             throw new Forbidden('User not allowed for query "' . $request->query . '"');
         }
 

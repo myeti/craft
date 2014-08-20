@@ -22,7 +22,7 @@ abstract class Lang
      */
     public static function in($dir)
     {
-        static::instance(new Indexer($dir));
+        return static::instance(new Indexer($dir));
     }
 
     /**
@@ -31,7 +31,7 @@ abstract class Lang
      */
     public static function locale($locale)
     {
-        static::instance()->locale($locale);
+        return static::instance()->locale($locale);
     }
 
 
@@ -43,7 +43,7 @@ abstract class Lang
      */
     public static function translate($text, array $vars = [])
     {
-        static::instance()->translate($text, $vars);
+        return static::instance()->translate($text, $vars);
     }
 
 
@@ -52,7 +52,7 @@ abstract class Lang
      */
     public static function save()
     {
-        static::instance()->save();
+        return static::instance()->save();
     }
 
 

@@ -53,11 +53,11 @@ abstract class Service
      * @param \Exception $e
      * @param Request $request
      * @param Response $response
-     * @return Response
+     * @return null|Response
      */
-    public function error(\Exception $e, Request $request, Response $response)
+    public function error(\Exception $e, Request $request, Response $response = null)
     {
-        return $response;
+        return null;
     }
 
 } 

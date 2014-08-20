@@ -14,6 +14,15 @@ abstract class Session
 {
 
     /**
+     * Get all data
+     * @return array
+     */
+    public static function all()
+    {
+        return static::storage()->all();
+    }
+
+    /**
      * Check if data exists
      * @param string $key
      * @return bool

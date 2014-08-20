@@ -11,6 +11,7 @@
 namespace Craft\View\Engine;
 
 use Craft\View\Engine;
+use Craft\View\Error\TemplateNotFound;
 
 abstract class Sandbox
 {
@@ -47,9 +48,15 @@ abstract class Sandbox
      * @param array $data
      * @param array $sections
      * @param array $helpers
+     * @throws TemplateNotFound
      */
     public function __construct(Engine $engine, $template, array $data = [], array $sections = [], array $helpers = [])
     {
+        // error
+        if(!file_exists($template)) {
+            throw new TemplateNotFound('Template "' . $template . '" not found.');
+        }
+
         $this->engine = $engine;
         $this->template = $template;
         $this->data = $data;

@@ -294,7 +294,7 @@ abstract class Mog
      */
     public static function browser()
     {
-        return get_browser()->browser;
+        return @get_browser()->browser;
     }
 
 

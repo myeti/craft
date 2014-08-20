@@ -11,13 +11,13 @@
 namespace Forge;
 
 use Craft\App\Kernel;
-use Craft\App\Service;
 use Craft\App\Service\AuthService;
 use Craft\App\Service\RenderService;
 use Craft\App\Service\ResolverService;
 use Craft\App\Service\RouterService;
-use Craft\Map\Router;
-use Craft\View\Engine;
+use Craft\App\Service\WhoopsService;
+use Craft\Map\RouterInterface;
+use Craft\View\EngineInterface;
 
 /**
  * Ready to use app
@@ -27,20 +27,16 @@ class App extends Kernel
 
     /**
      * Ready-to-use app
-     * @param array $routes
-     * @param string $templates
-     * @param string $assets
+     * @param RouterInterface $router
+     * @param EngineInterface $engine
      */
-    public function __construct(array $routes = [], $templates = null, $assets = '/')
+    public function __construct(RouterInterface $router, EngineInterface $engine)
     {
-        $router = new Router($routes);
         $this->plug(new RouterService($router));
-
         $this->plug(new ResolverService);
         $this->plug(new AuthService);
-
-        $engine = new Engine($templates ?: Mog::path(), Mog::base() . $assets);
         $this->plug(new RenderService($engine));
+        $this->plug(new WhoopsService);
     }
 
 }

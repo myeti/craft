@@ -9,7 +9,7 @@ require 'vendor/autoload.php';
 
 /**
  * First, you might need to setup you database.
- * Here is how to use a SQlite local base :
+ * Here is how to use a SQLite local base :
  */
 
 Forge\Syn::SQLite(__APP__ . '/craft.db')    // or Syn::MySQL('dbname', [host, username, password])
@@ -23,20 +23,32 @@ Forge\Syn::SQLite(__APP__ . '/craft.db')    // or Syn::MySQL('dbname', [host, us
  * Or you can define env config /+lang/url, then you can retrieve with Forge\Mog::env('lang')
  */
 
-$routes = [
+$router = new Forge\Router([
     '/'     => 'My\Logic\Front::hello',
-    '/lost' => 'My\Logic\Error::lost',
-    '/nope' => 'My\Logic\Error::nope'
-];
+    '/lost' => 'My\Logic\Front::lost',
+    '/nope' => 'My\Logic\Front::nope'
+]);
 
 
 /**
- * Setup your application using routes and templates directory
- * and tell the app how to handle errors like 404 and 403
+ * Define your template engine that will render
+ * your awesome design !
  */
-$app = new Forge\App($routes, __APP__ . '/views');
-$app->lost('/lost'); // 404 : redirect to '/lost'
-$app->nope('/nope'); // 403 : redirect to '/nope'
+
+$engine = new Forge\Engine(__APP__ . '/views', url('/public'));
+
+
+/**
+ * Setup your application using these components
+ */
+$app = new Forge\App($router, $engine);
+
+
+/**
+ * Tell the app how to handle http errors (404 & 403)
+ */
+$app->lost('/lost');
+$app->nope('/nope');
 
 
 /**
