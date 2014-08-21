@@ -13,8 +13,8 @@ namespace Craft\Event;
 trait Delegate
 {
 
-    /** @var EventInterface */
-    protected $subject;
+    /** @var ChannelInterface */
+    protected $channel;
 
 
     /**
@@ -25,7 +25,7 @@ trait Delegate
      */
     public function on($event, callable $callback)
     {
-        $this->subject->on($event, $callback);
+        $this->channel->on($event, $callback);
         return $this;
     }
 
@@ -37,7 +37,7 @@ trait Delegate
      */
     public function attach(ListenerInterface $listener)
     {
-        $listener->listen($this->subject);
+        $listener->listen($this->channel);
         return $this;
     }
 
@@ -49,7 +49,7 @@ trait Delegate
      */
     public function off($event)
     {
-        $this->subject->off($event);
+        $this->channel->off($event);
         return $this;
     }
 
@@ -57,12 +57,12 @@ trait Delegate
     /**
      * Event event
      * @param string $event
-     * @param array $params
+     * @param mixed $params
      * @return int
      */
-    public function fire($event, array $params = [])
+    public function fire($event, $params = null)
     {
-        return $this->subject->fire($event, $params);
+        return call_user_func_array([$this->channel, 'fire'], func_get_args());
     }
 
 } 

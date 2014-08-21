@@ -10,7 +10,7 @@
  */
 namespace Craft\Event;
 
-class Channel implements EventInterface
+class Channel implements ChannelInterface
 {
-    use Subject;
+    use ChannelTrait;
 }

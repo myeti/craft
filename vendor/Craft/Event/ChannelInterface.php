@@ -10,7 +10,7 @@
  */
 namespace Craft\Event;
 
-interface EventInterface
+interface ChannelInterface
 {
 
     /**

@@ -10,6 +10,7 @@
  */
 namespace Forge;
 
+use Craft\Event;
 use Craft\App\Kernel;
 use Craft\App\Service\AuthService;
 use Craft\App\Service\RenderService;
@@ -29,9 +30,12 @@ class App extends Kernel
      * Ready-to-use app
      * @param RouterInterface $router
      * @param EngineInterface $engine
+     * @param Event\EventInterface $channel
      */
-    public function __construct(RouterInterface $router, EngineInterface $engine)
+    public function __construct(RouterInterface $router, EngineInterface $engine, Event\EventInterface $channel = null)
     {
+        parent::__construct($channel);
+
         $this->plug(new RouterService($router));
         $this->plug(new ResolverService);
         $this->plug(new AuthService);

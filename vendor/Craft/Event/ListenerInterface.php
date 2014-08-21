@@ -14,9 +14,9 @@ interface ListenerInterface
 {
 
     /**
-     * Subscribe to subject's events
-     * @param EventInterface $subject
+     * Subscribe to channel events
+     * @param ChannelInterface $channel
      */
-    public function listen(EventInterface $subject);
+    public function listen(ChannelInterface $channel);
 
 } 

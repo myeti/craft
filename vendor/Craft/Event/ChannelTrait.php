@@ -10,7 +10,7 @@
  */
 namespace Craft\Event;
 
-trait Subject
+trait ChannelTrait
 {
 
     /** @var array */

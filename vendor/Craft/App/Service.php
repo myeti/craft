@@ -10,10 +10,9 @@
  */
 namespace Craft\App;
 
-use Craft\Event\EventInterface;
-use Craft\Event\ListenerInterface;
+use Craft\Event;
 
-abstract class Service implements ListenerInterface
+abstract class Service implements Event\ListenerInterface
 {
 
     /**
@@ -24,16 +23,16 @@ abstract class Service implements ListenerInterface
 
     /**
      * Subscribe to subject's events
-     * @param EventInterface $subject
+     * @param Event\ChannelInterface $channel
      */
-    public function listen(EventInterface $subject)
+    public function listen(Event\ChannelInterface $channel)
     {
         // get listening methods
-        $events = (array)$this->register($subject);
+        $events = (array)$this->register();
 
         // bind to subject
         foreach($events as $event => $method) {
-            $subject->on($event, [$this, $method]);
+            $channel->on($event, [$this, $method]);
         }
     }
 

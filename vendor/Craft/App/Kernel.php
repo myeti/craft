@@ -11,8 +11,7 @@
 namespace Craft\App;
 
 use Craft\App;
-use Craft\Event\EventInterface;
-use Craft\Event\Subject;
+use Craft\Event;
 use Craft\Log\Logger;
 
 /**
@@ -20,13 +19,22 @@ use Craft\Log\Logger;
  * manages inner events
  * and plug services
  */
-class Kernel extends Dispatcher implements EventInterface
+class Kernel extends Dispatcher implements Event\ChannelInterface
 {
 
-    use Subject;
+    use Event\Delegate;
 
     /** @var bool */
     protected $running = false;
+
+
+    /**
+     * Define inner event channel
+     */
+    public function __construct(Event\ChannelInterface $channel = null)
+    {
+        $this->subject = $channel ?: new Event\Channel;
+    }
 
 
     /**
