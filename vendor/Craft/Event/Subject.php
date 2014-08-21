@@ -57,22 +57,28 @@ trait Subject
     /**
      * Fire event
      * @param string $event
-     * @param array $params
+     * @param mixed $params
      * @return int
      */
-    public function fire($event, array $params = [])
+    public function fire($event, $params = null)
     {
         // no listeners
         if(!isset($this->listeners[$event])) {
             return false;
         }
 
+        // get params
+        $params = func_get_args();
+        array_shift($params);
+
         // trigger all listeners
+        $count = 0;
         foreach($this->listeners[$event] as $callable){
             call_user_func_array($callable, $params);
+            $count++;
         }
 
-        return count($this->listeners[$event]);
+        return $count;
     }
 
 }

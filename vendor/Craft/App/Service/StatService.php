@@ -22,15 +22,22 @@ use Craft\Box\Session;
 class StatService extends Service
 {
 
-    /** @var string */
-    public $name = 'Stats';
+    /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.end' => 'onKernelEnd'];
+    }
+
 
     /**
      * End of execution
      * @param Request $request
      * @param Response $response
      */
-    public function finish(Request $request, Response $response)
+    public function onKernelEnd(Request $request, Response $response)
     {
         // get data
         $elapsed = microtime(true) - $request->start;

@@ -10,7 +10,7 @@
  */
 namespace Craft\App\Service;
 
-use Craft\Error\Forbidden;
+use Craft\App\Error\Forbidden;
 use Craft\App\Service;
 use Craft\App\Request;
 use Craft\Log\Logger;
@@ -25,8 +25,15 @@ use Craft\Box\Auth;
 class AuthService extends Service
 {
 
-    /** @var string */
-    public $name = 'Auth';
+    /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.request' => 'onKernelRequest'];
+    }
+
 
     /**
      * Handle request
@@ -34,7 +41,7 @@ class AuthService extends Service
      * @throws Forbidden
      * @return Request
      */
-    public function before(Request $request)
+    public function onKernelRequest(Request $request)
     {
         // default value
         if(!isset($request->meta['auth'])) {

@@ -24,8 +24,14 @@ use Craft\Box\Mog;
 class JsonService extends Service
 {
 
-    /** @var string */
-    public $name = 'Render.Json';
+    /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.response' => 'onKernelResponse'];
+    }
 
     /**
      * Render data as json
@@ -33,7 +39,7 @@ class JsonService extends Service
      * @param Response $response
      * @return Response|void
      */
-    public function after(Request $request, Response $response)
+    public function onKernelResponse(Request $request, Response $response)
     {
         // json output requested
         if(isset($request->meta['json'])) {

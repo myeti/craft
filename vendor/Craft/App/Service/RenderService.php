@@ -26,10 +26,7 @@ use Craft\View\EngineInterface;
 class RenderService extends Service
 {
 
-    /** @var string */
-    public $name = 'Render.Engine';
-
-    /** @var Engine */
+    /** @var EngineInterface */
     protected $engine;
 
 
@@ -44,12 +41,22 @@ class RenderService extends Service
 
 
     /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.response' => 'onKernelResponse'];
+    }
+
+
+    /**
      * Handle response
      * @param Response $response
      * @param Request $request
      * @return Response
      */
-    public function after(Request $request, Response $response = null)
+    public function onKernelResponse(Request $request, Response $response = null)
     {
         // render if metadata provided
         if(!empty($request->meta['render'])) {

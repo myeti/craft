@@ -10,17 +10,15 @@
  */
 namespace Craft\App\Service;
 
-use Craft\Error\NotFound;
+use Craft\App\Error\NotFound;
 use Craft\App\Service;
 use Craft\App\Request;
+use Craft\Box\Mog;
 use Craft\Map\RouterInterface;
 use Craft\Log\Logger;
 
 class RouterService extends Service
 {
-
-    /** @var string */
-    public $name = 'Router';
 
     /** @var RouterInterface */
     public $router;
@@ -37,13 +35,28 @@ class RouterService extends Service
 
 
     /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.request' => 'onKernelRequest'];
+    }
+
+
+    /**
      * Handle request
      * @param Request $request
-     * @throws \Craft\Error\NotFound
+     * @throws NotFound
      * @return Request
      */
-    public function before(Request $request)
+    public function onKernelRequest(Request $request)
     {
+        // set query
+        if(!$request->query) {
+            $request->query = Mog::query();
+        }
+
         // route query
         $route = $this->router->find($request->query);
 

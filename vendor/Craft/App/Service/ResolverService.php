@@ -10,6 +10,7 @@
  */
 namespace Craft\App\Service;
 
+use Craft\App\Kernel;
 use Craft\App\Service;
 use Craft\App\Request;
 use Craft\Reflect\Action;
@@ -21,9 +22,6 @@ use Craft\Log\Logger;
  */
 class ResolverService extends Service
 {
-
-    /** @var string */
-    public $name = 'Resolver';
 
     /** @var InjectorInterface */
     protected $injector;
@@ -40,11 +38,21 @@ class ResolverService extends Service
 
 
     /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.request' => 'onKernelRequest'];
+    }
+
+
+    /**
      * Handle request
      * @param Request $request
      * @return Request
      */
-    public function before(Request $request)
+    public function onKernelRequest(Request $request)
     {
         // resolve
         $action = Action::resolve($request->action, $this->injector);

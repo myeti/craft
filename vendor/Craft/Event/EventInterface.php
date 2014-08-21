@@ -35,9 +35,9 @@ interface EventInterface
     /**
      * Fire event
      * @param string $event
-     * @param array $params
+     * @param mixed $params
      * @return int
      */
-    public function fire($event, array $params = []);
+    public function fire($event, $params = null);
 
 } 

@@ -10,54 +10,31 @@
  */
 namespace Craft\App;
 
-/**
- * A service operates before
- * and/or after the action is called
- */
-abstract class Service
+use Craft\Event\EventInterface;
+use Craft\Event\ListenerInterface;
+
+abstract class Service implements ListenerInterface
 {
 
-    /** @var string */
-    public $name;
+    /**
+     * Get listening methods
+     * @return array
+     */
+    abstract public function register();
 
     /**
-     * Handle request
-     * @param Request $request
-     * @return Request
+     * Subscribe to subject's events
+     * @param EventInterface $subject
      */
-    public function before(Request $request)
+    public function listen(EventInterface $subject)
     {
-        return $request;
+        // get listening methods
+        $events = (array)$this->register($subject);
+
+        // bind to subject
+        foreach($events as $event => $method) {
+            $subject->on($event, [$this, $method]);
+        }
     }
 
-    /**
-     * Handle response
-     * @param Request $request
-     * @param Response $response
-     * @return Response
-     */
-    public function after(Request $request, Response $response)
-    {
-        return $response;
-    }
-
-    /**
-     * End of execution
-     * @param Request $request
-     * @param Response $response
-     */
-    public function finish(Request $request, Response $response) {}
-
-    /**
-     * Handle error
-     * @param \Exception $e
-     * @param Request $request
-     * @param Response $response
-     * @return null|Response
-     */
-    public function error(\Exception $e, Request $request, Response $response = null)
-    {
-        return null;
-    }
-
-} 
+}

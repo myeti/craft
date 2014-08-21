@@ -10,7 +10,8 @@
  */
 namespace Craft\App\Service;
 
-use Craft\Error\NotFound;
+use Craft\App\Kernel;
+use Craft\App\Error\NotFound;
 use Craft\App\Service;
 use Craft\App\Request;
 use Craft\Orm\Syn;
@@ -24,11 +25,18 @@ use Craft\Log\Logger;
 class MapperService extends Service
 {
 
-    /** @var string */
-    public $name = 'Mapper';
-
     /** @var callable[] */
     protected $seekers = [];
+
+
+    /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.request' => 'onKernelRequest'];
+    }
 
 
     /**
@@ -51,7 +59,7 @@ class MapperService extends Service
      * @throws \InvalidArgumentException
      * @return Request
      */
-    public function before(Request $request)
+    public function onKernelRequest(Request $request)
     {
         // mapping requested
         if(!empty($request->meta['map'])) {

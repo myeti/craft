@@ -13,6 +13,9 @@ namespace Craft\Log;
 abstract class Logger
 {
 
+    /** @var WriterInterface */
+    protected static $instance;
+
     /**
      * Get writer instance
      * @param WriterInterface $writer
@@ -20,15 +23,14 @@ abstract class Logger
      */
     public static function writer(WriterInterface $writer = null)
     {
-        static $instance;
         if($writer) {
-            $instance = $writer;
+            static::$instance = $writer;
         }
-        if(!$instance) {
-            $instance = new Writer;
+        if(!static::$instance) {
+            static::$instance = new Writer;
         }
 
-        return $instance;
+        return static::$instance;
     }
 
 

@@ -34,12 +34,6 @@ class Dispatcher implements Handler
             throw new \BadMethodCallException('Request::action must be a valid callable.');
         }
 
-        // run before callbacks
-        foreach($request->before as $before) {
-            call_user_func($before, $request);
-        }
-        Logger::info('App.Dispatcher : ' . count($request->before) . ' callbacks executed before');
-
         // add request as last (and optional) method arg
         $args = $request->args;
         $args[] = &$request;
@@ -63,12 +57,6 @@ class Dispatcher implements Handler
         }
 
         Logger::info('App.Dispatcher : response generated');
-
-        // run after callbacks
-        foreach($request->after as $after) {
-            call_user_func($after, $request, $response);
-        }
-        Logger::info('App.Dispatcher : ' . count($request->after) . ' callbacks executed after');
 
         return $response;
     }

@@ -10,22 +10,20 @@
  */
 namespace Craft\App;
 
-use Craft\Error\Abort;
+use Craft\App;
+use Craft\Event\EventInterface;
 use Craft\Event\Subject;
 use Craft\Log\Logger;
 
 /**
  * Advanced Dispatcher :
  * manages inner events
- * and plug layers.
+ * and plug services
  */
-class Kernel extends Dispatcher
+class Kernel extends Dispatcher implements EventInterface
 {
 
     use Subject;
-
-    /** @var Service[] */
-    protected $services = [];
 
     /** @var bool */
     protected $running = false;
@@ -34,16 +32,15 @@ class Kernel extends Dispatcher
     /**
      * Add service
      * @param Service $service
-     * @throws \InvalidArgumentException
      * @return $this
      */
     public function plug(Service $service)
     {
         // resolve name
-        $name = $service->name ?: get_class($service);
+        $name = get_class($service);
 
-        // push service
-        $this->services[$name] = $service;
+        // register service
+        $service->listen($this);
         Logger::info('App.Kernel : service "' . $name . '" plugged');
 
         return $this;
@@ -51,120 +48,92 @@ class Kernel extends Dispatcher
 
 
     /**
-     * Drop service
-     * @param string $name
-     * @return $this
-     */
-    public function drop($name)
-    {
-        if(isset($this->services[$name])) {
-            unset($this->services[$name]);
-            Logger::info('App.Kernel : service "' . $name . '" unplugged');
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * Get inner service
-     * @param string $name
-     * @return bool|Service
-     */
-    public function service($name)
-    {
-        return isset($this->services[$name])
-            ? $this->services[$name]
-            : false;
-    }
-
-
-    /**
      * Handle context request
      * @param Request $request
      * @param Response $response
-     * @throws Abort
      * @throws \Exception
      * @return bool
      */
     public function handle(Request $request = null, Response $response = null)
     {
-        Logger::info('App.Kernel : kernel ' . ($this->running ? 'restart' : 'start'));
+        // kernel is now running
         $this->running = true;
-
-        // resolve request
-        if(!$request) {
-            $request = Request::generate();
-        }
+        Logger::info('App.Kernel : start');
 
         // safe
         try {
 
-            // execute 'before' services
-            foreach($this->services as $before) {
-                $return = $before->before($request);
-                if($return instanceof Request) {
-                    $request = $return;
-                }
+            // start event
+            Logger::info('App.Kernel : start event');
+            $this->fire('kernel.start');
+
+            // create default request
+            if(!$request) {
+                $request = new Request;
             }
 
-            // dispatch
+            // create default response
+            if(!$response) {
+                $response = new Response;
+            }
+
+            // request event
+            Logger::info('App.Kernel : request event');
+            $this->fire('kernel.request', $request);
+
+            // execute request
             $response = parent::handle($request, $response);
+            Logger::info('App.Kernel : request executed');
 
-            // execute 'after' services
-            foreach($this->services as $after) {
-                $return = $after->after($request, $response);
-                if($return instanceof Response) {
-                    $response = $return;
-                }
-            }
+            // request event
+            Logger::info('App.Kernel : response event');
+            $this->fire('kernel.response', $request, $response);
 
-            // send response
-            $response->send();
-            Logger::info('App.Kernel : response sent with code ' . $response->code);
+        }
+        // internal error (404, 403 etc...)
+        catch(Error\Internal $e) {
 
-            // finisher services
-            foreach($this->services as $finish) {
-                $finish->finish($request, $response);
+            // dispatch as http event or inject as exception
+            Logger::error('App.Kernel : internal error ' . $e->getCode() . ' : ' . $e->getMessage());
+            if(!$this->fire($e->getCode(), $request, $response, $e)) {
+                throw $e;
             }
 
         }
-        // error
+        // other errors
         catch(\Exception $e) {
 
-            Logger::error('App.Kernel : ' . $e->getCode() . ' ' . $e->getMessage());
+            // dispatch as specific error
+            Logger::error('App.Kernel : error ' . get_class($e) . ' : ' . $e->getMessage());
+            $event = 'kernel.error.' . get_class($e);
+            $caught = $this->fire($event, $request, $response, $e);
 
-            // dispatch to custom events
-            $done = $this->fire($e->getCode(), [$request, $e->getMessage()]);
+            // dispatch as general error
+            $caught += $this->fire('kernel.error', $request, $response, $e);
 
-            // no custom events
-            if(!$done) {
-
-                // try error services
-                $handled = false;
-                foreach($this->services as $error) {
-
-                    // proceed
-                    $response = $error->error($e, $request, $response);
-
-                    // response returned : stop
-                    if($response instanceof Response) {
-                        $response->send();
-                        $handled = true;
-                    }
-                }
-
-                // no error services
-                if(!$handled) {
-                    throw $e;
-                }
-
+            // no listener, throw it again...
+            if(!$caught) {
+                throw $e;
             }
 
         }
 
+        // send response
+        if($response instanceof Response) {
+            $response->send();
+            Logger::info('App.Kernel : response sent with code ' . $response->code);
+        }
+        else {
+            Logger::info('App.Kernel : no response sent');
+        }
+
+        // end event
+        Logger::info('App.Kernel : end event');
+        $this->fire('kernel.end', $request, $response);
+
+        // end
         $this->running = false;
-        Logger::info('App.Kernel : kernel end');
+        Logger::info('App.Kernel : end');
 
         return true;
     }

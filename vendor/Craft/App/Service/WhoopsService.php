@@ -14,10 +14,7 @@ use Whoops;
 class WhoopsService extends Service
 {
 
-    /** @var string */
-    public $name = 'Whoops.Handler';
-
-    /** @var  */
+    /** @var Whoops\Run */
     protected $whoops;
 
 
@@ -35,13 +32,23 @@ class WhoopsService extends Service
 
 
     /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.error' => 'onKernelError'];
+    }
+
+
+    /**
      * Handle error
-     * @param \Exception $e
      * @param Request $request
      * @param Response $response
+     * @param \Exception $e
      * @return Response
      */
-    public function error(\Exception $e, Request $request, Response $response = null)
+    public function onKernelError(Request $request, Response $response = null, \Exception $e)
     {
         // create response
         if(!$response) {
@@ -90,4 +97,4 @@ class WhoopsService extends Service
         return $response;
     }
 
-} 
+}
