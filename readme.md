@@ -13,14 +13,20 @@ All start in your 'index.php' :
 
 require 'vendor/autoload.php';
 
-// create your routes
-$routes = [
-    '/'     => 'My\Logic\Front::hello',
-    '/lost' => 'My\Logic\Error::lost'
-];
+// tell the mog you are in development mode
+Forge\Mog::env('mode', 'prod');
 
-// forge your app with routes and templates dir
-$app = new Forge\App($routes, __APP__ . '/views');
+// create your routes
+$router = new Forge\Router([
+    '/'     => 'My\Logic\Front::hello',
+    '/lost' => 'My\Logic\Front::lost'
+]);
+
+// define your template engine
+$engine = new Forge\Engine(__APP__ . '/views', url('/public'));
+
+// forge your app with these components
+$app = new Forge\App($router, $engine);
 
 // catch 404
 $app->lost('/lost');
@@ -67,7 +73,7 @@ Let's manage your users, shall we ?
 <?php
 
 // attempt a basic login
-if(Forge\Auth::basic('My\Model\User', $username, $password)) {
+if(Forge\Auth::basic($username, $password)) {
     // logged in
 }
 else {
@@ -77,8 +83,9 @@ else {
 // or manually login the user
 Forge\Auth::login($rank, $user); // rank number, user object
 
-// get rank
+// get rank or user
 $rank = Forge\Auth::rank();
+$user = Forge\Auth::user();
 
 ```
 
