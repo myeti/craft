@@ -10,9 +10,7 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Error\Forbidden;
-use Craft\App\Service;
-use Craft\App\Request;
+use Craft\App;
 use Craft\Log\Logger;
 use Craft\Box\Auth;
 
@@ -22,7 +20,7 @@ use Craft\Box\Auth;
  *
  * Needs Service\ResolverService
  */
-class AuthService extends Service
+class AuthService extends App\Service
 {
 
     /**
@@ -37,11 +35,10 @@ class AuthService extends Service
 
     /**
      * Handle request
-     * @param Request $request
-     * @throws Forbidden
-     * @return Request
+     * @param App\Request $request
+     * @throws App\Error\Forbidden
      */
-    public function onKernelRequest(Request $request)
+    public function onKernelRequest(App\Request $request)
     {
         // default value
         if(!isset($request->meta['auth'])) {
@@ -50,12 +47,10 @@ class AuthService extends Service
 
         // attempt
         if(!Auth::rank($request->meta['auth'])) {
-            throw new Forbidden('User not allowed for query "' . $request->query . '"');
+            throw new App\Error\Forbidden('User not allowed for query "' . $request->query . '"');
         }
 
         Logger::info('App.Firewall : user is allowed');
-
-        return $request;
     }
 
 }

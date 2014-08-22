@@ -19,7 +19,7 @@ use Craft\Log\Logger;
  * manages inner events
  * and plug services
  */
-class Kernel extends Dispatcher implements Event\ChannelInterface
+class Kernel extends Dispatcher implements Event\Trigger
 {
 
     use Event\Delegate;
@@ -31,9 +31,9 @@ class Kernel extends Dispatcher implements Event\ChannelInterface
     /**
      * Define inner event channel
      */
-    public function __construct(Event\ChannelInterface $channel = null)
+    public function __construct(Event\Trigger $channel = null)
     {
-        $this->subject = $channel ?: new Event\Channel;
+        $this->channel = $channel ?: new Event\Channel;
     }
 
 

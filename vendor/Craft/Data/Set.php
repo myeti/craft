@@ -10,236 +10,175 @@
  */
 namespace Craft\Data;
 
-/**
- * Class Set
- * @package Craft\Data
- *
- * Array utils functions
- */
-abstract class Set
+class Set extends Provider
 {
 
     /**
-     * Silent get
-     * @param array $array
-     * @param string $key
-     * @return bool
-     */
-    public static function has(array $array, $key)
-    {
-        return isset($array[$key]);
-    }
-
-    /**
-     * Silent get
-     * @param array $array
-     * @param string $key
-     * @return null|mixed
-     */
-    public static function get(array $array, $key)
-    {
-        return isset($array[$key]) ? $array[$key] : null;
-    }
-
-
-    /**
      * Get first element
-     * @param array $array
      * @return mixed
      */
-    public static function first(array $array)
+    public function first()
     {
-        return reset($array);
+        return ArrayHelper::first($this);
     }
 
 
     /**
      * Get first key
-     * @param array $array
+     * 
      * @return string
      */
-    public static function firstKey(array $array)
+    public function firstKey()
     {
-        reset($array);
-        return key($array);
+        return ArrayHelper::firstKey($this);
     }
 
 
     /**
      * Get last element
-     * @param array $array
+     * 
      * @return mixed
      */
-    public static function last(array $array)
+    public function last()
     {
-        return end($array);
+        return ArrayHelper::last($this);
     }
 
 
     /**
      * Get last key
-     * @param array $array
+     * 
      * @return string
      */
-    public static function lastKey(array $array)
+    public function lastKey()
     {
-        end($array);
-        return key($array);
+        return ArrayHelper::lastKey($this);
     }
 
 
     /**
      * Find first key of matched value
-     * @param array $array
+     * 
      * @param mixed $value
      * @return int
      */
-    public static function keyOf(array $array, $value)
+    public function keyOf($value)
     {
-        return array_search($value, $array);
+       return ArrayHelper::keyOf($this, $value);
     }
 
 
     /**
      * Find all keys of matched value
-     * @param array $array
+     * 
      * @param mixed $value
      * @return array
      */
-    public static function keysOf(array $array, $value)
+    public function keysOf($value)
     {
-        return array_keys($array, $value);
+        return ArrayHelper::keysOf($this, $value);
     }
 
 
     /**
      * Replace all value
-     * @param array $array
+     * 
      * @param mixed $value
      * @param mixed $replacement
-     * @return array
+     * @return $this
      */
-    public static function replace(array $array, $value, $replacement)
+    public function replace($value, $replacement)
     {
-        $keys = array_keys($array, $value);
-        foreach($keys as $key) {
-            $array[$key] = $replacement;
-        }
-
-        return $array;
+        $this->exchangeArray(ArrayHelper::replace($this, $value, $replacement));
+        return $this;
     }
 
 
     /**
      * Replace key and keep order
-     * @param array $array
+     * 
      * @param mixed $key
      * @param mixed $replacement
-     * @return array|bool
+     * @return $this
      */
-    public static function replaceKey(array $array, $key, $replacement)
+    public function replaceKey($key, $replacement)
     {
-        // key does not exists
-        if(!isset($array[$key])) {
-            return false;
-        }
-
-        // search current key
-        $keys = array_keys($array);
-        $index = array_search($key, $keys);
-
-        // replace
-        $keys[$index] = $replacement;
-        return array_combine($keys, $array);
-    }
-
-
-    /**
-     * Remove rows with specified value
-     * @param array $array
-     * @param mixed $value
-     * @return array
-     */
-    public static function drop(array $array, $value)
-    {
-        $keys = array_keys($array, $value);
-        return array_diff_key($array, array_flip($keys));
+        $this->exchangeArray(ArrayHelper::replaceKey($this, $key, $replacement));
+        return $this;
     }
 
 
     /**
      * Get keys
-     * @param array $array
+     * 
      * @return array
      */
-    public static function keys(array $array)
+    public function keys()
     {
-        return array_keys($array);
+        return ArrayHelper::keys($this);
     }
 
 
     /**
      * Get values
-     * @param array $array
+     * 
      * @return array
      */
-    public static function values(array $array)
+    public function values()
     {
-        return array_values($array);
+        return ArrayHelper::values($this);
     }
 
 
     /**
      * Insert element at specific position
-     * @param array $array
+     * 
      * @param mixed $value
      * @param string $at
-     * @return array
+     * @return $this
      */
-    public static function insert(array $array, $value, $at)
+    public function insert($value, $at)
     {
-        $before = array_slice($array, 0, $at);
-        $after = array_slice($array, $at);
-        $before[] = $value;
-        return array_merge($before, array_values($after));
+        $this->exchangeArray(ArrayHelper::insert($this, $value, $at));
+        return $this;
     }
 
 
     /**
      * Filter values
-     * @param array $array
+     * 
      * @param callable $callback
-     * @return array
+     * @return $this
      */
-    public static function filter(array $array, callable $callback)
+    public function filter(callable $callback)
     {
-        return array_map($array, $callback);
+        $this->exchangeArray(ArrayHelper::filter($this, $callback));
+        return $this;
     }
 
 
     /**
      * Filter keys
-     * @param array $array
+     * 
      * @param callable $callback
-     * @return array
+     * @return $this
      */
-    public static function filterKey(array $array, callable $callback)
+    public function filterKey(callable $callback)
     {
-        $keys = array_map(array_keys($array), $callback);
-        return array_diff_key($array, array_flip($keys));
+        $this->exchangeArray(ArrayHelper::filterKey($this, $callback));
+        return $this;
     }
 
 
     /**
      * Get random element(s)
-     * @param array $array
+     * 
      * @param int $num
      * @return mixed|array
      */
-    public static function random(array $array, $num = 1)
+    public function random($num = 1)
     {
-        $keys = (array)array_rand($array, $num);
-        return array_intersect_key($array, $keys);
+        return ArrayHelper::random($this, $num);
     }
 
 
@@ -247,45 +186,14 @@ abstract class Set
      * Sort array by columns
      * - [column => SORT_ASC] let you decide
      * - [column1, column2] will sort ASC
-     * @param array $array
+     * 
      * @param array $by
-     * @return array
+     * @return $this
      */
-    public static function sort(array $array, array $by)
+    public function sort(array $by)
     {
-        // resolve sorting
-        $sort = [];
-        foreach($by as $key => $val) {
-            if(is_int($key)) {
-                $sort[$val] = SORT_ASC;
-            }
-            else {
-                $sort[$key] = $val;
-            }
-        }
-
-        // prepare columns
-        $columns = [];
-        foreach($array as $key => $row) {
-            foreach($row as $column => $value) {
-
-                // need sorting ?
-                if(isset($sort[$column])) {
-                    $columns[$column][$key] = $value;
-                }
-
-            }
-        }
-
-        // prepare args
-        $args = [];
-        foreach($columns as $name => $keys) {
-            $args[] = $keys;
-            $args[] = $sort[$name];
-        }
-        $args[] = $array;
-
-        return call_user_func_array('array_multisort', $args);
+        $this->exchangeArray(ArrayHelper::sort($this, $by));
+        return $this;
     }
 
 }

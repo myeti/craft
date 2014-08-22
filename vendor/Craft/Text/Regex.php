@@ -10,7 +10,7 @@
  */
 namespace Craft\Text;
 
-use Craft\Data\Collection;
+use Craft\Data\Map;
 
 abstract class Regex
 {
@@ -33,7 +33,7 @@ abstract class Regex
 
             // filter string keys
             if($string_keys) {
-                $matches = new Collection($matches);
+                $matches = new Map($matches);
                 $matches->filterKey(function($key){
                     return !is_int($key);
                 });

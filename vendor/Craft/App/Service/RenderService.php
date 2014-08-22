@@ -10,12 +10,9 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Service;
-use Craft\App\Request;
-use Craft\App\Response;
+use Craft\App;
+use Craft\View;
 use Craft\Log\Logger;
-use Craft\View\Engine;
-use Craft\View\EngineInterface;
 
 /**
  * Render view using the html engine
@@ -23,18 +20,18 @@ use Craft\View\EngineInterface;
  *
  * Needs Service\ResolverService
  */
-class RenderService extends Service
+class RenderService extends App\Service
 {
 
-    /** @var EngineInterface */
+    /** @var View\EngineInterface */
     protected $engine;
 
 
     /**
      * Setup engine
-     * @param EngineInterface $engine
+     * @param View\EngineInterface $engine
      */
-    public function __construct(EngineInterface $engine)
+    public function __construct(View\EngineInterface $engine)
     {
         $this->engine = $engine;
     }
@@ -52,19 +49,16 @@ class RenderService extends Service
 
     /**
      * Handle response
-     * @param Response $response
-     * @param Request $request
-     * @return Response
+     * @param App\Response $response
+     * @param App\Request $request
      */
-    public function onKernelResponse(Request $request, Response $response = null)
+    public function onKernelResponse(App\Request $request, App\Response $response = null)
     {
         // render if metadata provided
         if(!empty($request->meta['render'])) {
             $response->content = $this->engine->render($request->meta['render'], $response->data);
             Logger::info('App.Html : render template "' . $request->meta['render'] . '" as html');
         }
-
-        return $response;
     }
 
 }

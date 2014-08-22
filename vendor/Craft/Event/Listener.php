@@ -8,19 +8,15 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Data;
+namespace Craft\Event;
 
-class SilentArray extends \ArrayObject
+interface Listener
 {
 
     /**
-     * Silent get : does not throw error
-     * @param mixed $index
-     * @return mixed
+     * Subscribe to channel events
+     * @param Trigger $channel
      */
-    public function offsetGet($index)
-    {
-        return isset($this[$index]) ? parent::offsetGet($index) : null;
-    }
+    public function listen(Trigger $channel);
 
 } 

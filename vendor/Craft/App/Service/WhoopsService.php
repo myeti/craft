@@ -2,16 +2,14 @@
 
 namespace Craft\App\Service;
 
-use Craft\App\Request;
-use Craft\App\Response;
-use Craft\App\Service;
+use Craft\App;
 use Craft\Box\Auth;
 use Craft\Box\Session;
 use Craft\Box\Mog;
 use Craft\Log\Logger;
 use Whoops;
 
-class WhoopsService extends Service
+class WhoopsService extends App\Service
 {
 
     /** @var Whoops\Run */
@@ -43,16 +41,15 @@ class WhoopsService extends Service
 
     /**
      * Handle error
-     * @param Request $request
-     * @param Response $response
+     * @param App\Request $request
+     * @param App\Response $response
      * @param \Exception $e
-     * @return Response
      */
-    public function onKernelError(Request $request, Response $response = null, \Exception $e)
+    public function onKernelError(App\Request $request, App\Response $response = null, \Exception $e)
     {
         // create response
         if(!$response) {
-            $response = new Response;
+            $response = new App\Response;
             $response->code = $e->getCode() ?: 500;
         }
 
@@ -93,8 +90,6 @@ class WhoopsService extends Service
 
         // process exception
         $response->content = $this->whoops->handleException($e);
-
-        return $response;
     }
 
 }

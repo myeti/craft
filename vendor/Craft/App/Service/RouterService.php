@@ -10,14 +10,12 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Error\NotFound;
-use Craft\App\Service;
-use Craft\App\Request;
+use Craft\App;
 use Craft\Box\Mog;
 use Craft\Map\RouterInterface;
 use Craft\Log\Logger;
 
-class RouterService extends Service
+class RouterService extends App\Service
 {
 
     /** @var RouterInterface */
@@ -46,11 +44,10 @@ class RouterService extends Service
 
     /**
      * Handle request
-     * @param Request $request
-     * @throws NotFound
-     * @return Request
+     * @param App\Request $request
+     * @throws App\Error\NotFound
      */
-    public function onKernelRequest(Request $request)
+    public function onKernelRequest(App\Request $request)
     {
         // set query
         if(!$request->query) {
@@ -62,7 +59,7 @@ class RouterService extends Service
 
         // 404
         if(!$route) {
-            throw new NotFound('Route "' . $request->query . '" not found');
+            throw new App\Error\NotFound('Route "' . $request->query . '" not found');
         }
 
         // update request
@@ -73,8 +70,6 @@ class RouterService extends Service
         $request->meta = array_merge($request->meta, $route->meta);
 
         Logger::info('App.Routing : route "' . $route->from . '" found, request created');
-
-        return $request;
     }
 
 }

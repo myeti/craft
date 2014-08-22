@@ -17,7 +17,7 @@ namespace Craft\Data;
  * Flat search in array
  * ex : key1.key2.key3 = [key1 => [key2 => [key3 => value]]]
  */
-abstract class Flat
+abstract class ArrayFlat
 {
 
     public static $separator = '.';

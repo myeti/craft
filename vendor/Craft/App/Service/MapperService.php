@@ -10,10 +10,7 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Kernel;
-use Craft\App\Error\NotFound;
-use Craft\App\Service;
-use Craft\App\Request;
+use Craft\App;
 use Craft\Orm\Syn;
 use Craft\Log\Logger;
 
@@ -22,7 +19,7 @@ use Craft\Log\Logger;
  *
  * Needs Service\ResolverService
  */
-class MapperService extends Service
+class MapperService extends App\Service
 {
 
     /** @var callable[] */
@@ -54,12 +51,11 @@ class MapperService extends Service
 
     /**
      * Handle request
-     * @param Request $request
-     * @throws NotFound
+     * @param App\Request $request
+     * @throws App\Error\NotFound
      * @throws \InvalidArgumentException
-     * @return Request
      */
-    public function onKernelRequest(Request $request)
+    public function onKernelRequest(App\Request $request)
     {
         // mapping requested
         if(!empty($request->meta['map'])) {
@@ -74,15 +70,13 @@ class MapperService extends Service
 
             // not found
             if(!$entity) {
-                throw new NotFound($model . '[' . $property . ':' . $request->args[$property] . '] not found.');
+                throw new App\Error\NotFound($model . '[' . $property . ':' . $request->args[$property] . '] not found.');
             }
 
             // replace property with entity
             $request->args[$property] = $entity;
             Logger::info('App.Mapping : map model ' . $model . ' into $' . $property);
         }
-
-        return $request;
     }
 
 }

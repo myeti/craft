@@ -10,16 +10,14 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Service;
-use Craft\App\Request;
-use Craft\App\Response;
+use Craft\App;
 use Craft\Log\Logger;
 use Craft\Box\Session;
 
 /**
  * Keep elapsed time in memory
  */
-class StatService extends Service
+class StatService extends App\Service
 {
 
     /**
@@ -34,10 +32,10 @@ class StatService extends Service
 
     /**
      * End of execution
-     * @param Request $request
-     * @param Response $response
+     * @param App\Request $request
+     * @param App\Response $response
      */
-    public function onKernelEnd(Request $request, Response $response)
+    public function onKernelEnd(App\Request $request, App\Response $response)
     {
         // get data
         $elapsed = microtime(true) - $request->start;

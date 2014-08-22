@@ -10,7 +10,7 @@
  */
 namespace Craft\Event;
 
-interface ChannelInterface
+interface Trigger
 {
 
     /**
@@ -22,9 +22,9 @@ interface ChannelInterface
 
     /**
      * Attach listener
-     * @param ListenerInterface $listener
+     * @param Listener $listener
      */
-    public function attach(ListenerInterface $listener);
+    public function attach(Listener $listener);
 
     /**
      * Detach all event callbacks

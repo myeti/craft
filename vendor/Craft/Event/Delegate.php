@@ -13,7 +13,7 @@ namespace Craft\Event;
 trait Delegate
 {
 
-    /** @var ChannelInterface */
+    /** @var Trigger */
     protected $channel;
 
 
@@ -32,10 +32,10 @@ trait Delegate
 
     /**
      * Attach callback
-     * @param ListenerInterface $listener
+     * @param Listener $listener
      * @return $this
      */
-    public function attach(ListenerInterface $listener)
+    public function attach(Listener $listener)
     {
         $listener->listen($this->channel);
         return $this;

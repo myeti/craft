@@ -10,9 +10,7 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Service;
-use Craft\App\Request;
-use Craft\App\Response;
+use Craft\App;
 use Craft\Log\Logger;
 use Craft\Box\Mog;
 
@@ -21,7 +19,7 @@ use Craft\Box\Mog;
  *
  * Needs Service\ResolverService
  */
-class JsonService extends Service
+class JsonService extends App\Service
 {
 
     /**
@@ -35,24 +33,21 @@ class JsonService extends Service
 
     /**
      * Render data as json
-     * @param Request $request
-     * @param Response $response
-     * @return Response|void
+     * @param App\Request $request
+     * @param App\Response $response
      */
-    public function onKernelResponse(Request $request, Response $response)
+    public function onKernelResponse(App\Request $request, App\Response $response)
     {
         // json output requested
         if(isset($request->meta['json'])) {
 
             // always or async
             if($request->meta['json'] != 'async' xor ($request->meta['json'] == 'async' and Mog::async())) {
-                $response = new Response\Json($response->data);
+                $response = new App\Response\Json($response->data);
                 Logger::info('App.Json : render response as json');
             }
 
         }
-
-        return $response;
     }
 
 }

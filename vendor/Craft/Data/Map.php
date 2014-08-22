@@ -10,7 +10,7 @@
  */
 namespace Craft\Data;
 
-class Repository extends \ArrayObject implements ProviderInterface
+class Map extends \ArrayObject implements ProviderInterface
 {
 
 
@@ -31,7 +31,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function has($key)
     {
-        return Flat::has($this, $key);
+        return ArrayFlat::has($this, $key);
     }
 
 
@@ -43,7 +43,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function get($key, $fallback = null)
     {
-        return Flat::get($this, $key, $fallback);
+        return ArrayFlat::get($this, $key, $fallback);
     }
 
 
@@ -55,7 +55,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function set($key, $value)
     {
-        Flat::set($this, $key, $value);
+        ArrayFlat::set($this, $key, $value);
         return $this;
     }
 
@@ -67,7 +67,7 @@ class Repository extends \ArrayObject implements ProviderInterface
      */
     public function drop($key)
     {
-        Flat::drop($this, $key);
+        ArrayFlat::drop($this, $key);
         return $this;
     }
 
@@ -86,7 +86,7 @@ class Repository extends \ArrayObject implements ProviderInterface
     /**
      * From array
      * @param array $input
-     * @return Repository
+     * @return self
      */
     public static function of(array &$input)
     {

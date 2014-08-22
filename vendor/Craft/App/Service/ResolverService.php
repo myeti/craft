@@ -10,9 +10,7 @@
  */
 namespace Craft\App\Service;
 
-use Craft\App\Kernel;
-use Craft\App\Service;
-use Craft\App\Request;
+use Craft\App;
 use Craft\Reflect\Action;
 use Craft\Reflect\InjectorInterface;
 use Craft\Log\Logger;
@@ -20,7 +18,7 @@ use Craft\Log\Logger;
 /**
  * Resolve action and read metadata.
  */
-class ResolverService extends Service
+class ResolverService extends App\Service
 {
 
     /** @var InjectorInterface */
@@ -49,10 +47,9 @@ class ResolverService extends Service
 
     /**
      * Handle request
-     * @param Request $request
-     * @return Request
+     * @param App\Request $request
      */
-    public function onKernelRequest(Request $request)
+    public function onKernelRequest(App\Request $request)
     {
         // resolve
         $action = Action::resolve($request->action, $this->injector);
@@ -62,8 +59,6 @@ class ResolverService extends Service
         $request->meta = array_merge($request->meta, $action->meta);
 
         Logger::info('App.Resolver : request action resolved');
-
-        return $request;
     }
 
 }

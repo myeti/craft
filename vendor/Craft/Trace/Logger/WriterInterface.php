@@ -8,15 +8,17 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Event;
+namespace Craft\Trace\Logger;
 
-interface ListenerInterface
+use Psr\Log\LoggerInterface;
+
+interface WriterInterface extends LoggerInterface
 {
 
     /**
-     * Subscribe to channel events
-     * @param ChannelInterface $channel
+     * Get all logs
+     * @return string
      */
-    public function listen(ChannelInterface $channel);
+    public function logs();
 
-} 
+}

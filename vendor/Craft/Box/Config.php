@@ -2,7 +2,7 @@
 
 namespace Craft\Box;
 
-use Craft\Data\Repository;
+use Craft\Data\Map;
 use Craft\Error\FileNotFound;
 
 class Config
@@ -11,7 +11,7 @@ class Config
     /** @var string */
     protected static $dir;
 
-    /** @var Repository[] */
+    /** @var Map[] */
     protected static $configs = [];
 
 
@@ -62,7 +62,7 @@ class Config
             }
 
             // add config
-            static::$configs[$file] = new Repository(require $path);
+            static::$configs[$file] = new Map(require $path);
         }
 
         // get config

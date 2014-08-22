@@ -10,9 +10,9 @@
  */
 namespace Craft\Box\Session;
 
-use Craft\Data\Repository;
+use Craft\Data\Map;
 
-class Storage extends Repository implements StorageInterface
+class Storage extends Map implements StorageInterface
 {
 
     /** @var string */

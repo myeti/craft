@@ -12,7 +12,7 @@ namespace Craft\App;
 
 use Craft\Event;
 
-abstract class Service implements Event\ListenerInterface
+abstract class Service implements Event\Listener
 {
 
     /**
@@ -22,10 +22,10 @@ abstract class Service implements Event\ListenerInterface
     abstract public function register();
 
     /**
-     * Subscribe to subject's events
-     * @param Event\ChannelInterface $channel
+     * Subscribe to channel events
+     * @param Event\Trigger $channel
      */
-    public function listen(Event\ChannelInterface $channel)
+    public function listen(Event\Trigger $channel)
     {
         // get listening methods
         $events = (array)$this->register();
