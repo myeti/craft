@@ -12,7 +12,7 @@ namespace Craft\App\Service;
 
 use Craft\App;
 use Craft\View;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 /**
  * Render view using the html engine

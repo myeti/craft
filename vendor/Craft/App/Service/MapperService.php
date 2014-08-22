@@ -12,7 +12,7 @@ namespace Craft\App\Service;
 
 use Craft\App;
 use Craft\Orm\Syn;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 /**
  * Inject a model when @map is specified.

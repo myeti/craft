@@ -13,7 +13,7 @@ namespace Craft\App\Service;
 use Craft\App;
 use Craft\Reflect\Action;
 use Craft\Reflect\InjectorInterface;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 /**
  * Resolve action and read metadata.

@@ -10,7 +10,7 @@
  */
 namespace Craft\Orm;
 
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 class Database
 {

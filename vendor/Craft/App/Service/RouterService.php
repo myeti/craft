@@ -13,7 +13,7 @@ namespace Craft\App\Service;
 use Craft\App;
 use Craft\Box\Mog;
 use Craft\Map\RouterInterface;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 class RouterService extends App\Service
 {

@@ -12,7 +12,7 @@ namespace Craft\Orm;
 
 use Craft\Orm\Adapter\MySQL;
 use Craft\Orm\Adapter\SQLite;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 abstract class Syn
 {

@@ -11,7 +11,7 @@
 namespace Craft\App\Service;
 
 use Craft\App;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 use Craft\Box\Session;
 
 /**

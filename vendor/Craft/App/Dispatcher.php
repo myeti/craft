@@ -10,7 +10,7 @@
  */
 namespace Craft\App;
 
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 /**
  * The most basic class :

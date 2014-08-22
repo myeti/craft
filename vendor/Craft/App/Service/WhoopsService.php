@@ -6,7 +6,7 @@ use Craft\App;
 use Craft\Box\Auth;
 use Craft\Box\Session;
 use Craft\Box\Mog;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 use Whoops;
 
 class WhoopsService extends App\Service

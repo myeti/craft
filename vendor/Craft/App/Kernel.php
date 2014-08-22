@@ -12,7 +12,7 @@ namespace Craft\App;
 
 use Craft\App;
 use Craft\Event;
-use Craft\Log\Logger;
+use Craft\Trace\Logger;
 
 /**
  * Advanced Dispatcher :
