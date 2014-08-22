@@ -10,4 +10,4 @@
  */
 namespace Forge;
 
-abstract class Logger extends \Craft\Log\Logger {}
+abstract class Logger extends \Craft\Trace\Logger {}
