@@ -8,6 +8,14 @@ require 'vendor/autoload.php';
 
 
 /**
+ * Tell the logger where to write your logs
+ */
+Forge\Logger::writer(
+    new Craft\Trace\Logger\FileWriter(__APP__ . '/logs')
+);
+
+
+/**
  * First, let the mog knows that you are in development
  */
 Forge\Mog::env('mode', 'prod');

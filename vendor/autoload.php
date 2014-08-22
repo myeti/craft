@@ -28,13 +28,6 @@ $loader->add('My',    __APP__);
 
 
 /**
- * Start logger
- */
-
-Forge\Logger::info('Hello :)');
-
-
-/**
  * Load helpers
  */
 

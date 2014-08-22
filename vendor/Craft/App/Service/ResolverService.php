@@ -58,7 +58,7 @@ class ResolverService extends App\Service
         $request->action = $action->callable;
         $request->meta = array_merge($request->meta, $action->meta);
 
-        Logger::info('App.Resolver : request action resolved');
+        Logger::info('Request action resolved');
     }
 
 }

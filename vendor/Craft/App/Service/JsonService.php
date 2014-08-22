@@ -44,7 +44,7 @@ class JsonService extends App\Service
             // always or async
             if($request->meta['json'] != 'async' xor ($request->meta['json'] == 'async' and Mog::async())) {
                 $response = new App\Response\Json($response->data);
-                Logger::info('App.Json : render response as json');
+                Logger::info('Render response as json');
             }
 
         }

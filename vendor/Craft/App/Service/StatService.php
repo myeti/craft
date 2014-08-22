@@ -47,8 +47,8 @@ class StatService extends App\Service
         Session::set('craft.time.average', $average);
         Session::set('craft.time.i', $i);
 
-        Logger::info('App.Statistics : execution time ' . number_format($elapsed, 4) . 's');
-        Logger::info('App.Statistics : average execution time ' . number_format($average, 4) . 's (i:' . $i . ')');
+        Logger::info('Execution time ' . number_format($elapsed, 4) . 's');
+        Logger::info('Average execution time ' . number_format($average, 4) . 's (i:' . $i . ')');
     }
 
 }

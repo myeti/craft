@@ -12,7 +12,6 @@ namespace Craft\Orm;
 
 use Craft\Orm\Adapter\MySQL;
 use Craft\Orm\Adapter\SQLite;
-use Craft\Trace\Logger;
 
 abstract class Syn
 {
@@ -206,8 +205,6 @@ abstract class Syn
         $db = new MySQL($dbname, $config);
         static::load($db);
 
-        Logger::info('Syn : init MySQL database');
-
         return $db;
     }
 
@@ -222,8 +219,6 @@ abstract class Syn
         // create db
         $db = new SQLite($filename);
         static::load($db);
-
-        Logger::info('Syn : init SQLite database');
 
         return $db;
     }

@@ -55,7 +55,7 @@ class Database
     {
         foreach(func_get_args() as $entity) {
             $this->entities[$entity] = new Database\Entity($this, $entity);
-            Logger::info('Syn.Database : map entity "' . $entity . '"');
+            Logger::info('Entity ' . $entity . ' mapped in database');
         }
 
         return $this;
@@ -127,7 +127,7 @@ class Database
             $valid &= $this->query($sql);
         }
 
-        Logger::info('Syn.Database : build schema');
+        Logger::info('Database schema built');
         return $valid;
     }
 

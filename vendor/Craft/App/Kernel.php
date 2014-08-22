@@ -44,12 +44,8 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     public function plug(Service $service)
     {
-        // resolve name
-        $name = get_class($service);
-
-        // register service
         $service->listen($this);
-        Logger::info('App.Kernel : service "' . $name . '" plugged');
+        Logger::info('Service ' . get_class($service) . ' plugged');
 
         return $this;
     }
@@ -65,14 +61,15 @@ class Kernel extends Dispatcher implements Event\Trigger
     public function handle(Request $request = null, Response $response = null)
     {
         // kernel is now running
-        $this->running = true;
-        Logger::info('App.Kernel : start');
+        Logger::info('Kernel ' . ($this->running ? 'restart' : 'start'));
+        if(!$this->running) {
+            $this->running = true;
+        }
 
         // safe
         try {
 
             // start event
-            Logger::info('App.Kernel : start event');
             $this->fire('kernel.start');
 
             // create default request
@@ -86,25 +83,33 @@ class Kernel extends Dispatcher implements Event\Trigger
             }
 
             // request event
-            Logger::info('App.Kernel : request event');
             $this->fire('kernel.request', $request);
+            if(!$request->alive) {
+                return false;
+            }
 
             // execute request
-            $response = parent::handle($request, $response);
-            Logger::info('App.Kernel : request executed');
+            Logger::info('Request executed');
 
-            // request event
-            Logger::info('App.Kernel : response event');
+            // response event
             $this->fire('kernel.response', $request, $response);
+            if(!$request->alive) {
+                return false;
+            }
 
         }
         // internal error (404, 403 etc...)
         catch(Error\Internal $e) {
 
             // dispatch as http event or inject as exception
-            Logger::error('App.Kernel : internal error ' . $e->getCode() . ' : ' . $e->getMessage());
+            Logger::error('Internal : ' . $e->getCode() . ' ' . $e->getMessage());
             if(!$this->fire($e->getCode(), $request, $response, $e)) {
                 throw $e;
+            }
+
+            // dead
+            if(!$request->alive) {
+                return false;
             }
 
         }
@@ -112,7 +117,7 @@ class Kernel extends Dispatcher implements Event\Trigger
         catch(\Exception $e) {
 
             // dispatch as specific error
-            Logger::error('App.Kernel : error ' . get_class($e) . ' : ' . $e->getMessage());
+            Logger::error(get_class($e) . ' : ' . $e->getMessage());
             $event = 'kernel.error.' . get_class($e);
             $caught = $this->fire($event, $request, $response, $e);
 
@@ -124,24 +129,28 @@ class Kernel extends Dispatcher implements Event\Trigger
                 throw $e;
             }
 
+            // dead
+            if(!$request->alive) {
+                return false;
+            }
+
         }
 
         // send response
         if($response instanceof Response) {
             $response->send();
-            Logger::info('App.Kernel : response sent with code ' . $response->code);
+            Logger::info('Response sent with code ' . $response->code);
         }
         else {
-            Logger::info('App.Kernel : no response sent');
+            Logger::info('No response sent');
         }
 
         // end event
-        Logger::info('App.Kernel : end event');
         $this->fire('kernel.end', $request, $response);
 
         // end
         $this->running = false;
-        Logger::info('App.Kernel : end');
+        Logger::info('Kernel end');
 
         return true;
     }
@@ -166,8 +175,9 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     public function lost($to)
     {
-        $this->on(404, function() use($to) {
-            Logger::info('App.Kernel : 404, redirect to "' . $to . '"');
+        $this->on(404, function(Request $request) use($to) {
+            Logger::info('404 Not found ! Go to ' . $to);
+            $request->halt();
             $this->to($to);
         });
 
@@ -182,8 +192,9 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     public function nope($to)
     {
-        $this->on(403, function() use($to) {
-            Logger::info('App.Kernel : 403, redirect to "' . $to . '"');
+        $this->on(403, function(Request $request) use($to) {
+            Logger::info('403 Forbidden ! Go to ' . $to);
+            $request->halt();
             $this->to($to);
         });
 

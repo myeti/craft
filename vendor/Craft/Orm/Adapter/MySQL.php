@@ -11,6 +11,7 @@
 namespace Craft\Orm\Adapter;
 
 use Craft\Orm\Database;
+use Craft\Trace\Logger;
 
 class MySQL extends Database
 {
@@ -36,6 +37,7 @@ class MySQL extends Database
 
         // init db
         parent::__construct($pdo);
+        Logger::info('MySQL connected using ' . $settings['username'] . '@' . $settings['host'] . '/' . $dbname);
     }
 
 } 

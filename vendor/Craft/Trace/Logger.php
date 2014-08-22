@@ -10,18 +10,20 @@
  */
 namespace Craft\Trace;
 
+use Psr\Log\LoggerInterface;
+
 abstract class Logger
 {
 
-    /** @var Logger\WriterInterface */
+    /** @var LoggerInterface */
     protected static $instance;
 
     /**
      * Get writer instance
-     * @param Logger\WriterInterface $writer
-     * @return Logger\WriterInterface
+     * @param LoggerInterface $writer
+     * @return LoggerInterface
      */
-    public static function writer(Logger\WriterInterface $writer = null)
+    public static function writer(LoggerInterface $writer = null)
     {
         if($writer) {
             static::$instance = $writer;
@@ -152,16 +154,6 @@ abstract class Logger
     public static function log($level, $message, array $context = [])
     {
         static::writer()->log($level, $message, $context);
-    }
-
-
-    /**
-     * Get all logs
-     * @return string
-     */
-    public static function logs()
-    {
-        return static::writer()->logs();
     }
 
 }

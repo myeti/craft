@@ -75,7 +75,7 @@ class MapperService extends App\Service
 
             // replace property with entity
             $request->args[$property] = $entity;
-            Logger::info('App.Mapping : map model ' . $model . ' into $' . $property);
+            Logger::info('Model ' . $model . ' mapped into $' . $property);
         }
     }
 

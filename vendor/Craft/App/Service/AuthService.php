@@ -50,7 +50,7 @@ class AuthService extends App\Service
             throw new App\Error\Forbidden('User not allowed for query "' . $request->query . '"');
         }
 
-        Logger::info('App.Firewall : user is allowed');
+        Logger::info('User auth is allowed');
     }
 
 }

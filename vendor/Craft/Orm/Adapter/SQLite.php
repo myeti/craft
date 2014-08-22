@@ -11,6 +11,7 @@
 namespace Craft\Orm\Adapter;
 
 use Craft\Orm\Database;
+use Craft\Trace\Logger;
 
 class SQLite extends Database
 {
@@ -25,8 +26,10 @@ class SQLite extends Database
         $pdo = new \PDO('sqlite:' . $filename);
         parent::__construct($pdo);
 
-        // custom builder
+        // custom builder`
         $this->builder = new SQLite\Builder;
+
+        Logger::info('SQLite connected using `' . $filename . '`');
     }
 
 } 

@@ -8,17 +8,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Trace\Logger;
+namespace Craft\Error;
 
-use Psr\Log\LoggerInterface;
-
-interface WriterInterface extends LoggerInterface
+class DirectoryNotFound extends \Exception
 {
 
-    /**
-     * Get all logs
-     * @return string
-     */
-    public function logs();
-
-}
+} 

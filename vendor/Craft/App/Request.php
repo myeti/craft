@@ -28,17 +28,14 @@ class Request
     /** @var array */
     public $args = [];
 
-    /** @var callable[] */
-    public $before;
-
     /** @var callable */
     public $action;
 
-    /** @var callable[] */
-    public $after;
-
     /** @var array */
     public $meta = [];
+
+    /** @var bool */
+    public $alive = true;
 
 
     /**
@@ -55,6 +52,15 @@ class Request
         $this->action = $action;
         $this->args = $args;
         $this->meta = $meta;
+    }
+
+
+    /**
+     * Kill the request
+     */
+    public function halt()
+    {
+        $this->alive = false;
     }
 
 

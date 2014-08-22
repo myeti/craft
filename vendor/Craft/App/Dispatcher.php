@@ -40,7 +40,7 @@ class Dispatcher implements Handler
 
         // run
         $data = call_user_func_array($request->action, $args);
-        Logger::info('App.Dispatcher : request executed');
+        Logger::info('Request ' . $request->query . ' executed');
 
         // user returned response object
         if($data instanceof Response) {
@@ -56,7 +56,7 @@ class Dispatcher implements Handler
             $response->data = $data;
         }
 
-        Logger::info('App.Dispatcher : response generated');
+        Logger::info('Response generated');
 
         return $response;
     }

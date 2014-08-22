@@ -59,7 +59,7 @@ class RouterService extends App\Service
 
         // 404
         if(!$route) {
-            throw new App\Error\NotFound('Route "' . $request->query . '" not found');
+            throw new App\Error\NotFound('Route ' . $request->query . ' not found');
         }
 
         // update request
@@ -69,7 +69,7 @@ class RouterService extends App\Service
         $request->args = $route->data;
         $request->meta = array_merge($request->meta, $route->meta);
 
-        Logger::info('App.Routing : route "' . $route->from . '" found, request created');
+        Logger::info('Route ' . $route->from . ' matched');
     }
 
 }

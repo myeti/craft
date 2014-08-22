@@ -57,7 +57,7 @@ class RenderService extends App\Service
         // render if metadata provided
         if(!empty($request->meta['render'])) {
             $response->content = $this->engine->render($request->meta['render'], $response->data);
-            Logger::info('App.Html : render template "' . $request->meta['render'] . '" as html');
+            Logger::info('Render template ' . $request->meta['render']);
         }
     }
 
