@@ -19,7 +19,7 @@ class Set extends Provider
      */
     public function first()
     {
-        return ArrayHelper::first($this);
+        return array_first($this);
     }
 
 
@@ -30,7 +30,7 @@ class Set extends Provider
      */
     public function firstKey()
     {
-        return ArrayHelper::firstKey($this);
+        return array_first_key($this);
     }
 
 
@@ -41,7 +41,7 @@ class Set extends Provider
      */
     public function last()
     {
-        return ArrayHelper::last($this);
+        return array_last($this);
     }
 
 
@@ -52,7 +52,7 @@ class Set extends Provider
      */
     public function lastKey()
     {
-        return ArrayHelper::lastKey($this);
+        return array_last_key($this);
     }
 
 
@@ -64,7 +64,7 @@ class Set extends Provider
      */
     public function keyOf($value)
     {
-       return ArrayHelper::keyOf($this, $value);
+       return array_key($this, $value);
     }
 
 
@@ -76,7 +76,7 @@ class Set extends Provider
      */
     public function keysOf($value)
     {
-        return ArrayHelper::keysOf($this, $value);
+        return array_keys($this, $value);
     }
 
 
@@ -89,7 +89,7 @@ class Set extends Provider
      */
     public function replace($value, $replacement)
     {
-        $this->exchangeArray(ArrayHelper::replace($this, $value, $replacement));
+        $this->exchangeArray(array_replace_value($this, $value, $replacement));
         return $this;
     }
 
@@ -103,7 +103,7 @@ class Set extends Provider
      */
     public function replaceKey($key, $replacement)
     {
-        $this->exchangeArray(ArrayHelper::replaceKey($this, $key, $replacement));
+        $this->exchangeArray(array_replace_key($this, $key, $replacement));
         return $this;
     }
 
@@ -115,7 +115,7 @@ class Set extends Provider
      */
     public function keys()
     {
-        return ArrayHelper::keys($this);
+        return array_keys($this);
     }
 
 
@@ -126,7 +126,7 @@ class Set extends Provider
      */
     public function values()
     {
-        return ArrayHelper::values($this);
+        return array_values($this);
     }
 
 
@@ -139,7 +139,7 @@ class Set extends Provider
      */
     public function insert($value, $at)
     {
-        $this->exchangeArray(ArrayHelper::insert($this, $value, $at));
+        $this->exchangeArray(array_insert($this, $value, $at));
         return $this;
     }
 
@@ -152,7 +152,7 @@ class Set extends Provider
      */
     public function filter(callable $callback)
     {
-        $this->exchangeArray(ArrayHelper::filter($this, $callback));
+        $this->exchangeArray(array_filter($this, $callback));
         return $this;
     }
 
@@ -165,7 +165,7 @@ class Set extends Provider
      */
     public function filterKey(callable $callback)
     {
-        $this->exchangeArray(ArrayHelper::filterKey($this, $callback));
+        $this->exchangeArray(array_filter_key($this, $callback));
         return $this;
     }
 
@@ -178,7 +178,17 @@ class Set extends Provider
      */
     public function random($num = 1)
     {
-        return ArrayHelper::random($this, $num);
+        return array_random($this, $num);
+    }
+
+
+    /**
+     * Count elements
+     * @return int
+     */
+    public function length()
+    {
+        return count($this);
     }
 
 
@@ -192,7 +202,7 @@ class Set extends Provider
      */
     public function sort(array $by)
     {
-        $this->exchangeArray(ArrayHelper::sort($this, $by));
+        $this->exchangeArray(array_sort($this, $by));
         return $this;
     }
 

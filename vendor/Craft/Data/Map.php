@@ -31,7 +31,7 @@ class Map extends \ArrayObject implements ProviderInterface
      */
     public function has($key)
     {
-        return ArrayFlat::has($this, $key);
+        return array_flat_has($this, $key);
     }
 
 
@@ -43,7 +43,7 @@ class Map extends \ArrayObject implements ProviderInterface
      */
     public function get($key, $fallback = null)
     {
-        return ArrayFlat::get($this, $key, $fallback);
+        return array_flat_get($this, $key, $fallback);
     }
 
 
@@ -55,7 +55,7 @@ class Map extends \ArrayObject implements ProviderInterface
      */
     public function set($key, $value)
     {
-        ArrayFlat::set($this, $key, $value);
+        array_flat_set($this, $key, $value);
         return $this;
     }
 
@@ -67,7 +67,7 @@ class Map extends \ArrayObject implements ProviderInterface
      */
     public function drop($key)
     {
-        ArrayFlat::drop($this, $key);
+        array_flat_drop($this, $key);
         return $this;
     }
 
