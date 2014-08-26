@@ -69,7 +69,7 @@ class Context
     public $locale;
 
     /** @var array */
-    public $dialog = [
+    protected $dialog = [
         'Kupo ?!',
         'I\'m hungry...',
         'May I help you ?',

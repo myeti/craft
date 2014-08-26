@@ -484,6 +484,16 @@ abstract class Mog
 
 
     /**
+     * Kupo !
+     * @return string
+     */
+    public static function kupo()
+    {
+        return static::context()->kupo();
+    }
+
+
+    /**
      * Create context wrapper
      * @return Mog\Context
      */

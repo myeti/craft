@@ -63,9 +63,7 @@ class RouterService extends App\Service
         }
 
         // update request
-        $request->before = $route->before;
         $request->action = $route->action;
-        $request->after = $route->after;
         $request->args = $route->data;
         $request->meta = array_merge($request->meta, $route->meta);
 

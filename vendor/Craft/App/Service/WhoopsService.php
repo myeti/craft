@@ -23,7 +23,6 @@ class WhoopsService extends App\Service
     {
         $this->whoops = new Whoops\Run;
         $this->whoops->pushHandler(new Whoops\Handler\PrettyPageHandler);
-        $this->whoops->writeToOutput(false);
         $this->whoops->allowQuit(false);
         $this->whoops->register();
     }
@@ -45,44 +44,23 @@ class WhoopsService extends App\Service
      * @param App\Response $response
      * @param \Exception $e
      */
-    public function onKernelError(App\Request $request, App\Response $response = null, \Exception $e)
+    public function onKernelError(App\Request $request, App\Response $response, \Exception $e)
     {
-        // create response
-        if(!$response) {
-            $response = new App\Response;
-            $response->code = $e->getCode() ?: 500;
-        }
+        // hide
+        $this->whoops->writeToOutput(false);
 
         // new handler
         $handler = new Whoops\Handler\PrettyPageHandler;
 
         // add data
-        $handler->addDataTable('Craft Request', (array)$request);
-        $handler->addDataTable('Craft Response', (array)$response);
+        $handler->addDataTable('Craft Request', get_object_vars($request));
+        $handler->addDataTable('Craft Response', get_object_vars($response));
         $handler->addDataTable('Craft Session', Session::all());
         $handler->addDataTable('Craft Auth', [
             'rank' => Auth::rank(),
             'user' => Auth::user(),
         ]);
-        $handler->addDataTable('Craft Mog', [
-            'url' => Mog::fullurl(),
-            'url.host' => Mog::host(),
-            'url.base' => Mog::base(),
-            'url.query' => Mog::query(),
-            'url.from' => Mog::from(),
-            'http.code' => Mog::code(),
-            'http.secure' => (int)Mog::https(),
-            'http.method' => Mog::method(),
-            'http.env' => Mog::env(),
-            'http.browser' => Mog::browser(),
-            'http.mobile' => (int)Mog::mobile(),
-            'user.ip' => Mog::ip(),
-            'user.local' => (int)Mog::local(),
-            'time.elapsed' => Mog::elapsed(),
-            'path' => Mog::path(),
-            'kupo' => html_entity_decode(Mog::kupo()),
-        ]);
-        $handler->addDataTable('Craft Logs', explode("<br/>", Logger::logs()));
+        $handler->addDataTable('Craft Mog', get_object_vars(Mog::context()));
 
         // push handler
         $this->whoops->clearHandlers();
@@ -90,6 +68,10 @@ class WhoopsService extends App\Service
 
         // process exception
         $response->content = $this->whoops->handleException($e);
+        $response->code = $e->getCode() ?: 500;
+
+        // show
+        $this->whoops->writeToOutput(true);
     }
 
 }

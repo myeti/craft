@@ -54,22 +54,11 @@ class Router implements RouterInterface
      * @param string $from
      * @param mixed $action
      * @param array $context
-     * @param callable $before
-     * @param callable $after
      * @return $this
      */
-    public function map($from, $action, array $context = [], callable $before = null, callable $after = null)
+    public function map($from, $action, array $context = [])
     {
         $route = new Route($from, $action, $context);
-
-        if($before) {
-            $route->before($before);
-        }
-
-        if($after) {
-            $route->after($after);
-        }
-
         return $this->add($route);
     }
 
@@ -83,17 +72,6 @@ class Router implements RouterInterface
     {
         // add prefixes
         $route->from = implode(null, $this->prefix) . $route->from;
-
-        // add before callbacks
-        foreach($this->before as $before) {
-            $route->before($before);
-        }
-
-        // add after callbacks
-        foreach($this->after as $after) {
-            $route->after($after);
-        }
-
         $this->routes[$route->from] = $route;
         return $this;
     }

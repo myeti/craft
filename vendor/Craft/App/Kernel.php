@@ -89,6 +89,7 @@ class Kernel extends Dispatcher implements Event\Trigger
             }
 
             // execute request
+            parent::handle($request, $response);
             Logger::info('Request executed');
 
             // response event
