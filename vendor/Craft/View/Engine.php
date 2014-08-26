@@ -34,11 +34,11 @@ class Engine implements EngineInterface
      * @param string $templates path
      * @param string $assets url
      */
-    public function __construct($templates, $assets = '/')
+    public function __construct($templates, $assets = null)
     {
         // set directories
         $this->templates = rtrim($templates, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->assets = rtrim($assets, '/') . '/';
+        $this->assets = $assets ? rtrim($assets, '/') . '/' : url('/');
 
         // text helper
         $this->set('e', '\Craft\Text\String::escape');
@@ -138,7 +138,7 @@ class Engine implements EngineInterface
         foreach(func_get_args() as $file) {
             $css[] = '<link type="text/css" href="' . $this->asset($file, '.css') . '" rel="stylesheet" />';
         }
-        return implode("\n", $css);
+        return implode("\n    ", $css) . "\n";
     }
 
 
@@ -153,7 +153,7 @@ class Engine implements EngineInterface
         foreach(func_get_args() as $file) {
             $js[] = '<script type="text/javascript" src="' . $this->asset($file, '.js')  . '"></script>';
         }
-        return implode("\n", $js);
+        return implode("\n    ", $js) . "\n";
     }
 
 

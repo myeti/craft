@@ -4,6 +4,7 @@
  * Hello !
  * I'll help you building your app :)
  */
+
 require 'vendor/autoload.php';
 
 
@@ -13,12 +14,6 @@ require 'vendor/autoload.php';
 Forge\Logger::writer(
     new Craft\Trace\Logger\FileWriter(__APP__ . '/logs')
 );
-
-
-/**
- * First, let the mog knows that you are in development
- */
-Forge\Mog::env('mode', 'prod');
 
 
 /**
@@ -49,7 +44,7 @@ $router = new Forge\Router([
  * your awesome design !
  */
 
-$engine = new Forge\Engine(__APP__ . '/views', url('/public'));
+$engine = new Forge\Engine(__APP__ . '/views');
 
 
 /**

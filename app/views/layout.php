@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Your App</title>
+    <title>Your Awesome App</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1" />
     <?= self::css('css/layout', 'css/content'); ?>

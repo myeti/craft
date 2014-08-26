@@ -26,22 +26,35 @@ use Craft\View\EngineInterface;
 class App extends Kernel
 {
 
+    const DEV = 'development';
+    const PROD = 'production';
+
+    /** @var string */
+    protected $mode;
+
+
     /**
      * Ready-to-use app
      * @param RouterInterface $router
      * @param EngineInterface $engine
-     * @param Event\EventInterface $channel
+     * @param string $mode
      */
-    public function __construct(RouterInterface $router, EngineInterface $engine, Event\EventInterface $channel = null)
+    public function __construct(RouterInterface $router, EngineInterface $engine, $mode = self::DEV)
     {
-        parent::__construct($channel);
+        // init kernel
+        parent::__construct();
 
+        // set mode
+        Mog::set('mode', $mode);
+
+        // init built-in services
         $this->plug(new RouterService($router));
         $this->plug(new ResolverService);
         $this->plug(new AuthService);
         $this->plug(new RenderService($engine));
 
-        if(!Mog::env('prod')) {
+        // error handling : dev mode only
+        if($mode == self::DEV) {
             $this->plug(new WhoopsService);
         }
     }

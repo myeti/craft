@@ -13,122 +13,329 @@ namespace Craft\Box;
 abstract class Mog
 {
 
-    /** @var string */
-    protected static $root;
+    /** @var Mog\Context */
+    protected static $context;
 
-    /** @var string */
-    protected static $base;
-
-    /** @var string */
-    protected static $query;
 
     /**
-     * Get root dir
+     * Get root
+     * @param mixed $set
+     * @return string
+     */
+    public static function root($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->root = $set;
+        }
+
+        return static::context()->root;
+    }
+
+
+    /**
+     * Get path
      * @return string
      */
     public static function path()
     {
-        if(!static::$root) {
-            static::$root = dirname(static::server('SCRIPT_FILENAME'));
+        $ctx = static::context();
+        return call_user_func_array([$ctx, 'path'], func_get_args());
+    }
+
+
+    /**
+     * Get http code
+     * @param mixed $set
+     * @return string
+     */
+    public static function code($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->code = $set;
         }
 
-        return static::$root . implode(DIRECTORY_SEPARATOR, func_get_args());
+        return static::context()->code;
     }
 
+
     /**
-     * Return http code
-     * @return int
+     * Is https
+     * @param mixed $set
+     * @return string
      */
-    public static function code()
+    public static function https($set = null)
     {
-        return http_response_code();
+        if(!is_null($set)) {
+            static::context()->https = $set;
+        }
+
+        return static::context()->https;
     }
 
+
     /**
-     * Is secure
-     * @return bool
+     * Is http
+     * @param mixed $set
+     * @return string
      */
-    public static function https()
+    public static function http($set = null)
     {
-        return (static::server('HTTP', 'off') == 'on');
+        if(!is_null($set)) {
+            static::context()->http = $set;
+        }
+
+        return static::context()->http;
     }
 
 
     /**
-     * Is not secure
-     * @return bool
+     * Get protocol
+     * @param mixed $set
+     * @return string
      */
-    public static function http()
+    public static function protocol($set = null)
     {
-        return !static::https();
+        if(!is_null($set)) {
+            static::context()->protocol = $set;
+        }
+
+        return static::context()->protocol;
     }
 
 
     /**
-     * Get current host
-     * @return mixed
+     * Get method
+     * @param mixed $set
+     * @return string
      */
-    public static function host()
+    public static function method($set = null)
     {
-        return static::server('HTTP_HOST');
+        if(!is_null($set)) {
+            static::context()->method = $set;
+        }
+
+        return static::context()->method;
     }
 
 
     /**
-     * Get request uri (without host)
+     * Is async
+     * @param mixed $set
+     * @return string
+     */
+    public static function async($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->async = $set;
+        }
+
+        return static::context()->async;
+    }
+
+
+    /**
+     * Is sync
+     * @param mixed $set
+     * @return string
+     */
+    public static function sync($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->sync = $set;
+        }
+
+        return static::context()->sync;
+    }
+
+
+    /**
+     * Get browser
+     * @param mixed $set
+     * @return string
+     */
+    public static function browser($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->browser = $set;
+        }
+
+        return static::context()->browser;
+    }
+
+
+    /**
+     * Get mobile
+     * @param mixed $set
+     * @return string
+     */
+    public static function mobile($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->mobile = $set;
+        }
+
+        return static::context()->mobile;
+    }
+
+
+    /**
+     * Get host
+     * @param mixed $set
+     * @return string
+     */
+    public static function host($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->host = $set;
+        }
+
+        return static::context()->host;
+    }
+
+
+    /**
+     * Get url
      * @return string
      */
     public static function url()
     {
-        return static::server('REQUEST_URI');
+        $ctx = static::context();
+        return call_user_func_array([$ctx, 'url'], func_get_args());
     }
 
 
     /**
-     * Get base url (before script file)
-     * @return string
+     * Get query
+     * @param mixed $set
+     * @return mixed|string
      */
-    public static function base()
+    public static function query($set = null)
     {
-        if(!static::$base) {
-            $uri = static::server('REQUEST_URI');
-            $path = static::server('SCRIPT_NAME');
-
-            $offset = strlen($path);
-            if(substr($uri, 0, $offset) != $path) {
-                $offset = strlen(dirname($path));
-            }
-
-            static::$base = rtrim(substr($uri, 0, $offset), '/') . '/';
-            static::$query = '/' . trim(substr($uri, $offset), '/');
+        if(!is_null($set)) {
+            static::context()->query = $set;
         }
 
-        return static::$base;
+        return static::context()->query;
     }
 
 
     /**
-     * Get url query segment
+     * Get base
+     * @param mixed $set
      * @return string
      */
-    public static function query()
+    public static function base($set = null)
     {
-        if(!static::$query) {
-            static::base();
+        if(!is_null($set)) {
+            static::context()->base = $set;
         }
 
-        return static::$query;
+        return static::context()->base;
     }
 
 
     /**
-     * Get full url (host + url)
+     * Get full url
+     * @param mixed $set
      * @return string
      */
-    public static function fullurl()
+    public static function fullurl($set = null)
     {
-        $protocol = static::https() ? 'https' : 'http';
-        return $protocol . '://' . static::host() . static::base() . static::query();
+        if(!is_null($set)) {
+            static::context()->fullurl = $set;
+        }
+
+        return static::context()->fullurl;
+    }
+
+
+    /**
+     * Get url from
+     * @param mixed $set
+     * @return mixed|string
+     */
+    public static function from($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->from = $set;
+        }
+
+        return static::context()->from;
+    }
+
+
+    /**
+     * Get ip
+     * @param mixed $set
+     * @return mixed|string
+     */
+    public static function ip($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->ip = $set;
+        }
+
+        return static::context()->ip;
+    }
+
+
+    /**
+     * Is local
+     * @param mixed $set
+     * @return bool
+     */
+    public static function local($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->local = $set;
+        }
+
+        return static::context()->local;
+    }
+
+
+    /**
+     * Get time
+     * @param mixed $set
+     * @return mixed|string
+     */
+    public static function time($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->time = $set;
+        }
+
+        return static::context()->time;
+    }
+
+
+    /**
+     * Get timezone
+     * @param mixed $set
+     * @return string
+     */
+    public static function timezone($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->timezone = $set;
+        }
+
+        return static::context()->timezone;
+    }
+
+
+    /**
+     * Get locale
+     * @param mixed $set
+     * @return string
+     */
+    public static function locale($set = null)
+    {
+        if(!is_null($set)) {
+            static::context()->locale = $set;
+        }
+
+        return static::context()->locale;
     }
 
 
@@ -138,14 +345,19 @@ abstract class Mog
      * @param  string $fallback
      * @return mixed
      */
-    public static function get($key = null, $fallback = null)
+    public static function get($key, $fallback = null)
     {
-        // fallback
-        if($key and !isset($_GET[$key])) {
-            return $fallback;
-        }
+        return static::context()->get($key, $fallback);
+    }
 
-        return $key ? $_GET[$key] : $_GET;
+
+    /**
+     * $_GET values
+     * @return array
+     */
+    public static function gets()
+    {
+        return static::context()->gets();
     }
 
 
@@ -155,14 +367,19 @@ abstract class Mog
      * @param  string $fallback
      * @return mixed
      */
-    public static function post($key = null, $fallback = null)
+    public static function post($key, $fallback = null)
     {
-        // fallback
-        if($key and !isset($_POST[$key])) {
-            return $fallback;
-        }
+        return static::context()->post($key, $fallback);
+    }
 
-        return $key ? $_POST[$key] : $_POST;
+
+    /**
+     * $_POST values
+     * @return array
+     */
+    public static function posts()
+    {
+        return static::context()->posts();
     }
 
 
@@ -172,14 +389,19 @@ abstract class Mog
      * @param  string $fallback
      * @return array|object
      */
-    public static function file($key = null, $fallback = null)
+    public static function file($key, $fallback = null)
     {
-        // fallback
-        if($key and !isset($_FILES[$key])) {
-            return $fallback;
-        }
+        return static::context()->file($key, $fallback);
+    }
 
-        return $key ? (object)$_FILES[$key] : $_FILES;
+
+    /**
+     * $_FILES values
+     * @return array
+     */
+    public static function files()
+    {
+        return static::context()->files();
     }
 
 
@@ -189,14 +411,19 @@ abstract class Mog
      * @param  string $fallback
      * @return mixed
      */
-    public static function server($key = null, $fallback = null)
+    public static function server($key, $fallback = null)
     {
-        // fallback
-        if($key and !isset($_SERVER[strtoupper($key)])) {
-            return $fallback;
-        }
+        return static::context()->server($key, $fallback);
+    }
 
-        return $key ? $_SERVER[strtoupper($key)] : $_SERVER;
+
+    /**
+     * $_SERVER values
+     * @return array
+     */
+    public static function servers()
+    {
+        return static::context()->servers();
     }
 
 
@@ -206,17 +433,19 @@ abstract class Mog
      * @param null $fallback
      * @return mixed
      */
-    public static function header($key = null, $fallback = null)
+    public static function header($key, $fallback = null)
     {
-        // define headers
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
+        return static::context()->header($key, $fallback);
+    }
 
-        // fallback
-        if($key and !isset($headers[$key])) {
-            return $fallback;
-        }
 
-        return $key ? $headers[$key] : $headers;
+    /**
+     * Header values
+     * @return array
+     */
+    public static function headers()
+    {
+        return static::context()->headers();
     }
 
 
@@ -226,14 +455,19 @@ abstract class Mog
      * @param mixed $fallback
      * @return mixed
      */
-    public static function env($key = null, $fallback = null)
+    public static function env($key, $fallback = null)
     {
-        // fallback
-        if($key and !isset($_ENV[$key])) {
-            return $fallback;
-        }
+        return static::context()->env($key, $fallback);
+    }
 
-        return $key ? $_ENV[$key] : $_ENV;
+
+    /**
+     * $_GET values
+     * @return array
+     */
+    public static function envs()
+    {
+        return static::context()->envs();
     }
 
 
@@ -245,152 +479,21 @@ abstract class Mog
      */
     public static function set($env, $value)
     {
-        $_ENV[$env] = $value;
+        static::context()->set($env, $value);
     }
 
 
     /**
-     * Get IP
-     * @return string
+     * Create context wrapper
+     * @return Mog\Context
      */
-    public static function ip()
+    public static function context()
     {
-        return static::server('REMOTE_ADDR');
-    }
-
-
-    /**
-     * Is local
-     * @return bool
-     */
-    public static function local()
-    {
-        return in_array(static::ip(), ['127.0.0.1', '::1']);
-    }
-
-
-    /**
-     * Get method
-     * @return string
-     */
-    public static function method()
-    {
-        return static::server('REQUEST_METHOD', 'GET');
-    }
-
-
-    /**
-     * Get asynchronous
-     * @return bool
-     */
-    public static function async()
-    {
-        return static::server('HTTP_X_REQUESTED_WITH', false)
-           and strtolower(static::server('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest';
-    }
-
-
-    /**
-     * Is synchronous
-     * @return bool
-     */
-    public static function sync()
-    {
-        return !static::async();
-    }
-
-
-    /**
-     * Get browser name
-     * @return string
-     */
-    public static function browser()
-    {
-        return @get_browser()->browser;
-    }
-
-
-    /**
-     * Is mobile
-     * @return bool
-     */
-    public static function mobile()
-    {
-        return static::server('HTTP_X_WAP_PROFILE', false) or static::server('HTTP_PROFILE', false);
-    }
-
-
-    /**
-     * Get last page visited
-     * @return string
-     */
-    public static function from()
-    {
-        return static::server('HTTP_REFERER');
-    }
-
-
-    /**
-     * Get elapsed system
-     * @return float
-     */
-    public static function elapsed()
-    {
-        $start = static::server('REQUEST_TIME_FLOAT');
-        $now = microtime(true);
-        return number_format($now - $start, 4);
-    }
-
-
-    /**
-     * Get or set timezone
-     * @param string $timezone
-     * @return string
-     */
-    public static function timezone($timezone = null)
-    {
-        if($timezone) {
-            date_default_timezone_set($timezone);
+        if(!static::$context) {
+            static::$context = new Mog\Context;
         }
 
-        return date_default_timezone_get();
-    }
-
-
-    /**
-     * Get or set locale
-     * @param $lang
-     * @return string
-     */
-    public static function locale($lang = null)
-    {
-        if($lang) {
-            setlocale(LC_ALL, $lang);
-            locale_set_default($lang);
-        }
-
-        return locale_get_default();
-    }
-
-
-    /**
-     * Kupo !
-     * @return string
-     */
-    public static function kupo()
-    {
-        $dialog = [
-            'Kupo ?!',
-            'I\'m hungry...',
-            'May I help you ?',
-            'It\'s dark in here...',
-            'I haven\'t received any mail lately, Kupo.',
-            'It\'s dangerous outside ! Kupo !',
-            'Don\'t call me if you don\'t need me, Kupo !',
-            'What do you want to do, Kupo ?'
-        ];
-
-        return 'o-&#949;(:o) ' . $dialog[array_rand($dialog)];
+        return static::$context;
     }
 
 }
