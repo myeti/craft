@@ -46,6 +46,14 @@ else {
 
 
 /**
+ * Setup logger
+ */
+Craft\Trace\Logger::register(
+    new Craft\Trace\Logger\PanelLogger
+);
+
+
+/**
  * Load helpers
  */
 

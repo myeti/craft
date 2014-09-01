@@ -9,14 +9,6 @@ require 'vendor/autoload.php';
 
 
 /**
- * Tell the logger where to write your logs
- */
-Forge\Logger::writer(
-    new Craft\Trace\Logger\FileWriter(__APP__ . '/logs')
-);
-
-
-/**
  * First, you might need to setup you database.
  * Here is how to use a SQLite local base :
  */

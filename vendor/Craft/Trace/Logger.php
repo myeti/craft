@@ -15,24 +15,26 @@ use Psr\Log\LoggerInterface;
 abstract class Logger
 {
 
-    /** @var LoggerInterface */
-    protected static $instance;
+    /** @var LoggerInterface[] */
+    protected static $instances;
+
 
     /**
-     * Get writer instance
-     * @param LoggerInterface $writer
-     * @return LoggerInterface
+     * Register logger
+     * @param LoggerInterface $logger
      */
-    public static function writer(LoggerInterface $writer = null)
+    public static function register(LoggerInterface $logger)
     {
-        if($writer) {
-            static::$instance = $writer;
-        }
-        if(!static::$instance) {
-            static::$instance = new Logger\Writer;
-        }
+        static::$instances[] = $logger;
+    }
 
-        return static::$instance;
+
+    /**
+     * Clear loggers
+     */
+    public static function clear()
+    {
+        static::$instances[] = [];
     }
 
 
@@ -45,8 +47,11 @@ abstract class Logger
      */
     public static function emergency($message, array $context = [])
     {
-        static::writer()->emergency($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->emergency($message, $context);
+        }
     }
+
 
     /**
      * Action must be taken immediately.
@@ -60,8 +65,11 @@ abstract class Logger
      */
     public static function alert($message, array $context = [])
     {
-        static::writer()->alert($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->alert($message, $context);
+        }
     }
+
 
     /**
      * Critical conditions.
@@ -74,8 +82,11 @@ abstract class Logger
      */
     public static function critical($message, array $context = [])
     {
-        static::writer()->critical($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->critical($message, $context);
+        }
     }
+
 
     /**
      * Runtime errors that do not require immediate action but should typically
@@ -87,8 +98,11 @@ abstract class Logger
      */
     public static function error($message, array $context = [])
     {
-        static::writer()->error($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->error($message, $context);
+        }
     }
+
 
     /**
      * Exceptional occurrences that are not errors.
@@ -102,8 +116,11 @@ abstract class Logger
      */
     public static function warning($message, array $context = [])
     {
-        static::writer()->warning($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->warning($message, $context);
+        }
     }
+
 
     /**
      * Normal but significant events.
@@ -114,8 +131,11 @@ abstract class Logger
      */
     public static function notice($message, array $context = [])
     {
-        static::writer()->notice($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->notice($message, $context);
+        }
     }
+
 
     /**
      * Interesting events.
@@ -128,8 +148,11 @@ abstract class Logger
      */
     public static function info($message, array $context = [])
     {
-        static::writer()->info($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->info($message, $context);
+        }
     }
+
 
     /**
      * Detailed debug information.
@@ -140,7 +163,9 @@ abstract class Logger
      */
     public static function debug($message, array $context = [])
     {
-        static::writer()->debug($message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->debug($message, $context);
+        }
     }
 
 
@@ -153,7 +178,9 @@ abstract class Logger
      */
     public static function log($level, $message, array $context = [])
     {
-        static::writer()->log($level, $message, $context);
+        foreach(static::$instances as $logger) {
+            $logger->log($level, $message, $context);
+        }
     }
 
 }

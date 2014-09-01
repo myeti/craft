@@ -17,6 +17,7 @@ use Craft\App\Service\RenderService;
 use Craft\App\Service\ResolverService;
 use Craft\App\Service\RouterService;
 use Craft\App\Service\WhoopsService;
+use Craft\App\Service\TraceService;
 use Craft\Map\RouterInterface;
 use Craft\View\EngineInterface;
 
@@ -56,6 +57,7 @@ class App extends Kernel
         // error handling : dev mode only
         if($mode == self::DEV) {
             $this->plug(new WhoopsService);
+            $this->plug(new TraceService);
         }
     }
 

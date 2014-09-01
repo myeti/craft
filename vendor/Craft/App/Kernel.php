@@ -52,19 +52,37 @@ class Kernel extends Dispatcher implements Event\Trigger
 
 
     /**
+     * Safe run
+     * @param Request $request
+     * @param Response $response
+     * @return bool
+     */
+    public function run(Request $request = null, Response $response = null)
+    {
+        try {
+            return $this->handle($request, $response);
+        }
+        catch(App\Halt $e) {
+            Logger::notice('Kernel halt !');
+            $callback = $e->callback;
+            return $callback($this, $request, $response);
+        }
+    }
+
+
+    /**
      * Handle context request
      * @param Request $request
      * @param Response $response
+     * @param bool $innerCycle
+     * @throws Error\Internal
      * @throws \Exception
      * @return bool
      */
-    public function handle(Request $request = null, Response $response = null)
+    public function handle(Request $request = null, Response $response = null, $innerCycle = false)
     {
         // kernel is now running
-        Logger::info('Kernel ' . ($this->running ? 'restart' : 'start'));
-        if(!$this->running) {
-            $this->running = true;
-        }
+        Logger::info('Kernel ' . ($innerCycle ? 'restart' : 'start'));
 
         // safe
         try {
@@ -82,21 +100,12 @@ class Kernel extends Dispatcher implements Event\Trigger
                 $response = new Response;
             }
 
-            // request event
-            $this->fire('kernel.request', $request);
-            if(!$request->alive) {
-                return false;
-            }
-
             // execute request
+            $this->fire('kernel.request', $request);
             parent::handle($request, $response);
-            Logger::info('Request executed');
 
             // response event
             $this->fire('kernel.response', $request, $response);
-            if(!$request->alive) {
-                return false;
-            }
 
         }
         // internal error (404, 403 etc...)
@@ -106,11 +115,6 @@ class Kernel extends Dispatcher implements Event\Trigger
             Logger::error('Internal : ' . $e->getCode() . ' ' . $e->getMessage());
             if(!$this->fire($e->getCode(), $request, $response, $e)) {
                 throw $e;
-            }
-
-            // dead
-            if(!$request->alive) {
-                return false;
             }
 
         }
@@ -130,11 +134,6 @@ class Kernel extends Dispatcher implements Event\Trigger
                 throw $e;
             }
 
-            // dead
-            if(!$request->alive) {
-                return false;
-            }
-
         }
 
         // send response
@@ -150,7 +149,6 @@ class Kernel extends Dispatcher implements Event\Trigger
         $this->fire('kernel.end', $request, $response);
 
         // end
-        $this->running = false;
         Logger::info('Kernel end');
 
         return true;

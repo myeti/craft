@@ -11,54 +11,80 @@
 
 
 /**
+ * Call action
+ * @param callable $action
+ * @param array $args
+ * @return mixed
+ */
+function call(callable $action, array $args)
+{
+    return call_user_func_array($action, $args);
+}
+
+
+/**
  * Get absolute path
  * @return string
  */
 function path()
 {
-    return call_user_func_array('\Craft\Box\Mog::path', func_get_args());
+    return call('\Craft\Box\Mog::path', func_get_args());
 }
 
 
 /**
  * Get complete url
  * "Ce truc, ça fait les frites !" - Rudy
+ * @param string $somewhere
  * @return string
  */
-function url()
+function url($somewhere)
 {
-    $segments = func_get_args();
-    return rtrim(Craft\Box\Mog::base(), '/') . '/' . ltrim(implode('/', $segments), '/');
+    return call('\Craft\Box\Mog::url', func_get_args());
 }
 
 
 /**
  * Redirect to url
+ * @param string $somewhere
  */
-function go()
+function go($somewhere)
 {
-    $segments = func_get_args();
-    header('Location: ' . call_user_func_array('url', $segments));
+    header('Location: ' . call('url', func_get_args()));
     exit;
 }
 
 
 /**
  * Debug var
+ * @param mixed $something
  */
-function debug()
+function debug($something)
 {
-    die(call_user_func_array('var_dump', func_get_args()));
+    call('var_dump', func_get_args());
+    exit;
+}
+
+
+/**
+ * Debug var in log
+ * @param mixed $something
+ */
+function log_debug($something)
+{
+    foreach(func_get_args() as $arg) {
+        \Craft\Trace\Logger::debug($arg);
+    }
 }
 
 
 /**
  * Post helper
- * @param null $key
+ * @param string $key
  * @param string $fallback
- * @return null
+ * @return mixed
  */
-function post($key = null, $fallback = null)
+function post($key, $fallback = null)
 {
     return Craft\Box\Mog::post($key, $fallback);
 }
@@ -66,11 +92,11 @@ function post($key = null, $fallback = null)
 
 /**
  * Env helper
- * @param null $key
+ * @param string $key
  * @param string $fallback
- * @return null
+ * @return mixed
  */
-function env($key = null, $fallback = null)
+function env($key, $fallback = null)
 {
     return Craft\Box\Mog::env($key, $fallback);
 }

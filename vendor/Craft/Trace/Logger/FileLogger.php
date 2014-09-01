@@ -5,7 +5,7 @@ namespace Craft\Trace\Logger;
 use Craft\Error\DirectoryNotFound;
 use Psr\Log\AbstractLogger;
 
-class FileWriter extends AbstractLogger
+class FileLogger extends AbstractLogger
 {
 
     /** @var resource */
