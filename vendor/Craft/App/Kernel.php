@@ -24,9 +24,6 @@ class Kernel extends Dispatcher implements Event\Trigger
 
     use Event\Delegate;
 
-    /** @var bool */
-    protected $running = false;
-
 
     /**
      * Define inner event channel
@@ -45,113 +42,190 @@ class Kernel extends Dispatcher implements Event\Trigger
     public function plug(Service $service)
     {
         $service->listen($this);
-        Logger::info('Service ' . get_class($service) . ' plugged');
+        Logger::info('Add service ' . get_class($service));
 
         return $this;
     }
 
 
     /**
-     * Safe run
-     * @param Request $request
-     * @param Response $response
-     * @return bool
-     */
-    public function run(Request $request = null, Response $response = null)
-    {
-        try {
-            return $this->handle($request, $response);
-        }
-        catch(App\Halt $e) {
-            Logger::notice('Kernel halt !');
-            $callback = $e->callback;
-            return $callback($this, $request, $response);
-        }
-    }
-
-
-    /**
      * Handle context request
      * @param Request $request
-     * @param Response $response
-     * @param bool $innerCycle
      * @throws Error\Internal
      * @throws \Exception
      * @return bool
      */
-    public function handle(Request $request = null, Response $response = null, $innerCycle = false)
+    public function handle(Request $request = null)
     {
-        // kernel is now running
-        Logger::info('Kernel ' . ($innerCycle ? 'restart' : 'start'));
-
-        // safe
         try {
 
-            // start event
-            $this->fire('kernel.start');
-
-            // create default request
-            if(!$request) {
-                $request = new Request;
-            }
-
-            // create default response
-            if(!$response) {
-                $response = new Response;
-            }
+            // start
+            $request = $this->start($request);
 
             // execute request
-            $this->fire('kernel.request', $request);
-            parent::handle($request, $response);
+            $response = $this->execute($request);
 
-            // response event
-            $this->fire('kernel.response', $request, $response);
-
+            // send response & finish
+            return $this->respond($request, $response)->end($request, $response);
         }
-        // internal error (404, 403 etc...)
-        catch(Error\Internal $e) {
+        // internal error
+        catch(App\Internal $e) {
 
-            // dispatch as http event or inject as exception
-            Logger::error('Internal : ' . $e->getCode() . ' ' . $e->getMessage());
-            if(!$this->fire($e->getCode(), $request, $response, $e)) {
-                throw $e;
-            }
+            // error caught
+            $response = $this->internal($e, $request);
 
+            // send response & finish
+            return $this->respond($request, $response)->end($request, $response);
         }
-        // other errors
+        // normal error
         catch(\Exception $e) {
 
-            // dispatch as specific error
-            Logger::error(get_class($e) . ' : ' . $e->getMessage());
-            $event = 'kernel.error.' . get_class($e);
-            $caught = $this->fire($event, $request, $response, $e);
+            // error caught
+            $response = $this->error($e, $request);
 
-            // dispatch as general error
-            $caught += $this->fire('kernel.error', $request, $response, $e);
-
-            // no listener, throw it again...
-            if(!$caught) {
-                throw $e;
-            }
-
+            // send response & finish
+            return $this->respond($request, $response)->end($request, $response);
         }
 
-        // send response
-        if($response instanceof Response) {
-            $response->send();
-            Logger::info('Response sent with code ' . $response->code);
-        }
-        else {
-            Logger::info('No response sent');
+    }
+
+
+    /**
+     * Start process
+     * @param Request $request
+     * @return Request
+     */
+    protected function start(Request $request = null)
+    {
+        // create default request
+        if(!$request) {
+            $request = new Request;
         }
 
-        // end event
+        // filter event
+        $this->fire('kernel.start');
+
+        // log starting
+        Logger::info('Kernel start');
+
+        return $request;
+    }
+
+
+    /**
+     * Execute request
+     * @param Request $request
+     * @return Response
+     */
+    protected function execute(Request $request)
+    {
+        // event filter
+        $this->fire('kernel.request', $request);
+
+        // dispatcher process
+        $response = parent::handle($request);
+
+        // log execution
+        Logger::info('Request executed');
+
+        return $response;
+    }
+
+
+    /**
+     * Send response
+     * @param Response $response
+     * @param Request $request
+     * @return $this
+     */
+    protected function respond(Request $request, Response $response)
+    {
+        // event filter
+        $this->fire('kernel.response', $request, $response);
+
+        // send response to client
+        $response->send();
+
+        // log sending
+        Logger::info('Response sent with code ' . $response->code);
+
+        return $this;
+    }
+
+
+    /**
+     * End process
+     * @param Request $request
+     * @param Response $response
+     * @return string
+     */
+    protected function end(Request $request, Response $response)
+    {
+        // filter event
         $this->fire('kernel.end', $request, $response);
 
-        // end
-        Logger::info('Kernel end');
+        // execution time
+        $now = microtime(true);
+        $elapsed = number_format($now - $request->start, 4);
 
-        return true;
+        // finish log
+        Logger::info('Kernel end - execution time : ' . $elapsed . 's');
+
+        return $elapsed;
+    }
+
+
+    /**
+     * Catch internal error
+     * @param Internal $e
+     * @param Request $request
+     * @throws Internal
+     * @return string
+     */
+    protected function internal(App\Internal $e, Request $request)
+    {
+        // create response
+        $response = new Response;
+
+        // http code error
+        Logger::error('Internal : ' . $e->getCode() . ' ' . $e->getMessage());
+        $caught = $this->fire($e->getCode(), $request, $response, $e);
+
+        // not caught
+        if(!$caught) {
+            throw $e;
+        }
+
+        return $response;
+    }
+
+
+    /**
+     * Catch other error
+     * @param \exception $e
+     * @param Request $request
+     * @throws \exception
+     * @return string
+     */
+    protected function error(\exception $e, Request $request)
+    {
+        // create response
+        $response = new Response;
+
+        // log error
+        $class = get_class($e);
+        Logger::critical($class . ' : ' . $e->getMessage());
+
+        // specific & general error
+        $caught = $this->fire('kernel.error.' . $class, $request, $response, $e);
+        $caught += $this->fire('kernel.error', $request, $response, $e);
+
+        // not caught
+        if(!$caught) {
+            throw $e;
+        }
+
+        return $response;
     }
 
 
@@ -174,9 +248,8 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     public function lost($to)
     {
-        $this->on(404, function(Request $request) use($to) {
+        $this->on(404, function() use($to) {
             Logger::info('404 Not found ! Go to ' . $to);
-            $request->halt();
             $this->to($to);
         });
 
@@ -191,9 +264,8 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     public function nope($to)
     {
-        $this->on(403, function(Request $request) use($to) {
+        $this->on(403, function() use($to) {
             Logger::info('403 Forbidden ! Go to ' . $to);
-            $request->halt();
             $this->to($to);
         });
 

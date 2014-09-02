@@ -17,7 +17,7 @@
  */
 function is_traversable($input)
 {
-    return (is_array($input) or $input instanceof \Traversable);
+    return (is_array($input) || $input instanceof \Traversable);
 }
 
 
@@ -28,7 +28,7 @@ function is_traversable($input)
  */
 function is_collection($input)
 {
-    return (is_array($input) or $input instanceof \ArrayAccess);
+    return (is_array($input) || $input instanceof \ArrayAccess);
 }
 
 

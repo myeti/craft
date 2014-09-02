@@ -10,4 +10,4 @@
  */
 namespace Forge;
 
-class Flat extends \Craft\App\Bundle\Flat {}
+class Api extends \Craft\App\Bundle\Api {}

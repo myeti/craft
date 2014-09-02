@@ -158,6 +158,15 @@ class Response
 
 
     /**
+     * Callable response
+     */
+    public function __invoke()
+    {
+        return $this->send();
+    }
+
+
+    /**
      * Get status code
      * @param int $code
      * @return string|bool

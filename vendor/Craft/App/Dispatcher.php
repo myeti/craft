@@ -10,24 +10,21 @@
  */
 namespace Craft\App;
 
-use Craft\Trace\Logger;
-
 /**
  * The most basic class :
  * execute the action stored in
  * the Request object.
  */
-class Dispatcher implements Handler
+class Dispatcher
 {
 
     /**
      * Run on request
      * @param Request $request
-     * @param Response $response
      * @throws \BadMethodCallException
      * @return Response
      */
-    public function handle(Request $request, Response $response = null)
+    public function handle(Request $request)
     {
         // not a valid callable
         if(!is_callable($request->action)) {
@@ -40,7 +37,6 @@ class Dispatcher implements Handler
 
         // run
         $data = call_user_func_array($request->action, $args);
-        Logger::info('Request ' . $request->query . ' executed');
 
         // user returned response object
         if($data instanceof Response) {
@@ -55,8 +51,6 @@ class Dispatcher implements Handler
             $response = new Response;
             $response->data = $data;
         }
-
-        Logger::info('Response generated');
 
         return $response;
     }

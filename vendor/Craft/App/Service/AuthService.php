@@ -36,7 +36,7 @@ class AuthService extends App\Service
     /**
      * Handle request
      * @param App\Request $request
-     * @throws App\Error\Forbidden
+     * @throws App\Internal\Forbidden
      */
     public function onKernelRequest(App\Request $request)
     {
@@ -47,7 +47,7 @@ class AuthService extends App\Service
 
         // attempt
         if(!Auth::rank($request->meta['auth'])) {
-            throw new App\Error\Forbidden('User not allowed for query "' . $request->query . '"');
+            throw new App\Internal\Forbidden('User not allowed for query "' . $request->query . '"');
         }
 
         Logger::info('User auth is allowed');

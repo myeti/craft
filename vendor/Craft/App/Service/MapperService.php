@@ -52,7 +52,7 @@ class MapperService extends App\Service
     /**
      * Handle request
      * @param App\Request $request
-     * @throws App\Error\NotFound
+     * @throws App\Internal\NotFound
      * @throws \InvalidArgumentException
      */
     public function onKernelRequest(App\Request $request)
@@ -70,7 +70,7 @@ class MapperService extends App\Service
 
             // not found
             if(!$entity) {
-                throw new App\Error\NotFound($model . '[' . $property . ':' . $request->args[$property] . '] not found.');
+                throw new App\Internal\NotFound($model . '[' . $property . ':' . $request->args[$property] . '] not found.');
             }
 
             // replace property with entity

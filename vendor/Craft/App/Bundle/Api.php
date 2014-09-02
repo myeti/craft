@@ -8,20 +8,16 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Forge\App;
+namespace Craft\App\Bundle;
 
-use Craft\App\Kernel;
+use Craft\App\Bundle;
 use Craft\App\Service;
-use Craft\App\Service\AuthService;
-use Craft\App\Service\ResolverService;
-use Craft\App\Service\RouterService;
-use Craft\App\Service\JsonService;
 use Craft\Map\Router;
 
 /**
  * Ready to use app
  */
-class App extends Kernel
+class Api extends Bundle
 {
 
     /**
@@ -31,12 +27,12 @@ class App extends Kernel
     public function __construct(array $classes)
     {
         $router = Router::annotations($classes);
-        $this->plug(new RouterService($router));
+        $this->plug(new Service\RouterService($router));
 
-        $this->plug(new ResolverService);
-        $this->plug(new AuthService);
+        $this->plug(new Service\ResolverService);
+        $this->plug(new Service\AuthService);
 
-        $this->plug(new JsonService);
+        $this->plug(new Service\JsonService);
     }
 
 }

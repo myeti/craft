@@ -8,6 +8,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Forge;
+namespace Craft\App;
 
-class Flat extends \Craft\App\Bundle\Flat {}
+class Internal extends \Exception
+{
+
+    /** @var int */
+    public $code = 500;
+
+} 

@@ -8,6 +8,14 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Forge;
+namespace Craft\App\Internal;
 
-class Flat extends \Craft\App\Bundle\Flat {}
+use Craft\App\Internal;
+
+class NotFound extends Internal
+{
+
+    /** @var int */
+    public $code = 404;
+
+} 

@@ -49,7 +49,7 @@ else {
  * Setup logger
  */
 Craft\Trace\Logger::register(
-    new Craft\Trace\Logger\PanelLogger
+    new Craft\Trace\Logger\FileLogger(__APP__ . '/logs')
 );
 
 

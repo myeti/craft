@@ -45,7 +45,7 @@ class RouterService extends App\Service
     /**
      * Handle request
      * @param App\Request $request
-     * @throws App\Error\NotFound
+     * @throws App\Internal\NotFound
      */
     public function onKernelRequest(App\Request $request)
     {
@@ -59,7 +59,7 @@ class RouterService extends App\Service
 
         // 404
         if(!$route) {
-            throw new App\Error\NotFound('Route ' . $request->query . ' not found');
+            throw new App\Internal\NotFound('Route ' . $request->query . ' not found');
         }
 
         // update request

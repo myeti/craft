@@ -2,7 +2,7 @@
 
 /**
  * Hello !
- * I'll help you building your app :)
+ * I'll help you build your app :)
  */
 
 require 'vendor/autoload.php';
@@ -21,7 +21,7 @@ Forge\Syn::SQLite(__APP__ . '/craft.db')    // or Syn::MySQL('dbname', [host, us
 /**
  * You can now create your routes.
  * You can define params /url/with/:id, then the action will receive $id
- * Or you can define env config /+lang/url, then you can retrieve with Forge\Mog::env('lang')
+ * Or you can define env config /+lang/url, then you can retrieve with env('lang')
  */
 
 $router = new Forge\Router([
@@ -40,16 +40,21 @@ $engine = new Forge\Engine(__APP__ . '/views');
 
 
 /**
- * Setup your application using these components
+ * Create your application using these components
+ * and set the environment mode (dev or prod)
  */
-$app = new Forge\App($router, $engine);
+
+$app = new Forge\App($router, $engine, Forge\App::DEV);
 
 
 /**
  * Tell the app how to handle http errors (404 & 403)
  */
-$app->lost('/lost');
-$app->nope('/nope');
+
+use Craft\App\Response\Redirect;
+
+$app->on(404, new Redirect('/lost'));
+$app->on(403, new Redirect('/nope'));
 
 
 /**
