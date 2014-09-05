@@ -10,6 +10,7 @@
  */
 namespace Craft\App;
 
+use Craft\Box\Mog;
 use Craft\Event;
 use Craft\Map\RouterInterface;
 use Craft\View\EngineInterface;
@@ -20,26 +21,15 @@ use Craft\View\EngineInterface;
 class Bundle extends Kernel
 {
 
-    const DEV = 1;
-    const PROD = 2;
-
-    /** @var int */
-    protected static $mode = self::DEV;
-
-
     /**
      * Ready-to-use app
      * @param RouterInterface $router
      * @param EngineInterface $engine
-     * @param int $mode
      */
-    public function __construct(RouterInterface $router, EngineInterface $engine, $mode = self::DEV)
+    public function __construct(RouterInterface $router, EngineInterface $engine)
     {
         // init kernel
         parent::__construct();
-
-        // set mode
-        static::$mode = $mode;
 
         // init built-in services
         $this->plug(new Service\RouterService($router));
@@ -48,29 +38,9 @@ class Bundle extends Kernel
         $this->plug(new Service\RenderService($engine));
 
         // error handling : dev mode only
-        if(static::dev()) {
+        if(Mog::in('dev')) {
             $this->plug(new Service\WhoopsService);
         }
-    }
-
-
-    /**
-     * Is dev mode
-     * @return bool
-     */
-    public static function dev()
-    {
-        return static::$mode == self::DEV;
-    }
-
-
-    /**
-     * Is prod mode
-     * @return bool
-     */
-    public static function prod()
-    {
-        return static::$mode == self::PROD;
     }
 
 }

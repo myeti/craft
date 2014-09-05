@@ -12,10 +12,6 @@ if(!defined('__APP__')) {
     define('__APP__', __ROOT__ . '/app');
 }
 
-if(!defined('__NOW__')) {
-    define('__NOW__', time());
-}
-
 
 /**
  * Setup AutoLoader
@@ -34,15 +30,10 @@ $loader->add('My',     __APP__);
 
 
 /**
- * Set base url
+ * Set environment as dev
  */
 
-if(defined('__BASE__')) {
-    Craft\Box\Mog::base(__BASE__);
-}
-else {
-    define('__BASE__', Craft\Box\Mog::base());
-}
+Craft\Box\Mog::set('dev');
 
 
 /**

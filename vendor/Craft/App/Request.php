@@ -34,8 +34,8 @@ class Request
     /** @var array */
     public $meta = [];
 
-    /** @var bool */
-    public $alive = true;
+    /** @var string */
+    public $error;
 
 
     /**
@@ -52,15 +52,6 @@ class Request
         $this->action = $action;
         $this->args = $args;
         $this->meta = $meta;
-    }
-
-
-    /**
-     * Kill the request
-     */
-    public function halt()
-    {
-        $this->alive = false;
     }
 
 

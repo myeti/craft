@@ -274,14 +274,24 @@ class Context
 
 
     /**
-     * Set env value
-     * @param string $env
-     * @param string $value
+     * Set env mode (dev, test, prod)
+     * @param string $mode
      * @return mixed
      */
-    public function set($env, $value)
+    public function set($mode)
     {
-        $_ENV[$env] = $value;
+        $_ENV['mode'] = $mode;
+    }
+
+
+    /**
+     * Check env mode
+     * @param string $mode
+     * @return bool
+     */
+    public function in($mode)
+    {
+        return ($_ENV['mode'] == $mode);
     }
 
 

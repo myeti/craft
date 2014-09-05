@@ -10,7 +10,6 @@
  */
 namespace Craft\App;
 
-use Craft\App;
 use Craft\Event;
 use Craft\Trace\Logger;
 
@@ -51,7 +50,7 @@ class Kernel extends Dispatcher implements Event\Trigger
     /**
      * Handle context request
      * @param Request $request
-     * @throws Error\Internal
+     * @throws Internal
      * @throws \Exception
      * @return bool
      */
@@ -69,13 +68,13 @@ class Kernel extends Dispatcher implements Event\Trigger
             return $this->respond($request, $response)->end($request, $response);
         }
         // internal error
-        catch(App\Internal $e) {
+        catch(Internal $e) {
 
             // error caught
             $response = $this->internal($e, $request);
 
             // send response & finish
-            return $this->respond($request, $response)->end($request, $response);
+            return $this->respond($request, $response, $e)->end($request, $response);
         }
         // normal error
         catch(\Exception $e) {
@@ -84,7 +83,7 @@ class Kernel extends Dispatcher implements Event\Trigger
             $response = $this->error($e, $request);
 
             // send response & finish
-            return $this->respond($request, $response)->end($request, $response);
+            return $this->respond($request, $response, $e)->end($request, $response);
         }
 
     }
@@ -134,20 +133,28 @@ class Kernel extends Dispatcher implements Event\Trigger
 
     /**
      * Send response
-     * @param Response $response
      * @param Request $request
+     * @param Response $response
+     * @param \Exception $e
      * @return $this
      */
-    protected function respond(Request $request, Response $response)
+    protected function respond(Request $request, Response $response, \Exception $e = null)
     {
-        // event filter
-        $this->fire('kernel.response', $request, $response);
+
+        // no error, apply filter
+        if(!$e) {
+            $this->fire('kernel.response', $request, $response);
+            $log = 'Response ' . $response->code . ' sent';
+        }
+        else {
+            $log = 'Response ' . $response->code . ' sent with error(s)';
+        }
 
         // send response to client
         $response->send();
 
         // log sending
-        Logger::info('Response sent with code ' . $response->code);
+        Logger::info($log);
 
         return $this;
     }
@@ -182,13 +189,16 @@ class Kernel extends Dispatcher implements Event\Trigger
      * @throws Internal
      * @return string
      */
-    protected function internal(App\Internal $e, Request $request)
+    protected function internal(Internal $e, Request $request)
     {
+        // update request
+        $request->error = $e->getCode() . ' ' . $e->getMessage();
+
         // create response
         $response = new Response;
 
         // http code error
-        Logger::error('Internal : ' . $e->getCode() . ' ' . $e->getMessage());
+        Logger::error('Internal : ' . $request->error);
         $caught = $this->fire($e->getCode(), $request, $response, $e);
 
         // not caught
@@ -202,19 +212,22 @@ class Kernel extends Dispatcher implements Event\Trigger
 
     /**
      * Catch other error
-     * @param \exception $e
+     * @param \Exception $e
      * @param Request $request
-     * @throws \exception
+     * @throws \Exception
      * @return string
      */
-    protected function error(\exception $e, Request $request)
+    protected function error(\Exception $e, Request $request)
     {
+        // update request
+        $request->error = $e->getMessage();
+
         // create response
         $response = new Response;
 
         // log error
         $class = get_class($e);
-        Logger::critical($class . ' : ' . $e->getMessage());
+        Logger::critical($class . ' : ' . $request->error);
 
         // specific & general error
         $caught = $this->fire('kernel.error.' . $class, $request, $response, $e);
@@ -226,50 +239,6 @@ class Kernel extends Dispatcher implements Event\Trigger
         }
 
         return $response;
-    }
-
-
-    /**
-     * Emulate url request
-     * @param $query
-     * @return Response
-     */
-    public function to($query)
-    {
-        $request = new Request($query);
-        return $this->handle($request);
-    }
-
-
-    /**
-     * 404 Not found
-     * @param string $to
-     * @return $this
-     */
-    public function lost($to)
-    {
-        $this->on(404, function() use($to) {
-            Logger::info('404 Not found ! Go to ' . $to);
-            $this->to($to);
-        });
-
-        return $this;
-    }
-
-
-    /**
-     * 403 Forbidden
-     * @param string $to
-     * @return $this
-     */
-    public function nope($to)
-    {
-        $this->on(403, function() use($to) {
-            Logger::info('403 Forbidden ! Go to ' . $to);
-            $this->to($to);
-        });
-
-        return $this;
     }
 
 }

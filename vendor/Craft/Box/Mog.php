@@ -472,14 +472,24 @@ abstract class Mog
 
 
     /**
-     * Set env value
-     * @param string $env
-     * @param string $value
+     * Set env mode (dev, test, prod)
+     * @param string $mode
      * @return mixed
      */
-    public static function set($env, $value)
+    public static function set($mode)
     {
-        static::context()->set($env, $value);
+        static::context()->set($mode);
+    }
+
+
+    /**
+     * Check env mode
+     * @param string $mode
+     * @return bool
+     */
+    public static function in($mode)
+    {
+        return static::context()->in($mode);
     }
 
 

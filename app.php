@@ -4,12 +4,18 @@
  * Hello !
  * I'll help you build your app :)
  */
-
 require 'vendor/autoload.php';
 
 
 /**
- * First, you might need to setup you database.
+ * First, tell the mog your application state
+ * - dev, test or production -
+ */
+Forge\Mog::set('dev');
+
+
+/**
+ * Then, you might need to setup you database.
  * Here is how to use a SQLite local base :
  */
 
@@ -41,10 +47,9 @@ $engine = new Forge\Engine(__APP__ . '/views');
 
 /**
  * Create your application using these components
- * and set the environment mode (dev or prod)
  */
 
-$app = new Forge\App($router, $engine, Forge\App::DEV);
+$app = new Forge\App($router, $engine);
 
 
 /**
