@@ -191,20 +191,22 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     protected function internal(Internal $e, Request $request)
     {
-        // update request
-        $request->error = $e->getCode() . ' ' . $e->getMessage();
-
         // create response
         $response = new Response;
 
         // http code error
-        Logger::error('Internal : ' . $request->error);
         $caught = $this->fire($e->getCode(), $request, $response, $e);
 
-        // not caught
+        // not caught, try as normal error
         if(!$caught) {
-            throw $e;
+            return $this->error($e, $request);
         }
+
+        // update request
+        $request->error = $e->getCode() . ' ' . $e->getMessage();
+
+        // log error
+        Logger::notice('Internal : ' . $request->error);
 
         return $response;
     }
@@ -219,15 +221,27 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     protected function error(\Exception $e, Request $request)
     {
+        // create message
+        $class = get_class($e);
+        $message = $class;
+
         // update request
-        $request->error = $e->getMessage();
+        if($e->getMessage()) {
+            $request->error = $e->getMessage();
+            $message .= ' "' . $request->error . '"';
+        }
+        else {
+            $request->error = $message;
+        }
+
+        // add file:line
+        $message .= ' in ' . $e->getFile() . ':' . $e->getLine();
 
         // create response
         $response = new Response;
 
         // log error
-        $class = get_class($e);
-        Logger::critical($class . ' : ' . $request->error);
+        Logger::critical($message);
 
         // specific & general error
         $caught = $this->fire('kernel.error.' . $class, $request, $response, $e);
