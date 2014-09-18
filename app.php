@@ -6,13 +6,16 @@
  */
 require 'vendor/autoload.php';
 
+use Craft\App;
+use Craft\Orm;
+use Craft\View;
+use Craft\Routing;
+
 
 /**
  * Then, you might need to setup you database.
  * Here is how to use a SQLite local base :
  */
-
-use Craft\Orm;
 
 Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, username, password])
          ->map('My\Entity\User')           // map entity 'My\Model\User'
@@ -24,8 +27,6 @@ Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, use
  * You can define params /url/with/:id, then the action will receive $id
  * Or you can define env config /+lang/url, then you can retrieve with env('lang')
  */
-
-use Craft\Routing;
 
 $router = new Routing\UrlRouter([
     '/'     => 'My\Logic\Front::hello',
@@ -39,16 +40,12 @@ $router = new Routing\UrlRouter([
  * your awesome design !
  */
 
-use Craft\View;
-
 $engine = new View\Engine(__APP__ . '/views');
 
 
 /**
  * Create your application using these components
  */
-
-use Craft\App;
 
 $app = new App\Bundle($router, $engine);
 
@@ -57,8 +54,8 @@ $app = new App\Bundle($router, $engine);
  * Tell the app how to handle http errors (404 & 403)
  */
 
-$app->on(404, App\Response\Event::redirect('/lost'));
-$app->on(403, App\Response\Event::redirect('/nope'));
+$app->on(404, App\Event::redirect('/lost'));
+$app->on(403, App\Event::redirect('/nope'));
 
 
 /**

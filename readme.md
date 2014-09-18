@@ -31,7 +31,7 @@ $engine = new View\Engine(__APP__ . '/views');
 $app = new App\Bundle($router, $engine);
 
 // catch 404
-$app->on(404, App\Response\Event::redirect('/lost'));
+$app->on(404, App\Event::redirect('/lost'));
 
 // let's go !
 $app->handle();

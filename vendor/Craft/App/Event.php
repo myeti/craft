@@ -1,9 +1,6 @@
 <?php
 
-namespace Craft\App\Response;
-
-use Craft\App\Request;
-use Craft\App\Response;
+namespace Craft\App;
 
 abstract class Event
 {
