@@ -13,10 +13,11 @@ All start in your 'index.php' :
 
 require 'vendor/autoload.php';
 
-// create your routes
-
+use Craft\App;
+use Craft\View;
 use Craft\Routing;
 
+// create your routes
 $router = new Routing\UrlRouter([
     '/'     => 'My\Logic\Front::hello',
     '/lost' => 'My\Logic\Front::lost',
@@ -24,15 +25,9 @@ $router = new Routing\UrlRouter([
 ]);
 
 // define your template engine
-
-use Craft\View;
-
 $engine = new View\Engine(__APP__ . '/views');
 
 // forge your app with these components
-
-use Craft\App;
-
 $app = new App\Bundle($router, $engine);
 
 // catch 404
