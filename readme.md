@@ -1,4 +1,4 @@
-# Craft 2.2
+# Craft 2.3
 
 Craft is a small & efficient PHP5.6 framework that helps you to quickly build webapps.
 It only provides mere tools and libs, the rest is up to your creativity !
@@ -13,23 +13,30 @@ All start in your 'index.php' :
 
 require 'vendor/autoload.php';
 
-// tell the mog you are in development mode
-Forge\Mog::env('mode', 'prod');
-
 // create your routes
-$router = new Forge\Router([
+
+use Craft\Routing;
+
+$router = new Routing\UrlRouter([
     '/'     => 'My\Logic\Front::hello',
-    '/lost' => 'My\Logic\Front::lost'
+    '/lost' => 'My\Logic\Front::lost',
+    '/nope' => 'My\Logic\Front::nope'
 ]);
 
 // define your template engine
-$engine = new Forge\Engine(__APP__ . '/views', url('/public'));
+
+use Craft\View;
+
+$engine = new View\Engine(__APP__ . '/views');
 
 // forge your app with these components
-$app = new Forge\App($router, $engine);
+
+use Craft\App;
+
+$app = new App\Bundle($router, $engine);
 
 // catch 404
-$app->lost('/lost');
+$app->on(404, App\Response\Event::redirect('/lost'));
 
 // let's go !
 $app->handle();
@@ -46,7 +53,7 @@ You can use `Syn`, the inner orm, and map your own models :
 ```php
 <?php
 
-use Forge\Syn;
+use Craft\Orm\Syn;
 
 Syn::MySQL('dbname')        // or Syn::SQLite(dbfile)
     ->map('My\Entity\User')
