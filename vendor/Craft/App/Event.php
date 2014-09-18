@@ -2,8 +2,33 @@
 
 namespace Craft\App;
 
-abstract class Event
+class Event
 {
+
+    /** @var Response */
+    protected $response;
+
+
+    /**
+     * Embed response object
+     * @param Response $response
+     */
+    public function __construct(Response $response)
+    {
+        $this->response = $response;
+    }
+
+
+    /**
+     * Callable event
+     * @param Request $request
+     * @param Response $response
+     */
+    public function __invoke(Request $request, Response &$response)
+    {
+        $response = $this->response;
+    }
+
 
     /**
      * Generate 200 response
@@ -12,7 +37,7 @@ abstract class Event
      */
     public static function ok($content = null)
     {
-        return static::embed(Response::ok($content));
+        return new self(Response::ok($content));
     }
 
 
@@ -23,7 +48,7 @@ abstract class Event
      */
     public static function notFound($content = null)
     {
-        return static::embed(Response::notFound($content));
+        return new self(Response::notFound($content));
     }
 
 
@@ -34,7 +59,7 @@ abstract class Event
      */
     public static function forbidden($content = null)
     {
-        return static::embed(Response::forbidden($content));
+        return new self(Response::forbidden($content));
     }
 
 
@@ -45,7 +70,7 @@ abstract class Event
      */
     public static function json(array $data)
     {
-        return static::embed(Response::json($data));
+        return new self(Response::json($data));
     }
 
 
@@ -57,7 +82,7 @@ abstract class Event
      */
     public static function view($template, array $data = [])
     {
-        return static::embed(Response::view($template, $data));
+        return new self(Response::view($template, $data));
     }
 
 
@@ -68,7 +93,7 @@ abstract class Event
      */
     public static function download($filename)
     {
-        return static::embed(Response::download($filename));
+        return new self(Response::download($filename));
     }
 
 
@@ -80,20 +105,7 @@ abstract class Event
      */
     public static function redirect($url, $outside = false)
     {
-        return static::embed(Response::redirect($url, $outside));
-    }
-
-
-    /**
-     * Embed response in event callback
-     * @param Response $r
-     * @return callable
-     */
-    protected static function embed(Response $r)
-    {
-        return function(Request $request, Response &$response) use($r) {
-            $response = $r;
-        };
+        return new self(Response::redirect($url, $outside));
     }
 
 } 
