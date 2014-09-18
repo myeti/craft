@@ -17,10 +17,10 @@ if(!defined('__APP__')) {
  * Setup AutoLoader
  */
 
-require __DIR__ . '/Craft/Reflect/ClassLoader.php';
+require __DIR__ . '/Craft/Kit/ClassLoader.php';
 
-$loader = new Craft\Reflect\ClassLoader;
-$loader->register();
+$loader = new Craft\Kit\ClassLoader;
+$loader->autoload();
 
 $loader->add('Craft',  __DIR__ . '/Craft');
 $loader->add('Forge',  __DIR__ . '/Forge');
@@ -33,14 +33,14 @@ $loader->add('My',     __APP__);
  * Set environment as dev
  */
 
-Craft\Box\Mog::set('dev');
+Craft\Box\Mog::mode('dev');
 
 
 /**
  * Setup logger
  */
-Craft\Trace\Logger::register(
-    new Craft\Trace\Logger\FileLogger(__APP__ . '/logs')
+Craft\Debug\Logger::register(
+    new Craft\Debug\Logger\FileLogger(__APP__ . '/logs')
 );
 
 

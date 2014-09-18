@@ -60,21 +60,17 @@ class Channel implements Trigger
      * @param mixed $params
      * @return int
      */
-    public function fire($event, $params = null)
+    public function fire($event, &...$params)
     {
         // no listeners
         if(!isset($this->listeners[$event])) {
             return false;
         }
 
-        // get params
-        $params = func_get_args();
-        array_shift($params);
-
         // trigger all listeners
         $count = 0;
         foreach($this->listeners[$event] as $callable){
-            call_user_func_array($callable, $params);
+            $callable(...$params);
             $count++;
         }
 

@@ -38,6 +38,6 @@ interface Trigger
      * @param mixed $params
      * @return int
      */
-    public function fire($event, $params = null);
+    public function fire($event, &...$params);
 
 } 

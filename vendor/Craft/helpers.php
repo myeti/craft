@@ -9,6 +9,47 @@
  * file that was distributed with this source code.
  */
 
+/**
+ * Get class name
+ * @param $object
+ * @return string
+ */
+function classname($object)
+{
+    $segments = explode('\\', get_class($object));
+    return end($segments);
+}
+
+
+/**
+ * Check if object is using trait
+ * @param $object
+ * @param $trait
+ * @return bool
+ */
+function has_trait($object, $trait)
+{
+    return in_array($trait, class_uses($object));
+}
+
+
+/**
+ * Hydrate object props with array
+ * @param $object
+ * @param array $data
+ * @return object
+ */
+function hydrate($object, array $data)
+{
+    foreach($data as $field => $value) {
+        if(property_exists($object, $field)) {
+            $object->{$field} = $value;
+        }
+    }
+
+    return $object;
+}
+
 
 /**
  * Call action
@@ -26,9 +67,9 @@ function call(callable $action, array $args)
  * Get absolute path
  * @return string
  */
-function path()
+function path(...$segments)
 {
-    return call('\Craft\Box\Mog::path', func_get_args());
+    return \Craft\Box\Mog::path(...$segments);
 }
 
 
@@ -38,9 +79,9 @@ function path()
  * @param string $somewhere
  * @return string
  */
-function url($somewhere)
+function url(...$segments)
 {
-    return call('\Craft\Box\Mog::url', func_get_args());
+    return \Craft\Box\Mog::url(...$segments);
 }
 
 
@@ -48,9 +89,9 @@ function url($somewhere)
  * Redirect to url
  * @param string $somewhere
  */
-function go($somewhere)
+function go(...$segments)
 {
-    header('Location: ' . call('url', func_get_args()));
+    header('Location: ' . url(...$segments));
     exit;
 }
 
@@ -59,9 +100,9 @@ function go($somewhere)
  * Debug var
  * @param mixed $something
  */
-function debug($something)
+function debug(...$args)
 {
-    call('var_dump', func_get_args());
+    var_dump(...$args);
     exit;
 }
 
@@ -70,10 +111,10 @@ function debug($something)
  * Debug var in log
  * @param mixed $something
  */
-function log_debug($something)
+function log_debug(...$args)
 {
-    foreach(func_get_args() as $arg) {
-        \Craft\Trace\Logger::debug($arg);
+    foreach($args as $arg) {
+        \Craft\Debug\Logger::debug($arg);
     }
 }
 
@@ -110,19 +151,7 @@ function env($key, $fallback = null)
  */
 function __($text, array $vars = [])
 {
-    return Craft\Text\Lang::translate($text, $vars);
-}
-
-
-/**
- * Hydrate object with env
- * @param $object
- * @param array $data
- * @return object
- */
-function hydrate($object, array $data)
-{
-    return Craft\Reflect\Object::hydrate($object, $data);
+    return Craft\Data\Text\Lang::translate($text, $vars);
 }
 
 
@@ -134,5 +163,5 @@ function hydrate($object, array $data)
  */
 function compose($string, array $vars = [])
 {
-    return Craft\Text\String::compose($string, $vars);
+    return Craft\Data\Text\String::compose($string, $vars);
 }

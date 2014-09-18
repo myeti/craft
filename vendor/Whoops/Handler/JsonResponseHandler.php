@@ -29,7 +29,7 @@ class JsonResponseHandler extends Handler
      * @param  bool|null $returnFrames
      * @return bool|$this
      */
-    public function addTraceToOutput($returnFrames = null)
+    public function addDebugToOutput($returnFrames = null)
     {
         if(func_num_args() == 0) {
             return $this->returnFrames;
@@ -77,7 +77,7 @@ class JsonResponseHandler extends Handler
         $response = array(
             'error' => Formatter::formatExceptionAsDataArray(
                 $this->getInspector(),
-                $this->addTraceToOutput()
+                $this->addDebugToOutput()
             ),
         );
 

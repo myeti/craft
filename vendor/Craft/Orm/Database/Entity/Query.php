@@ -109,15 +109,10 @@ class Query
     /**
      * Add where clause
      * @param $expression
-     * @param mixed $value
      * @return $this
      */
-    public function where($expression, $value = null)
+    public function where($expression, ...$values)
     {
-        // get values
-        $values = func_get_args();
-        array_shift($values);
-
         // parse last
         $split = explode(' ', $expression);
         $last = end($split);

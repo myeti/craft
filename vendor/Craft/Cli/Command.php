@@ -13,66 +13,27 @@ namespace Craft\Cli;
 abstract class Command
 {
 
-    /** @var array */
-    protected $arguments = [];
-
-    /** @var array */
-    protected $parameters = [];
-
-    /** @var array */
-    protected $flags = [];
+    /** @var string */
+    public $name;
 
     /** @var string */
-    protected $description;
+    public $description;
+
+    /** @var string */
+    protected $params;
 
 
     /**
      * Setup command
-     * @param $description
+     * @param string $name
+     * @param string $params
+     * @param string $description
      */
-    public function __construct($description)
+    public function __construct($name, $params, $description)
     {
+        $this->name = $name;
         $this->description = $description;
-        $this->register();
-    }
-
-
-    /**
-     * Add required argument
-     * @param $name
-     * @param $description
-     * @return $this
-     */
-    protected function argument($name, $description)
-    {
-        $this->arguments[$name] = $description;
-        return $this;
-    }
-
-
-    /**
-     * Add optional param starting with -
-     * @param $name
-     * @param $description
-     * @return $this
-     */
-    protected function param($name, $description)
-    {
-        $this->parameters[$name] = $description;
-        return $this;
-    }
-
-
-    /**
-     * Add option flag starting with --
-     * @param $name
-     * @param $description
-     * @return $this
-     */
-    protected function flag($name, $description)
-    {
-        $this->flags[$name] = $description;
-        return $this;
+        $this->params = $params;
     }
 
 
@@ -81,13 +42,8 @@ abstract class Command
      * @param array $args
      * @return string
      */
-    public function run(array $args)
+    public function run()
     {
-        // init
-        $arguments = array_fill_keys(array_keys($this->arguments), null);
-        $parameters = array_fill_keys(array_keys($this->parameters), null);
-        $flags = array_fill_keys(array_keys($this->flags), null);
-
         // parse args
         $skip = [];
         foreach($args as $k => $argument) {
@@ -160,13 +116,6 @@ abstract class Command
             $this->execute($arguments, $parameters, $flags);
         }
     }
-
-
-    /**
-     * Register arguments
-     * @return mixed
-     */
-    abstract protected function register();
 
 
     /**

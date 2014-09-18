@@ -31,12 +31,8 @@ class Dispatcher
             throw new \BadMethodCallException('Request::action must be a valid callable.');
         }
 
-        // add request as last (and optional) method arg
-        $args = $request->args;
-        $args[] = &$request;
-
         // run
-        $data = call_user_func_array($request->action, $args);
+        $data = call_user_func_array($request->action, $request->args);
 
         // user returned response object
         if($data instanceof Response) {

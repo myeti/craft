@@ -47,8 +47,8 @@ class Frame implements Serializable
 
         // Check if this frame occurred within an eval().
         // @todo: This can be made more reliable by checking if we've entered
-        // eval() in a previous trace, but will need some more work on the upper
-        // trace collector(s).
+        // eval() in a previous Debug, but will need some more work on the upper
+        // Debug collector(s).
         if(preg_match('/^(.*)\((\d+)\) : (?:eval\(\)\'d|assert) code$/', $file, $matches)) {
             $file = $this->frame['file'] = $matches[1];
             $this->frame['line'] = (int) $matches[2];

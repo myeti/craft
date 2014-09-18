@@ -9,6 +9,6 @@ use ErrorException as BaseErrorException;
 
 /**
  * Wraps ErrorException; mostly used for typing (at least now)
- * to easily cleanup the stack trace of redundant info.
+ * to easily cleanup the stack Debug of redundant info.
  */
 class ErrorException extends BaseErrorException {}

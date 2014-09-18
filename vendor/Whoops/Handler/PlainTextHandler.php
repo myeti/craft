@@ -29,17 +29,17 @@ class PlainTextHandler extends Handler
     /**
      * @var bool
      */
-    private $addTraceToOutput = true;
+    private $addDebugToOutput = true;
 
     /**
      * @var bool|integer
      */
-    private $addTraceFunctionArgsToOutput = false;
+    private $addDebugFunctionArgsToOutput = false;
 
     /**
      * @var integer
      */
-    private $traceFunctionArgsOutputLimit = 1024;
+    private $DebugFunctionArgsOutputLimit = 1024;
 
     /**
      * @var bool
@@ -94,37 +94,37 @@ class PlainTextHandler extends Handler
     }
 
     /**
-     * Add error trace to output.
-     * @param bool|null $addTraceToOutput
+     * Add error Debug to output.
+     * @param bool|null $addDebugToOutput
      * @return bool|$this
      */
-    public function addTraceToOutput($addTraceToOutput = null)
+    public function addDebugToOutput($addDebugToOutput = null)
     {
         if(func_num_args() == 0) {
-            return $this->addTraceToOutput;
+            return $this->addDebugToOutput;
         }
 
-        $this->addTraceToOutput = (bool) $addTraceToOutput;
+        $this->addDebugToOutput = (bool) $addDebugToOutput;
         return $this;
     }
 
     /**
-     * Add error trace function arguments to output.
+     * Add error Debug function arguments to output.
      * Set to True for all frame args, or integer for the n first frame args.
-     * @param bool|integer|null $addTraceFunctionArgsToOutput
+     * @param bool|integer|null $addDebugFunctionArgsToOutput
      * @return null|bool|integer
      */
-    public function addTraceFunctionArgsToOutput($addTraceFunctionArgsToOutput = null)
+    public function addDebugFunctionArgsToOutput($addDebugFunctionArgsToOutput = null)
     {
         if(func_num_args() == 0) {
-            return $this->addTraceFunctionArgsToOutput;
+            return $this->addDebugFunctionArgsToOutput;
         }
 
-        if(! is_integer($addTraceFunctionArgsToOutput)) {
-            $this->addTraceFunctionArgsToOutput = (bool) $addTraceFunctionArgsToOutput;
+        if(! is_integer($addDebugFunctionArgsToOutput)) {
+            $this->addDebugFunctionArgsToOutput = (bool) $addDebugFunctionArgsToOutput;
         }
         else {
-            $this->addTraceFunctionArgsToOutput = $addTraceFunctionArgsToOutput;
+            $this->addDebugFunctionArgsToOutput = $addDebugFunctionArgsToOutput;
         }
     }
 
@@ -134,9 +134,9 @@ class PlainTextHandler extends Handler
      * Prevent memory limit errors.
      * @var integer
      */
-    public function setTraceFunctionArgsOutputLimit($traceFunctionArgsOutputLimit)
+    public function setDebugFunctionArgsOutputLimit($DebugFunctionArgsOutputLimit)
     {
-        $this->traceFunctionArgsOutputLimit = (integer) $traceFunctionArgsOutputLimit;
+        $this->DebugFunctionArgsOutputLimit = (integer) $DebugFunctionArgsOutputLimit;
     }
 
     /**
@@ -145,9 +145,9 @@ class PlainTextHandler extends Handler
      * Prevent memory limit errors.
      * @return integer
      */
-    public function getTraceFunctionArgsOutputLimit()
+    public function getDebugFunctionArgsOutputLimit()
     {
-        return $this->traceFunctionArgsOutputLimit;
+        return $this->DebugFunctionArgsOutputLimit;
     }
 
     /**
@@ -228,22 +228,22 @@ class PlainTextHandler extends Handler
      */
     private function getFrameArgsOutput(Frame $frame, $line)
     {
-        if($this->addTraceFunctionArgsToOutput() === false
-            || $this->addTraceFunctionArgsToOutput() < $line) {
+        if($this->addDebugFunctionArgsToOutput() === false
+            || $this->addDebugFunctionArgsToOutput() < $line) {
             return '';
         }
 
         // Dump the arguments:
         ob_start();
         var_dump($frame->getArgs());
-        if(ob_get_length() > $this->getTraceFunctionArgsOutputLimit()) {
+        if(ob_get_length() > $this->getDebugFunctionArgsOutputLimit()) {
             // The argument var_dump is to big.
             // Discarded to limit memory usage.
             ob_clean();
             return sprintf(
                 "\n%sArguments dump length greater than %d Bytes. Discarded.",
                 self::VAR_DUMP_PREFIX,
-                $this->getTraceFunctionArgsOutputLimit()
+                $this->getDebugFunctionArgsOutputLimit()
             );
         }
 
@@ -253,18 +253,18 @@ class PlainTextHandler extends Handler
     }
 
     /**
-     * Get the exception trace as plain text.
+     * Get the exception Debug as plain text.
      * @return string
      */
-    private function getTraceOutput()
+    private function getDebugOutput()
     {
-        if(! $this->addTraceToOutput()) {
+        if(! $this->addDebugToOutput()) {
             return '';
         }
         $inspector = $this->getInspector();
         $frames = $inspector->getFrames();
 
-        $response = "\nStack trace:";
+        $response = "\nStack Debug:";
 
         $line = 1;
         foreach($frames as $frame) {
@@ -309,7 +309,7 @@ class PlainTextHandler extends Handler
                 $exception->getMessage(),
                 $exception->getFile(),
                 $exception->getLine(),
-                $this->getTraceOutput()
+                $this->getDebugOutput()
             );
 
         if($this->getLogger()) {

@@ -53,11 +53,17 @@ class Context
     /** @var string */
     public $from;
 
+    /** @var bool */
+    public $cli;
+
     /** @var string */
     public $ip;
 
     /** @var bool */
     public $local;
+
+    /** @var string */
+    public $mode;
 
     /** @var string */
     public $time;
@@ -69,7 +75,7 @@ class Context
     public $locale;
 
     /** @var array */
-    protected $dialog = [
+    protected $kupo = [
         'Kupo ?!',
         'I\'m hungry...',
         'May I help you ?',
@@ -83,9 +89,15 @@ class Context
 
     /**
      * Generate request from env
+     * @param bool $empty
      */
-    public function __construct()
+    public function __construct($empty = false)
     {
+        // empty context
+        if($empty) {
+            return;
+        }
+
         // physical path
         $this->root = dirname($this->server('SCRIPT_FILENAME'));
 
@@ -99,9 +111,12 @@ class Context
                        && strtolower($this->server('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest';
         $this->sync = !$this->async;
 
+        // cli
+        $this->cli = php_sapi_name() == "cli";
+
         // devices
         $this->browser = @get_browser()->browser;
-        $this->mobile = $this->server('HTTP_X_WAP_PROFILE', false) or $this->server('HTTP_PROFILE', false);
+        $this->mobile = $this->server('HTTP_X_WAP_PROFILE', false) || $this->server('HTTP_PROFILE', false);
 
         // url
         $this->host = $this->server('HTTP_HOST');
@@ -114,6 +129,7 @@ class Context
         // user
         $this->ip = $this->server('REMOTE_ADDR');
         $this->local = in_array($this->ip, ['127.0.0.1', '::1']);
+        $this->mode = $this->env('ENV_MODE');
         $this->time = $this->server('REQUEST_TIME_FLOAT');
         $this->timezone = date_default_timezone_get();
         $this->locale = locale_get_default();
@@ -124,9 +140,9 @@ class Context
      * Get physical path
      * @return string
      */
-    public function path()
+    public function path(...$args)
     {
-        return $this->root . implode(DIRECTORY_SEPARATOR, func_get_args());
+        return $this->root . implode(DIRECTORY_SEPARATOR, $args);
     }
 
 
@@ -134,9 +150,9 @@ class Context
      * Get physical path
      * @return string
      */
-    public function url()
+    public function url(...$args)
     {
-        return $this->base . implode('/', func_get_args());
+        return $this->base . implode('/', $args);
     }
 
 
@@ -278,9 +294,9 @@ class Context
      * @param string $mode
      * @return mixed
      */
-    public function set($mode)
+    public function mode($mode)
     {
-        $_ENV['mode'] = $mode;
+        $_ENV['ENV_MODE'] = $mode;
     }
 
 
@@ -291,7 +307,7 @@ class Context
      */
     public function in($mode)
     {
-        return ($_ENV['mode'] == $mode);
+        return ($_ENV['ENV_MODE'] == $mode);
     }
 
 
@@ -323,7 +339,7 @@ class Context
      */
     public function kupo()
     {
-        return 'o-&#949;(:o) ' . $this->dialog[array_rand($this->dialog)];
+        return 'o-&#949;(:o) ' . array_random($this->kupo);
     }
     
 } 

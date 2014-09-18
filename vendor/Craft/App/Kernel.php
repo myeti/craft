@@ -11,7 +11,7 @@
 namespace Craft\App;
 
 use Craft\Event;
-use Craft\Trace\Logger;
+use Craft\Debug\Logger;
 
 /**
  * Advanced Dispatcher :
@@ -41,8 +41,6 @@ class Kernel extends Dispatcher implements Event\Trigger
     public function plug(Service $service)
     {
         $service->listen($this);
-        Logger::info('Add service ' . get_class($service));
-
         return $this;
     }
 
@@ -56,36 +54,28 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     public function handle(Request $request = null)
     {
+        $response = null;
+        $error = null;
+
+        // resolve & execute request
         try {
-
-            // start
             $request = $this->start($request);
-
-            // execute request
             $response = $this->execute($request);
-
-            // send response & finish
-            return $this->respond($request, $response)->end($request, $response);
         }
-        // internal error
+        // catch internal event
         catch(Internal $e) {
-
-            // error caught
             $response = $this->internal($e, $request);
-
-            // send response & finish
-            return $this->respond($request, $response, $e)->end($request, $response);
         }
-        // normal error
+        // catch normal error
         catch(\Exception $e) {
-
-            // error caught
+            $error = $e;
             $response = $this->error($e, $request);
-
-            // send response & finish
-            return $this->respond($request, $response, $e)->end($request, $response);
         }
-
+        // output any response
+        finally {
+            $this->respond($request, $response, $error);
+            return $this->end($request, $response);
+        }
     }
 
 
@@ -140,12 +130,18 @@ class Kernel extends Dispatcher implements Event\Trigger
      */
     protected function respond(Request $request, Response $response, \Exception $e = null)
     {
+        // no response
+        if(!$response) {
+            Logger::info('No response to send');
+            return $this;
+        }
 
         // no error, apply filter
         if(!$e) {
             $this->fire('kernel.response', $request, $response);
             $log = 'Response ' . $response->code . ' sent';
         }
+        // had error, skip filter
         else {
             $log = 'Response ' . $response->code . ' sent with error(s)';
         }

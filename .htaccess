@@ -1,4 +1,4 @@
-SetEnv PHP_VER 5_4
+SetEnv PHP_VER 5_6
 
 <IfModule mod_rewrite.c>
     RewriteEngine On

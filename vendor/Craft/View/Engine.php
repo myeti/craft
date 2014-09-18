@@ -41,8 +41,8 @@ class Engine implements EngineInterface
         $this->assets = $assets ? rtrim($assets, '/') . '/' : url('/');
 
         // text helper
-        $this->set('e', '\Craft\Text\String::escape');
-        $this->set('t', '\Craft\Text\Lang::translate');
+        $this->set('e', '\Craft\Data\Text\String::escape');
+        $this->set('t', '\Craft\Data\Text\Lang::translate');
 
         // box helper
         $this->set('session', '\Craft\Box\Session::get');
@@ -129,13 +129,13 @@ class Engine implements EngineInterface
 
     /**
      * Css tag
-     * @param string $filename
+     * @param $files
      * @return string
      */
-    public function css($filename)
+    public function css(...$files)
     {
         $css = [];
-        foreach(func_get_args() as $file) {
+        foreach($files as $file) {
             $css[] = '<link type="text/css" href="' . $this->asset($file, '.css') . '" rel="stylesheet" />';
         }
         return implode("\n    ", $css) . "\n";
@@ -144,13 +144,13 @@ class Engine implements EngineInterface
 
     /**
      * Js tag
-     * @param string $filename
+     * @param $files
      * @return string
      */
-    public function js($filename)
+    public function js(...$files)
     {
         $js = [];
-        foreach(func_get_args() as $file) {
+        foreach($files as $file) {
             $js[] = '<script type="text/javascript" src="' . $this->asset($file, '.js')  . '"></script>';
         }
         return implode("\n    ", $js) . "\n";

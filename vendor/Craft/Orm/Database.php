@@ -10,7 +10,7 @@
  */
 namespace Craft\Orm;
 
-use Craft\Trace\Logger;
+use Craft\Debug\Logger;
 
 class Database
 {
@@ -48,12 +48,12 @@ class Database
 
     /**
      * Map entities
-     * @param string $entity
+     * @param $entities
      * @return $this
      */
-    public function map($entity)
+    public function map(...$entities)
     {
-        foreach(func_get_args() as $entity) {
+        foreach($entities as $entity) {
             $this->entities[$entity] = new Database\Entity($this, $entity);
             Logger::info('Entity ' . $entity . ' mapped in database');
         }

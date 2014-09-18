@@ -60,9 +60,9 @@ trait Delegate
      * @param mixed $params
      * @return int
      */
-    public function fire($event, $params = null)
+    public function fire($event, &...$params)
     {
-        return call_user_func_array([$this->channel, 'fire'], func_get_args());
+        return $this->channel->fire($event, ...$params);
     }
 
 } 

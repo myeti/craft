@@ -207,7 +207,9 @@ function array_filter_key(array $array, callable $callback)
 function array_random(array $array, $num = 1)
 {
     $keys = (array)array_rand($array, $num);
-    return array_intersect_key($array, $keys);
+    $results = array_intersect_key($array, $keys);
+
+    return ($num == 1) ? current($results) : $results;
 }
 
 
@@ -252,7 +254,7 @@ function array_sort(array $array, array $by)
     }
     $args[] = $array;
 
-    return call_user_func_array('array_multisort', $args);
+    return array_multisort(...$args);
 }
 
 

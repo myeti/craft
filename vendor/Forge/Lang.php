@@ -10,4 +10,4 @@
  */
 namespace Forge;
 
-abstract class Lang extends \Craft\Text\Lang {}
+abstract class Lang extends \Craft\Data\Text\Lang {}

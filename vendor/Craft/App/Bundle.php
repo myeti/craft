@@ -12,7 +12,7 @@ namespace Craft\App;
 
 use Craft\Box\Mog;
 use Craft\Event;
-use Craft\Map\RouterInterface;
+use Craft\Routing\RouterInterface;
 use Craft\View\EngineInterface;
 
 /**
@@ -32,14 +32,14 @@ class Bundle extends Kernel
         parent::__construct();
 
         // init built-in services
-        $this->plug(new Service\RouterService($router));
-        $this->plug(new Service\ResolverService);
-        $this->plug(new Service\AuthService);
-        $this->plug(new Service\RenderService($engine));
+        $this->plug(new Service\Routing($router));
+        $this->plug(new Service\Resolver);
+        $this->plug(new Service\Firewall);
+        $this->plug(new Service\Rendering($engine));
 
         // error handling : dev mode only
         if(Mog::in('dev')) {
-            $this->plug(new Service\WhoopsService);
+            $this->plug(new Service\Whoops);
         }
     }
 

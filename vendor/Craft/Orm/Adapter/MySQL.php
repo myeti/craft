@@ -11,7 +11,7 @@
 namespace Craft\Orm\Adapter;
 
 use Craft\Orm\Database;
-use Craft\Trace\Logger;
+use Craft\Debug\Logger;
 
 class MySQL extends Database
 {

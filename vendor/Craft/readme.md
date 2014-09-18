@@ -12,12 +12,12 @@ It only provides mere tools and libs, the rest is up to your creativity !
 - Craft\Error
 - Craft\Event
 - Craft\Log
-- Craft\Map
+- Craft\Routing
 - Craft\Orm
 - Craft\Pattern
-- Craft\Reflect
+- Craft\Kit
 - Craft\Remote
 - Craft\Storage
-- Craft\Text
+- Craft\Data\Text
 - Craft\View
 - Craft\Web

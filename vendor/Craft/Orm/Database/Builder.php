@@ -10,7 +10,7 @@
  */
 namespace Craft\Orm\Database;
 
-use Craft\Reflect\Meta;
+use Craft\Kit\Metadata;
 
 class Builder
 {
@@ -60,7 +60,7 @@ class Builder
         foreach($fields as $field => $null) {
 
             // resolve type
-            $type = Meta::property($entity, $field, 'var') ?: 'string';
+            $type = Metadata::property($entity, $field, 'var') ?: 'string';
 
             // define opts
             $opts = ['type' => trim($type)] + $this->defaults;
@@ -131,7 +131,7 @@ class Builder
     public static function resolve($entity)
     {
         if(!isset(static::$resolved[$entity])) {
-            static::$resolved[$entity] = Meta::object($entity, 'entity') ?: end(explode('\\', $entity));
+            static::$resolved[$entity] = Metadata::object($entity, 'entity') ?: end(explode('\\', $entity));
         }
 
         return static::$resolved[$entity];

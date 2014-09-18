@@ -15,7 +15,7 @@ use Countable;
 
 /**
  * Exposes a fluent interface for dealing with an ordered list
- * of stack-trace frames.
+ * of stack-Debug frames.
  */
 class FrameCollection implements ArrayAccess, IteratorAggregate, Serializable, Countable
 {
@@ -166,7 +166,7 @@ class FrameCollection implements ArrayAccess, IteratorAggregate, Serializable, C
     }
 
     /**
-     * Gets the innermost part of stack trace that is not the same as that of outer exception
+     * Gets the innermost part of stack Debug that is not the same as that of outer exception
      *
      * @param FrameCollection $parentFrames Outer exception frames to compare tail against
      * @return Frame[]

@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 namespace Craft\App;
+use Craft\Debug\Error\FileNotFound;
+use Craft\View\Engine;
 
 /**
  * The Response object contains
@@ -32,6 +34,9 @@ class Response
 
     /** @var string */
     public $content = '';
+
+    /** @var string */
+    public $halt = false;
 
     /** @var array */
     protected static $status = [
@@ -116,10 +121,49 @@ class Response
      * Set header
      * @param $name
      * @param $value
+     * @return $this
      */
     public function header($name, $value)
     {
         $this->headers[$name] = $value;
+        return $this;
+    }
+
+
+    /**
+     * Set format
+     * @param $format
+     * @return $this
+     */
+    public function format($format)
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+
+    /**
+     * Set code
+     * @param $code
+     * @return $this
+     */
+    public function code($code)
+    {
+        $this->code = $code;
+        return $this;
+    }
+
+
+    /**
+     * Set data
+     * @param $name
+     * @param $value
+     * @return $this
+     */
+    public function set($name, $value)
+    {
+        $this->data[$name] = $value;
+        return $this;
     }
 
 
@@ -176,6 +220,104 @@ class Response
         return isset(static::$status[$code])
             ? static::$status[$code]
             : false;
+    }
+
+
+    /**
+     * Generate 200 response
+     * @param string $content
+     * @return Response
+     */
+    public static function ok($content = null)
+    {
+        return new self($content);
+    }
+
+
+    /**
+     * Generate 404 response
+     * @param string $content
+     * @return Response
+     */
+    public static function notFound($content = null)
+    {
+        return new self($content, 404);
+    }
+
+
+    /**
+     * Generate 403 response
+     * @param string $content
+     * @return Response
+     */
+    public static function forbidden($content = null)
+    {
+        return new self($content, 403);
+    }
+
+
+    /**
+     * Generate json response
+     * @param array $data
+     * @return Response
+     */
+    public static function json(array $data)
+    {
+        $response = new self(json_encode($data, JSON_PRETTY_PRINT));
+        $response->format('application/json');
+
+        return $response;
+    }
+
+
+    /**
+     * Generate template response
+     * @param string $template
+     * @param array $data
+     * @return Response
+     */
+    public static function view($template, array $data = [])
+    {
+        return new self(Engine::make($template, $data));
+    }
+
+
+    /**
+     * Generate downloadable file response
+     * @param string $filename
+     * @throws \Craft\Debug\Error\FileNotFound
+     * @return Response
+     */
+    public static function download($filename)
+    {
+        // no file
+        if(!file_exists($filename)) {
+            throw new FileNotFound('File "' . $filename . '" not found.');
+        }
+
+        $response = new self(file_get_contents($filename));
+        $response->format('application/octet-stream');
+        $response->header('Content-Transfer-Encoding', 'Binary');
+        $response->header('Content-disposition', 'attachment; filename="' . basename($filename) . '"');
+
+        return $response;
+    }
+
+
+    /**
+     * Generate redirect response
+     * @param string $url
+     * @param bool $outside
+     * @return Response
+     */
+    public static function redirect($url, $outside = false)
+    {
+        $response = new self;
+        $response->code = 307;
+        $response->header('Location', $outside ? $url : url($url));
+        $response->halt = true;
+
+        return $response;
     }
 
 } 

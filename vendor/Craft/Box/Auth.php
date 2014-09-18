@@ -82,13 +82,13 @@ abstract class Auth
 
     /**
      * Singleton session instance
-     * @return Session\Storage
+     * @return Session\Native
      */
     protected static function storage()
     {
         static $instance;
         if(!$instance) {
-            $instance = new Session\Storage('app/auth');
+            $instance = new Session\Native('app/auth');
         }
 
         return $instance;

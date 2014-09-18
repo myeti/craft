@@ -10,40 +10,47 @@
  */
 namespace Craft\Cli;
 
-use Craft\Cli\Command\Welcome;
-
 class Console
 {
 
-    const VERSION = '0.9';
-
+    const VERSION = 0.9;
 
 	/** @var Command[] */
 	protected $commands = [];
 
-    /** @var Command */
-    protected $welcome;
-
 
     /**
-     * Define i&o
-     * @param $welcome
+     * Define cli interface
+     * @param array $commands
      */
-    public function __construct(Command $welcome = null)
+    public function __construct(array $commands = [])
     {
-        $this->welcome = $welcome ?: new Welcome('Welcome command');
+        foreach($commands as $command) {
+            $this->add($command);
+        }
     }
 
 
     /**
      * Register command
-     * @param $name
      * @param Command $command
      * @return $this
      */
-	public function add($name, Command $command)
+	public function add(Command $command)
 	{
-		$this->commands[$name] = $command;
+		$this->commands[$command->name] = $command;
+        return $this;
+	}
+
+
+    /**
+     * Register command
+     * @param Command $command
+     * @return $this
+     */
+	public function raw($name, $param = null, callable $command)
+	{
+		$this->commands[$command->name] = $command;
         return $this;
 	}
 

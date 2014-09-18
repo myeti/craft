@@ -12,7 +12,7 @@ namespace Craft\App\Bundle;
 
 use Craft\App\Bundle;
 use Craft\App\Service;
-use Craft\Map\Router;
+use Craft\Routing\ApiRouter;
 
 /**
  * Ready to use app
@@ -26,13 +26,13 @@ class Api extends Bundle
      */
     public function __construct(array $classes)
     {
-        $router = Router::annotations($classes);
-        $this->plug(new Service\RouterService($router));
+        $router = new ApiRouter($classes);
+        $this->plug(new Service\Routing($router));
 
-        $this->plug(new Service\ResolverService);
-        $this->plug(new Service\AuthService);
+        $this->plug(new Service\Resolver);
+        $this->plug(new Service\Firewall);
 
-        $this->plug(new Service\JsonService);
+        $this->plug(new Service\JsonOutput);
     }
 
 }

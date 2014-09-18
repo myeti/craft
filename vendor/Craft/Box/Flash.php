@@ -60,13 +60,13 @@ abstract class Flash
 
     /**
      * Singleton session instance
-     * @return Session\Storage
+     * @return Session\Native
      */
     protected static function storage()
     {
         static $instance;
         if(!$instance) {
-            $instance = new Session\Storage('app/flash');
+            $instance = new Session\Native('app/flash');
         }
 
         return $instance;

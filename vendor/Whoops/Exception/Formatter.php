@@ -13,10 +13,10 @@ class Formatter
      * Returns all basic information about the exception in a simple array
      * for further convertion to other languages
      * @param Inspector $inspector
-     * @param bool $shouldAddTrace
+     * @param bool $shouldAddDebug
      * @return array
      */
-    public static function formatExceptionAsDataArray(Inspector $inspector, $shouldAddTrace)
+    public static function formatExceptionAsDataArray(Inspector $inspector, $shouldAddDebug)
     {
         $exception = $inspector->getException();
         $response = array(
@@ -26,7 +26,7 @@ class Formatter
             'line'    => $exception->getLine()
         );
 
-        if($shouldAddTrace) {
+        if($shouldAddDebug) {
             $frames    = $inspector->getFrames();
             $frameData = array();
 
@@ -41,7 +41,7 @@ class Formatter
                 );
             }
 
-            $response['trace'] = $frameData;
+            $response['Debug'] = $frameData;
         }
 
         return $response;
@@ -56,7 +56,7 @@ class Formatter
         $plain .= $message;
         $plain .= '"'."\n\n";
 
-        $plain .= "Stacktrace:\n";
+        $plain .= "StackDebug:\n";
         foreach($frames as $i => $frame) {
             $plain .= "#". (count($frames) - $i - 1). " ";
             $plain .= $frame->getClass() ?: '';

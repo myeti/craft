@@ -36,10 +36,9 @@ abstract class Mog
      * Get path
      * @return string
      */
-    public static function path()
+    public static function path(...$args)
     {
-        $ctx = static::context();
-        return call_user_func_array([$ctx, 'path'], func_get_args());
+        return static::context()->path(...$args);
     }
 
 
@@ -197,10 +196,9 @@ abstract class Mog
      * Get url
      * @return string
      */
-    public static function url()
+    public static function url(...$args)
     {
-        $ctx = static::context();
-        return call_user_func_array([$ctx, 'url'], func_get_args());
+        return static::context()->url(...$args);
     }
 
 
@@ -476,9 +474,9 @@ abstract class Mog
      * @param string $mode
      * @return mixed
      */
-    public static function set($mode)
+    public static function mode($mode)
     {
-        static::context()->set($mode);
+        static::context()->mode($mode);
     }
 
 

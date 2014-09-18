@@ -42,12 +42,11 @@ class Entity
     /**
      * Add where clause
      * @param $expression
-     * @param mixed $value
      * @return $this
      */
-    public function where($expression, $value = null)
+    public function where($expression, ...$args)
     {
-        call_user_func_array([$this->query, 'where'], func_get_args());
+        $this->query->where($expression, ...$args);
         return $this;
     }
 

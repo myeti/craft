@@ -100,13 +100,13 @@ abstract class Session
 
     /**
      * Singleton session instance
-     * @return Session\Storage
+     * @return Session\Native
      */
     protected static function storage()
     {
         static $instance;
         if(!$instance) {
-            $instance = new Session\Storage('app/data');
+            $instance = new Session\Native('app/data');
         }
 
         return $instance;

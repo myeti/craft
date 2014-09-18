@@ -11,10 +11,11 @@
 namespace Craft\App;
 
 use Craft\Box\Mog;
+use Craft\Box\Mog\Context;
 
 /**
  * The Request object contains
- * all the data given from http
+ * all the data given from context
  */
 class Request
 {
@@ -37,6 +38,9 @@ class Request
     /** @var string */
     public $error;
 
+    /** @var Context */
+    public $ctx;
+
 
     /**
      * Init request
@@ -52,6 +56,7 @@ class Request
         $this->action = $action;
         $this->args = $args;
         $this->meta = $meta;
+        $this->ctx = Mog::context();
     }
 
 

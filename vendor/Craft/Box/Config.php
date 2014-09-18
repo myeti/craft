@@ -3,7 +3,7 @@
 namespace Craft\Box;
 
 use Craft\Data\Map;
-use Craft\Error\FileNotFound;
+use Craft\Debug\Error\FileNotFound;
 
 class Config
 {
@@ -31,10 +31,9 @@ class Config
      * @throws FileNotFound
      * @return mixed|mixed[]
      */
-    public static function get($path)
+    public static function get(...$args)
     {
         // multiple get
-        $args = func_get_args();
         if(count($args) > 1){
 
             $values = [];

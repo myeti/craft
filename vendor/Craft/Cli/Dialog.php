@@ -15,12 +15,12 @@ abstract class Dialog
 
     /**
      * Write message
-     * @param $message
+     * @param $args
      * @return $this
      */
-    public static function say($message)
+    public static function say(...$args)
     {
-        echo implode(' ', func_get_args());
+        echo implode(' ', $args);
     }
 
 

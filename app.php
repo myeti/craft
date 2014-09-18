@@ -8,20 +8,15 @@ require 'vendor/autoload.php';
 
 
 /**
- * First, tell the mog your application state
- * - dev, test or production -
- */
-Forge\Mog::set('dev');
-
-
-/**
  * Then, you might need to setup you database.
  * Here is how to use a SQLite local base :
  */
 
-Forge\Syn::SQLite(__APP__ . '/craft.db')    // or Syn::MySQL('dbname', [host, username, password])
-          ->map('My\Entity\User')           // map entity 'My\Model\User'
-          ->build();                        // build your models into your db
+use Craft\Orm;
+
+Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, username, password])
+         ->map('My\Entity\User')           // map entity 'My\Model\User'
+         ->build();                        // build your models into your db
 
 
 /**
@@ -30,7 +25,9 @@ Forge\Syn::SQLite(__APP__ . '/craft.db')    // or Syn::MySQL('dbname', [host, us
  * Or you can define env config /+lang/url, then you can retrieve with env('lang')
  */
 
-$router = new Forge\Router([
+use Craft\Routing;
+
+$router = new Routing\UrlRouter([
     '/'     => 'My\Logic\Front::hello',
     '/lost' => 'My\Logic\Front::lost',
     '/nope' => 'My\Logic\Front::nope'
@@ -42,24 +39,26 @@ $router = new Forge\Router([
  * your awesome design !
  */
 
-$engine = new Forge\Engine(__APP__ . '/views');
+use Craft\View;
+
+$engine = new View\Engine(__APP__ . '/views');
 
 
 /**
  * Create your application using these components
  */
 
-$app = new Forge\App($router, $engine);
+use Craft\App;
+
+$app = new App\Bundle($router, $engine);
 
 
 /**
  * Tell the app how to handle http errors (404 & 403)
  */
 
-use Craft\App\Response\Redirect;
-
-$app->on(404, new Redirect('/lost'));
-$app->on(403, new Redirect('/nope'));
+$app->on(404, App\Response\Event::redirect('/lost'));
+$app->on(403, App\Response\Event::redirect('/nope'));
 
 
 /**
