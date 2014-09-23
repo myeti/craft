@@ -6,7 +6,7 @@ It only provides mere tools and libs, the rest is up to your creativity !
 
 ## Quickstart
 
-All start in your `index.php` :
+Everything starts in your `index.php` :
 
 ```php
 <?php
