@@ -74,8 +74,10 @@ Let's manage your users, shall we ?
 ```php
 <?php
 
+use Craft\Box\Auth;
+
 // attempt a basic login
-if(Forge\Auth::basic($username, $password)) {
+if(Auth::basic($username, $password)) {
     // logged in
 }
 else {
@@ -83,11 +85,11 @@ else {
 }
 
 // or manually login the user
-Forge\Auth::login($rank, $user); // rank number, user object
+Auth::login($rank, $user); // rank number, user object
 
 // get rank or user
-$rank = Forge\Auth::rank();
-$user = Forge\Auth::user();
+$rank = Auth::rank();
+$user = Auth::user();
 
 ```
 
@@ -96,14 +98,16 @@ You want to keep some data in memory ?
 ```php
 <?php
 
+use Craft\Box\Session;
+
 // write
-Forge\Session::set('foo', 'bar');
+Session::set('foo', 'bar');
 
 // read
-$foo = Forge\Session::get('foo');
+$foo = Session::get('foo');
 
 // clear
-Forge\Session::drop('foo');
+Session::drop('foo');
 ```
 
 #### Simple, isn't it ?

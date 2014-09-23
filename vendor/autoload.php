@@ -23,9 +23,8 @@ $loader = new Craft\Kit\ClassLoader;
 $loader->autoload();
 
 $loader->add('Craft',  __DIR__ . '/Craft');
-$loader->add('Forge',  __DIR__ . '/Forge');
-$loader->add('Psr',    __DIR__ . '/Psr');
 $loader->add('Whoops', __DIR__ . '/Whoops');
+$loader->add('Psr',    __DIR__ . '/Psr');
 $loader->add('My',     __APP__);
 
 
