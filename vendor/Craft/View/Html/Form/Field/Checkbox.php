@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Form\Field;
+namespace Craft\View\Html\Form\Field;
 
-use Craft\View\Engine;
-use Craft\View\Form\Field;
+use Craft\View\Html\Engine;
+use Craft\View\Html\Form\Field;
 
-class Text extends Field
+class Checkbox extends Field
 {
 
     /**
@@ -22,7 +22,7 @@ class Text extends Field
      */
     public function input()
     {
-        return Engine::make(dirname(__DIR__) . '/templates/text.input', ['field' => $this]);
+        return Engine::make(dirname(__DIR__) . '/templates/checkbox.input', ['field' => $this]);
     }
 
 } 

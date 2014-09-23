@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Engine;
+namespace Craft\View\Template;
 
 use Craft\View\Engine;
 use Craft\Debug\Error\FileNotFound;
@@ -50,14 +50,14 @@ abstract class Sandbox
      * @param array $helpers
      * @throws FileNotFound
      */
-    public function __construct(Engine $engine, $template, array $data = [], array $sections = [], array $helpers = [])
+    public function __construct($template, array $data = [], array $sections = [], array $helpers = [], Engine $engine = null)
     {
         // error
         if(!file_exists($template)) {
             throw new FileNotFound('Template "' . $template . '" not found.');
         }
 
-        $this->engine = $engine;
+        $this->engine = $engine ?: new Engine(null);
         $this->template = $template;
         $this->data = $data;
         $this->sections = $sections;

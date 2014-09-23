@@ -34,7 +34,7 @@ class Engine implements EngineInterface
      * @param string $templates path
      * @param string $assets url
      */
-    public function __construct($templates, $assets = null)
+    public function __construct($templates = null, $assets = null)
     {
         // set directories
         $this->templates = rtrim($templates, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -93,7 +93,7 @@ class Engine implements EngineInterface
         $data = array_merge((array)$this, $data);
 
         // create template & compile
-        $template = new Engine\Template($this, $template, $data, $sections, $this->helpers);
+        $template = new Template($template, $data, $sections, $this->helpers, $this);
         $content = $template->compile();
 
         // layout ?

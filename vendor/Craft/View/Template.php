@@ -8,11 +8,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Form\Field;
+namespace Craft\View;
 
-use Craft\View\Form\Field;
-
-class String extends Field
+class Template extends Template\Sandbox
 {
-
+    // safe sandbox
 } 

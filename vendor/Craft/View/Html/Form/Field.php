@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Form;
+namespace Craft\View\Html\Form;
 
-use Craft\View\Engine;
+use Craft\View\Html\Engine;
 
 abstract class Field
 {
