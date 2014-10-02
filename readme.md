@@ -1,4 +1,5 @@
 # Craft 2.3
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/WickedYeti/Craft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Craft is a small & efficient PHP5.6 framework that helps you to quickly build webapps.
 It only provides mere tools and libs, the rest is up to your creativity !
