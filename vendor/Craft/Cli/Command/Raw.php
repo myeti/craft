@@ -7,8 +7,15 @@ use Craft\Cli\Command;
 class Raw extends Command
 {
 
+    /** @var string */
+    protected $name;
+
+    /** @var string */
+    protected $description;
+
     /** @var \Closure */
     protected $closure;
+
 
     /**
      * Setup raw command
@@ -23,11 +30,31 @@ class Raw extends Command
 
 
     /**
+     * Get command name
+     * @return string
+     */
+    public function name()
+    {
+        return $this->name;
+    }
+
+
+    /**
+     * Get command name
+     * @return string
+     */
+    public function description()
+    {
+        return $this->description;
+    }
+
+
+    /**
      * Attach action
      * @param callable $closure
      * @return $this
      */
-    public function execute(\Closure $closure)
+    public function execute(callable $closure)
     {
         $this->closure = $closure;
         return $this;
@@ -40,9 +67,9 @@ class Raw extends Command
      * @param object $options
      * @return mixed
      */
-    public function run($args, $options)
+    protected function run($args, $options)
     {
-        call_user_func($this->closure);
+        return call_user_func($this->closure);
     }
 
 }

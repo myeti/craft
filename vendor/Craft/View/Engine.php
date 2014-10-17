@@ -38,7 +38,7 @@ class Engine implements EngineInterface
     {
         // set directories
         $this->templates = rtrim($templates, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->assets = $assets ? rtrim($assets, '/') . '/' : @url('/');
+        $this->assets = $assets ? rtrim($assets, '/') . '/' : url('/');
 
         // text helper
         $this->set('e', '\Craft\Data\Text\String::escape');

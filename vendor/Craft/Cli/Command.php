@@ -13,17 +13,34 @@ namespace Craft\Cli;
 abstract class Command
 {
 
-    /** @var string */
-    public $name;
-
-    /** @var string */
-    public $description;
-
     /** @var Command\Argument[] */
     protected $args = [];
 
     /** @var Command\Option[] */
     protected $options = [];
+
+
+    /**
+     * Get command name
+     * @return string
+     */
+    abstract public function name();
+
+
+    /**
+     * Get command name
+     * @return string
+     */
+    abstract public function description();
+
+
+    /**
+     * Execute command
+     * @param object $args
+     * @param object $options
+     * @return mixed
+     */
+    abstract protected function run($args, $options);
 
 
     /**
@@ -143,14 +160,5 @@ abstract class Command
         // good, execute command
         return $this->run((object)$args, (object)$options);
     }
-
-
-    /**
-     * Execute command
-     * @param object $args
-     * @param object $options
-     * @return mixed
-     */
-    abstract public function run($args, $options);
 
 }

@@ -13,11 +13,8 @@ namespace Craft\Cli;
 class Console
 {
 
-    /** @var Command */
-    protected $entry;
-
-	/** @var Command[] */
-	protected $commands = [];
+    /** @var Command[] */
+    protected $commands = [];
 
 
     /**
@@ -26,6 +23,10 @@ class Console
      */
     public function __construct(array $commands = [])
     {
+        // add listing command
+        $this->set('list', null)->execute([$this, 'listing']);
+
+        // add user commands
         foreach($commands as $command) {
             $this->add($command);
         }
@@ -37,49 +38,36 @@ class Console
      * @param Command $commands
      * @return $this
      */
-	public function add(Command ...$commands)
-	{
+    public function add(Command ...$commands)
+    {
         foreach($commands as $command) {
-
-            // entry command
-            if(!$command->name) {
-                $this->entry = $command;
-            }
-            // stack command
-            else {
-                $this->commands[$command->name] = $command;
-            }
-
+            $this->commands[$command->name()] = $command;
         }
 
         return $this;
-	}
+    }
 
 
     /**
      * Create raw command
      * @param string $name
      * @param string $description
-     * @return $this
+     * @return Command\Raw
      */
-	public function &set($name, $description)
-	{
+    public function &set($name, $description)
+    {
         $command = new Command\Raw($name, $description);
-		$this->commands[$command->name] = $command;
+        $this->commands[$name] = $command;
         return $command;
-	}
+    }
 
 
     /**
      * Let's go !
      * @return bool
      */
-	public function run()
-	{
-        // add preset commands
-        $this->add(new Preset\EntryCommand);
-        $this->add(new Preset\ListCommand($this->commands));
-
+    public function run()
+    {
         // parse argv
         $argv = $_SERVER['argv'];
         array_shift($argv);
@@ -92,9 +80,10 @@ class Console
             $name = trim(array_shift($argv));
         }
 
-        // entry command
+        // entry point
         if(!$name) {
-            return $this->entry->valid($argv);
+            Console::say('Welcome to the Craft Cli !')->ln();
+            return true;
         }
 
         // unknown command
@@ -104,7 +93,32 @@ class Console
 
         // valid & run command
         return $this->commands[$name]->valid($argv);
-	}
+    }
+
+
+    /**
+     * List all registered commands
+     * @return bool
+     */
+    public function listing()
+    {
+        // get commands list
+        $commands = $this->commands;
+        unset($commands['list']);
+
+        // no commands
+        if(!$commands) {
+            Console::say('no registered commands yet')->ln();
+            return false;
+        }
+
+        // display commands
+        foreach($commands as $command){
+            Console::say($command->name(), "\t", $command->description())->ln();
+        }
+
+        return true;
+    }
 
 
     /**
