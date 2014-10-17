@@ -109,4 +109,14 @@ class ClassLoader
         return false;
     }
 
+
+    /**
+     * Get registered vendors
+     * @return array
+     */
+    public function vendors()
+    {
+        return $this->vendors;
+    }
+
 }

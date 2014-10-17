@@ -10,14 +10,14 @@
  */
 namespace Craft\App\Bundle;
 
-use Craft\App\Bundle;
+use Craft\App\Kernel;
 use Craft\App\Service;
 use Craft\Routing\ApiRouter;
 
 /**
  * Ready to use app
  */
-class Api extends Bundle
+class Api extends Kernel
 {
 
     /**

@@ -19,9 +19,9 @@ use Craft\Routing;
 
 // create your routes
 $router = new Routing\UrlRouter([
-    '/'     => 'My\Logic\Front::hello',
-    '/lost' => 'My\Logic\Front::lost',
-    '/nope' => 'My\Logic\Front::nope'
+    '/'     => 'App\Logic\Front::hello',
+    '/lost' => 'App\Logic\Front::lost',
+    '/nope' => 'App\Logic\Front::nope'
 ]);
 
 // define your template engine
@@ -51,7 +51,7 @@ You can use `Syn`, the inner orm, and map your own models :
 use Craft\Orm\Syn;
 
 Syn::MySQL('dbname')        // or Syn::SQLite(dbfile)
-    ->map('My\Entity\User')
+    ->map('App\Entity\User')
     ->build();              // deploy structure
 
 $users = User::all();
@@ -59,7 +59,7 @@ $users = User::all(['id =' => 10]); // or
 $users = User::get()->where('age =', 10)->all();
 
 $user = User::one(['id =' => 10]); // or
-$user = new My\Entity\User;
+$user = new App\Entity\User;
 $user->age = 15;
 
 User::save($user);

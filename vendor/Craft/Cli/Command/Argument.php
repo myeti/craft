@@ -5,27 +5,48 @@ namespace Craft\Cli\Command;
 class Argument
 {
 
+    const OPTIONAL = 1;
+    const REQUIRED = 2;
+
     /** @var string */
     public $name;
 
-    /** @var bool */
-    public $required = true;
+    /** @var int */
+    public $type = self::REQUIRED;
 
     /** @var mixed */
-    public $default;
+    public $value;
 
 
     /**
      * New argument
      * @param string $name
-     * @param bool $required
-     * @param mixed $default
+     * @param int $type
      */
-    public function __construct($name, $required = true, $default = null)
+    public function __construct($name, $type = self::REQUIRED)
     {
         $this->name = $name;
-        $this->required = $required;
-        $this->default = $default;
+        $this->type = $type;
+    }
+
+
+    /**
+     * Value is optional
+     * @return bool
+     */
+    public function isOptional()
+    {
+        return ($this->type === self::OPTIONAL);
+    }
+
+
+    /**
+     * Value is required
+     * @return bool
+     */
+    public function isRequired()
+    {
+        return ($this->type === self::REQUIRED);
     }
 
 } 

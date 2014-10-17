@@ -18,7 +18,7 @@ use Craft\Routing;
  */
 
 Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, username, password])
-         ->map('My\Entity\User')           // map entity 'My\Model\User'
+         ->map('App\Entity\User')           // map entity 'App\Model\User'
          ->build();                        // build your models into your db
 
 
@@ -29,9 +29,9 @@ Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, use
  */
 
 $router = new Routing\UrlRouter([
-    '/'     => 'My\Logic\Front::hello',
-    '/lost' => 'My\Logic\Front::lost',
-    '/nope' => 'My\Logic\Front::nope'
+    '/'     => 'App\Logic\Front::hello',
+    '/lost' => 'App\Logic\Front::lost',
+    '/nope' => 'App\Logic\Front::nope'
 ]);
 
 
@@ -47,7 +47,7 @@ $engine = new View\Engine(__APP__ . '/views');
  * Create your application using these components
  */
 
-$app = new App\Bundle($router, $engine);
+$app = new App\Kernel($router, $engine);
 
 
 /**

@@ -25,22 +25,24 @@ $loader->autoload();
 $loader->add('Craft',  __DIR__ . '/Craft');
 $loader->add('Whoops', __DIR__ . '/Whoops');
 $loader->add('Psr',    __DIR__ . '/Psr');
-$loader->add('My',     __APP__);
+$loader->add('App',     __APP__);
 
 
 /**
- * Set environment as dev
+ * Setup http mode
  */
+if(php_sapi_name() != 'cli') {
 
-Craft\Box\Mog::mode('dev');
+    // mode
+    Craft\Box\Mog::mode('dev');
 
 
-/**
- * Setup logger
- */
-Craft\Debug\Logger::register(
-    new Craft\Debug\Logger\FileLogger(__APP__ . '/logs')
-);
+    // logger
+    Craft\Debug\Logger::register(
+        new Craft\Debug\Logger\FileLogger(__APP__ . '/logs')
+    );
+
+}
 
 
 /**

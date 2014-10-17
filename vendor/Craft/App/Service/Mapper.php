@@ -60,21 +60,21 @@ class Mapper extends App\Service
         // mapping requested
         if(!empty($request->meta['map'])) {
 
-            // parse meta (@map My\Model:prop)
+            // parse meta (@map App\Model:prop)
             list($model, $property) = explode(':', $request->meta['map']);
 
             // get entity
             $entity = isset($this->seekers[$model])
                 ? call_user_func_array($this->seekers[$model], [$request, $property])
-                : Syn::one($model, [$property => $request->args[$property]]);
+                : Syn::one($model, [$property => $request->params[$property]]);
 
             // not found
             if(!$entity) {
-                throw new App\Internal\NotFound($model . '[' . $property . ':' . $request->args[$property] . '] not found.');
+                throw new App\Internal\NotFound($model . '[' . $property . ':' . $request->params[$property] . '] not found.');
             }
 
             // replace property with entity
-            $request->args[$property] = $entity;
+            $request->params[$property] = $entity;
             Logger::info('Model ' . $model . ' mapped into $' . $property);
         }
     }

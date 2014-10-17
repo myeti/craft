@@ -63,8 +63,10 @@ class Routing extends App\Service
         }
 
         // update request
-        $request->action = $route->action;
+        $request->route = $route;
         $request->args = $route->args;
+        $request->params = $route->args;
+        $request->action = $route->action;
 
         Logger::info('Route ' . $route->query . ' matched');
     }

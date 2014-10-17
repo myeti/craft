@@ -5,27 +5,37 @@ namespace Craft\Cli\Command;
 class Option extends Argument
 {
 
-    /** @var string */
-    public $name;
-
-    /** @var bool */
-    public $value = true;
-
-    /** @var mixed */
-    public $default;
+    const NO_VALUE = 0;
+    const MULTIPLE = 3;
 
 
     /**
-     * New argument
+     * New option
      * @param string $name
-     * @param bool $value
-     * @param mixed $default
+     * @param int $type
      */
-    public function __construct($name, $value = true, $default = null)
+    public function __construct($name, $type = self::OPTIONAL)
     {
         $this->name = $name;
-        $this->value = $value;
-        $this->default = $default;
+        $this->type = $type;
+    }
+
+    /**
+     * No value
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return ($this->type === self::NO_VALUE);
+    }
+
+    /**
+     * No has multiple values
+     * @return bool
+     */
+    public function isMultiple()
+    {
+        return ($this->type === self::MULTIPLE);
     }
 
 } 

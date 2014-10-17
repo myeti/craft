@@ -16,11 +16,11 @@ class Route
     /** @var string */
     public $query;
 
-    /** @var callable */
-    public $action;
-
     /** @var array */
     public $args = [];
+
+    /** @var callable */
+    public $action;
 
     /** @var array */
     public $rules = [];
@@ -32,7 +32,7 @@ class Route
      * @param mixed $action
      * @param array $rules
      */
-    public function __construct($query, $action, array $rules = [])
+    public function __construct($query = null, $action = null, array $rules = [])
     {
         $this->query = $query;
         $this->action = $action;

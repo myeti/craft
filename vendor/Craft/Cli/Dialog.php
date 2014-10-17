@@ -10,17 +10,42 @@
  */
 namespace Craft\Cli;
 
-abstract class Dialog
+class Dialog
 {
+
+    /** @var resource */
+    protected $input;
+
+
+    /**
+     * Open IO dialog
+     */
+    public function __construct()
+    {
+        $this->input = fopen('php://stdin', 'r');
+    }
+
 
     /**
      * Write message
-     * @param $args
-     * @return $this
+     * @param string $message
+     * @return Dialog
      */
-    public static function say(...$args)
+    public function say(...$message)
     {
-        echo implode(' ', $args);
+        echo implode(null, $message);
+        return $this;
+    }
+
+
+    /**
+     * Write new line
+     * @return Dialog
+     */
+    public function ln()
+    {
+        echo "\n";
+        return $this;
     }
 
 
@@ -28,26 +53,21 @@ abstract class Dialog
      * Get user input
      * @return string
      */
-    public static function read()
+    public function read()
     {
-        static $scanner;
-        if(!$scanner) {
-            $scanner = fopen('php://stdin', 'r');
-        }
-
-        $input = fgets($scanner);
-        return trim($input);
+        return trim(fgets($this->input));
     }
+
 
     /**
      * Ask question and get user answer
      * @param $message
      * @return string
      */
-    public static function ask($message)
+    public function ask(...$message)
     {
-        static::say($message);
-        return static::read();
+        $this->say(...$message)->say(' ');
+        return $this->read();
     }
 
 }

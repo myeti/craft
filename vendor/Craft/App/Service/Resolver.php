@@ -61,7 +61,7 @@ class Resolver extends App\Service
         // request as last param ?
         $params = $action->ref->getParameters();
         if($param = end($params) and $param->getClass() === App\Request::class) {
-            $request->args[] = &$request;
+            $request->params[] = &$request;
         }
 
         Logger::info('Request action resolved');

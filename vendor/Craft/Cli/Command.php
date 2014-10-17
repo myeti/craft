@@ -19,112 +19,138 @@ abstract class Command
     /** @var string */
     public $description;
 
-    /** @var string */
-    protected $params;
+    /** @var Command\Argument[] */
+    protected $args = [];
+
+    /** @var Command\Option[] */
+    protected $options = [];
 
 
     /**
-     * Setup command
+     * Add argument
      * @param string $name
-     * @param string $params
-     * @param string $description
+     * @param int $type
+     * @return $this
      */
-    public function __construct($name, $params, $description)
+    public function arg($name, $type = Command\Argument::REQUIRED)
     {
-        $this->name = $name;
-        $this->description = $description;
-        $this->params = $params;
+        $this->args[] = new Command\Argument($name, $type);
+        return $this;
     }
 
 
     /**
-     * Run command
-     * @param array $args
-     * @return string
+     * Add option
+     * @param string $name
+     * @param int $type
+     * @return $this
      */
-    public function run()
+    public function opt($name, $type = Command\Option::OPTIONAL)
     {
+        $this->options[] = new Command\Option($name, $type);
+        return $this;
+    }
+
+
+    /**
+     * Check if target command
+     */
+    public function valid(array $argv)
+    {
+        // init
+        $args = $options = [];
+
         // parse args
-        $skip = [];
-        foreach($args as $k => $argument) {
+        foreach($this->args as &$arg) {
 
-            // skip argument
-            if(in_array($k, $skip)) {
-                continue;
+            // init
+            $args[$arg->name] = false;
+
+            // is valid argument ?
+            $valid = (substr(current($argv), 0, 1) !== '-');
+
+            // is required & not valid argument
+            if($arg->isRequired() and (!$argv or !$valid)) {
+                Console::say('missing argument "', $arg->name, '"')->ln();
+                return false;
             }
-
-            // flag
-            if(substr($argument, 0, 2) == '--') {
-
-                // parse flag
-                $flag = substr($argument, 2);
-
-                // error
-                if(!isset($flags[$flag])) {
-                    return 'Unknown flag "' . $flag . '".';
-                }
-
-                $flags[$flag] = true;
+            // valid argument
+            elseif($valid) {
+                $args[$arg->name] = array_shift($argv);
             }
-            // parameter
-            elseif(substr($argument, 0, 1) == '-') {
-
-                // parse parameter
-                $parameter = substr($argument, 1);
-
-                // error
-                if(!isset($parameters[$parameter])) {
-                    return 'Unknown parameter "' . $parameter . '".';
-                }
-                elseif(!isset($args[$k + 1])) {
-                    return 'Parameter "' . $parameter . '" must have a value.';
-                }
-
-                // get value
-                $value = $args[$k + 1];
-                $skip[] = $k + 1;
-
-                $parameters[$parameter] = $value;
-
-            }
-            // argument
+            // not valid argument
             else {
-
-                // parse argument
-                list($argument, $value) = explode(' ', $argument);
-
-                // error
-                if(!isset($arguments[$argument])) {
-                    return 'Unknown argument "' . $argument . '".';
-                }
-                elseif(!$value) {
-                    return 'Argument "' . $argument . '" must have a value.';
-                }
-
-                $arguments[$argument] = $value;
-
+                break;
             }
 
-            // argument missing ?
-            foreach($arguments as $name => $val) {
-                if(!$val) {
-                    return 'Argument "' . $name . '" is missing.';
-                }
-            }
-
-            // execute command
-            $this->execute($arguments, $parameters, $flags);
         }
+
+        // prepare argv for options parsing
+        $query = implode('&', $argv);
+        foreach($this->options as $opt) {
+            if($opt->isMultiple()) {
+                $query = str_replace('-' . $opt->name, '-' . $opt->name . '[]', $query);
+            }
+        }
+        parse_str($query, $argv);
+
+        // parse options
+        foreach($this->options as &$opt) {
+
+            // init
+            $options[$opt->name] = $opt->isMultiple() ? array() : false;
+            $key = (strlen($opt->name) === 1 ? '-' : '--') . $opt->name;
+
+            // option exists
+            if(isset($argv[$key])) {
+
+                // clean
+                if($argv[$key] == '') {
+                    $argv[$key] = null;
+                }
+
+                // error : must not have a value
+                if($opt->isEmpty() and $argv[$key] != null) {
+                    Console::say('option "', $opt->name, '" accepts no value')->ln();
+                    return false;
+                }
+                // error : must have a value
+                elseif($opt->isRequired() and $argv[$key] == null) {
+                    Console::say('option "', $opt->name, '" must have a value')->ln();
+                    return false;
+                }
+                // error : must have one or many value
+                elseif($opt->isMultiple() and empty($argv[$key])) {
+                    Console::say('option "', $opt->name, '" must have at least one value')->ln();
+                    return false;
+                }
+
+                // valid value, set option
+                $options[$opt->name] = ($argv[$key] == null) ? true : $argv[$key];
+
+                unset($argv[$key]);
+            }
+
+        }
+
+        // unknown params
+        if($argv) {
+            $name = is_int(key($argv)) ? current($argv) : key($argv);
+            Console::say('unknown parameter "', $name, '"')->ln();
+            return false;
+        }
+
+        // good, execute command
+        return $this->run((object)$args, (object)$options);
     }
 
 
     /**
      * Execute command
-     * @param array $arguments
-     * @param array $parameters
-     * @param array $flags
+     * @param object $args
+     * @param object $options
      * @return mixed
      */
-    abstract public function execute(array $arguments, array $parameters, array $flags);
+    abstract public function run($args, $options);
 
 }

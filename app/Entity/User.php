@@ -1,6 +1,6 @@
 <?php
 
-namespace My\Entity;
+namespace App\Entity;
 
 /**
  * Hey ! This is your first model.

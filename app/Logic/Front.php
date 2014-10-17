@@ -4,7 +4,7 @@
  * This is a controller, a class that contains many actions.
  * Use it to write all your business layer !
  */
-namespace My\Logic;
+namespace App\Logic;
 
 /**
  * You can already define some metadata that will be applied

@@ -64,7 +64,7 @@ abstract class Auth
      * @param string $password
      * @return bool|mixed
      */
-    public static function basic($username, $password, $model = '\My\Model\User')
+    public static function basic($username, $password, $model = '\App\Model\User')
     {
         // prepare data
         $data = compact('username', 'password');

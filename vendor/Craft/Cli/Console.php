@@ -13,7 +13,8 @@ namespace Craft\Cli;
 class Console
 {
 
-    const VERSION = 0.9;
+    /** @var Command */
+    protected $entry;
 
 	/** @var Command[] */
 	protected $commands = [];
@@ -33,83 +34,133 @@ class Console
 
     /**
      * Register command
-     * @param Command $command
+     * @param Command $commands
      * @return $this
      */
-	public function add(Command $command)
+	public function add(Command ...$commands)
 	{
-		$this->commands[$command->name] = $command;
+        foreach($commands as $command) {
+
+            // entry command
+            if(!$command->name) {
+                $this->entry = $command;
+            }
+            // stack command
+            else {
+                $this->commands[$command->name] = $command;
+            }
+
+        }
+
         return $this;
 	}
 
 
     /**
-     * Register command
-     * @param Command $command
+     * Create raw command
+     * @param string $name
+     * @param string $description
      * @return $this
      */
-	public function raw($name, $param = null, callable $command)
+	public function &set($name, $description)
 	{
+        $command = new Command\Raw($name, $description);
 		$this->commands[$command->name] = $command;
-        return $this;
+        return $command;
 	}
 
 
     /**
      * Let's go !
-     * @param string $args
      * @return bool
      */
-	public function run($args = null)
+	public function run()
 	{
-		// parse query
-        if(!$args) {
-            $args = $_SERVER['argv'];
-            array_shift($args);
+        // add preset commands
+        $this->add(new Preset\EntryCommand);
+        $this->add(new Preset\ListCommand($this->commands));
+
+        // parse argv
+        $argv = $_SERVER['argv'];
+        array_shift($argv);
+
+        // resolve name
+        if(substr(current($argv), 0, 1) === '-') {
+            $name = null;
         }
         else {
-            $args = explode(' ', $args);
+            $name = trim(array_shift($argv));
         }
 
-        // get command name
-        $name = array_shift($args);
-
-        // welcome
-        if(!$name or $name[0] == '-') {
-
-            if($name) {
-                array_unshift($args, $name);
-            }
-
-            return $this->welcome->run($args);
+        // entry command
+        if(!$name) {
+            return $this->entry->valid($argv);
         }
 
-        // command not found
+        // unknown command
         if(!isset($this->commands[$name])) {
-            return $this->out('Unknown command "' . $name . '".');
+            Console::say('unknown command "', $name, '"');
         }
 
-        // execute command
-        $error = $this->commands[$name]->run($args);
-
-        // error
-        if($error) {
-            return $this->out($error);
-        }
-
-        return true;
+        // valid & run command
+        return $this->commands[$name]->valid($argv);
 	}
 
 
     /**
-     * Output message
-     * @param $message
-     * @return bool
+     * Write message
+     * @param string $message
+     * @return Dialog
      */
-    protected function out($message)
+    public static function say(...$message)
     {
-        Dialog::say($message);
-        return false;
+        return static::dialog()->say(...$message);
+    }
+
+
+    /**
+     * Write new line
+     * @return Dialog
+     */
+    public static function ln()
+    {
+        return static::dialog()->ln();
+    }
+
+
+    /**
+     * Get user input
+     * @return string
+     */
+    public static function read()
+    {
+        return static::dialog()->read();
+    }
+
+
+    /**
+     * Ask question and get user answer
+     * @param $message
+     * @return string
+     */
+    public static function ask(...$message)
+    {
+        return static::dialog()->ask(...$message);
+    }
+
+
+    /**
+     * Dialog instance
+     * @return Dialog
+     */
+    protected static function dialog()
+    {
+        static $dialog;
+        if(!$dialog) {
+            $dialog = new Dialog;
+        }
+
+        return $dialog;
     }
 
 }

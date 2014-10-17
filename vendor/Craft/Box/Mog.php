@@ -13,21 +13,16 @@ namespace Craft\Box;
 abstract class Mog
 {
 
-    /** @var Mog\Context */
+    /** @var Context */
     protected static $context;
 
 
     /**
      * Get root
-     * @param mixed $set
      * @return string
      */
-    public static function root($set = null)
+    public static function root()
     {
-        if(!is_null($set)) {
-            static::context()->root = $set;
-        }
-
         return static::context()->root;
     }
 
@@ -44,151 +39,61 @@ abstract class Mog
 
     /**
      * Get http code
-     * @param mixed $set
      * @return string
      */
-    public static function code($set = null)
+    public static function code()
     {
-        if(!is_null($set)) {
-            static::context()->code = $set;
-        }
-
-        return static::context()->code;
+        return static::context()->http->code;
     }
 
 
     /**
      * Is https
-     * @param mixed $set
      * @return string
      */
-    public static function https($set = null)
+    public static function secure()
     {
-        if(!is_null($set)) {
-            static::context()->https = $set;
-        }
-
-        return static::context()->https;
-    }
-
-
-    /**
-     * Is http
-     * @param mixed $set
-     * @return string
-     */
-    public static function http($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->http = $set;
-        }
-
-        return static::context()->http;
-    }
-
-
-    /**
-     * Get protocol
-     * @param mixed $set
-     * @return string
-     */
-    public static function protocol($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->protocol = $set;
-        }
-
-        return static::context()->protocol;
+        return static::context()->http->secure;
     }
 
 
     /**
      * Get method
-     * @param mixed $set
      * @return string
      */
-    public static function method($set = null)
+    public static function method()
     {
-        if(!is_null($set)) {
-            static::context()->method = $set;
-        }
-
-        return static::context()->method;
+        return static::context()->http->method;
     }
 
 
     /**
      * Is async
-     * @param mixed $set
      * @return string
      */
-    public static function async($set = null)
+    public static function ajax()
     {
-        if(!is_null($set)) {
-            static::context()->async = $set;
-        }
-
-        return static::context()->async;
-    }
-
-
-    /**
-     * Is sync
-     * @param mixed $set
-     * @return string
-     */
-    public static function sync($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->sync = $set;
-        }
-
-        return static::context()->sync;
+        return static::context()->http->ajax;
     }
 
 
     /**
      * Get browser
-     * @param mixed $set
      * @return string
      */
-    public static function browser($set = null)
+    public static function browser()
     {
-        if(!is_null($set)) {
-            static::context()->browser = $set;
-        }
-
         return static::context()->browser;
     }
 
 
     /**
      * Get mobile
-     * @param mixed $set
      * @return string
      */
-    public static function mobile($set = null)
+    public static function mobile()
     {
-        if(!is_null($set)) {
-            static::context()->mobile = $set;
-        }
-
         return static::context()->mobile;
-    }
-
-
-    /**
-     * Get host
-     * @param mixed $set
-     * @return string
-     */
-    public static function host($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->host = $set;
-        }
-
-        return static::context()->host;
     }
 
 
@@ -204,91 +109,61 @@ abstract class Mog
 
     /**
      * Get query
-     * @param mixed $set
      * @return mixed|string
      */
-    public static function query($set = null)
+    public static function query()
     {
-        if(!is_null($set)) {
-            static::context()->query = $set;
-        }
-
-        return static::context()->query;
+        return static::context()->url->query;
     }
 
 
     /**
      * Get base
-     * @param mixed $set
      * @return string
      */
-    public static function base($set = null)
+    public static function base()
     {
-        if(!is_null($set)) {
-            static::context()->base = $set;
-        }
-
-        return static::context()->base;
-    }
-
-
-    /**
-     * Get full url
-     * @param mixed $set
-     * @return string
-     */
-    public static function fullurl($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->fullurl = $set;
-        }
-
-        return static::context()->fullurl;
+        return static::context()->url->base;
     }
 
 
     /**
      * Get url from
-     * @param mixed $set
      * @return mixed|string
      */
-    public static function from($set = null)
+    public static function from()
     {
-        if(!is_null($set)) {
-            static::context()->from = $set;
-        }
-
-        return static::context()->from;
+        return static::context()->url->from;
     }
 
 
     /**
      * Get ip
-     * @param mixed $set
      * @return mixed|string
      */
-    public static function ip($set = null)
+    public static function ip()
     {
-        if(!is_null($set)) {
-            static::context()->ip = $set;
-        }
-
         return static::context()->ip;
     }
 
 
     /**
-     * Is local
-     * @param mixed $set
+     * Cli mode
      * @return bool
      */
-    public static function local($set = null)
+    public static function cli()
     {
-        if(!is_null($set)) {
-            static::context()->local = $set;
-        }
+        return static::context()->cli;
+    }
 
-        return static::context()->local;
+
+    /**
+     * Is local
+     * @return bool
+     */
+    public static function local()
+    {
+       return static::context()->local;
     }
 
 
@@ -343,9 +218,9 @@ abstract class Mog
      * @param  string $fallback
      * @return mixed
      */
-    public static function get($key, $fallback = null)
+    public static function arg($key, $fallback = null)
     {
-        return static::context()->get($key, $fallback);
+        return static::context()->arg($key, $fallback);
     }
 
 
@@ -353,9 +228,9 @@ abstract class Mog
      * $_GET values
      * @return array
      */
-    public static function gets()
+    public static function args()
     {
-        return static::context()->gets();
+        return static::context()->args;
     }
 
 
@@ -365,9 +240,9 @@ abstract class Mog
      * @param  string $fallback
      * @return mixed
      */
-    public static function post($key, $fallback = null)
+    public static function form($key, $fallback = null)
     {
-        return static::context()->post($key, $fallback);
+        return static::context()->form($key, $fallback);
     }
 
 
@@ -375,9 +250,9 @@ abstract class Mog
      * $_POST values
      * @return array
      */
-    public static function posts()
+    public static function forms()
     {
-        return static::context()->posts();
+        return static::context()->form;
     }
 
 
@@ -399,7 +274,7 @@ abstract class Mog
      */
     public static function files()
     {
-        return static::context()->files();
+        return static::context()->files;
     }
 
 
@@ -421,7 +296,7 @@ abstract class Mog
      */
     public static function servers()
     {
-        return static::context()->servers();
+        return static::context()->server;
     }
 
 
@@ -443,7 +318,7 @@ abstract class Mog
      */
     public static function headers()
     {
-        return static::context()->headers();
+        return static::context()->header;
     }
 
 
@@ -465,7 +340,7 @@ abstract class Mog
      */
     public static function envs()
     {
-        return static::context()->envs();
+        return static::context()->env;
     }
 
 
@@ -503,12 +378,12 @@ abstract class Mog
 
     /**
      * Create context wrapper
-     * @return Mog\Context
+     * @return Context
      */
     public static function context()
     {
         if(!static::$context) {
-            static::$context = new Mog\Context;
+            static::$context = Context::create();
         }
 
         return static::$context;

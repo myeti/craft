@@ -14,13 +14,12 @@ use Craft\App;
 use Craft\Box\Mog;
 use Craft\Debug\Error\FileNotFound;
 use Craft\Routing\UrlRouter;
-use Craft\View\Engine;
 use Craft\View\EngineInterface;
 
 /**
  * Ready to use app
  */
-class StaticApp extends App\Kernel
+class StaticApp extends App\Core
 {
 
     /**

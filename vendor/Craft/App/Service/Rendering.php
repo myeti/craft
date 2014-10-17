@@ -61,7 +61,7 @@ class Rendering extends App\Service
             Logger::info('Render template ' . $request->meta['render']);
         }
         // render json on async request
-        elseif(isset($request->meta['json']) and $request->meta['json'] == 'async' and Mog::async()) {
+        elseif(isset($request->meta['json']) and $request->meta['json'] == 'async' and Mog::ajax()) {
             $response = App\Response::json($response->data);
             Logger::info('Render json over ajax request');
         }

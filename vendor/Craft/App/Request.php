@@ -11,17 +11,18 @@
 namespace Craft\App;
 
 use Craft\Box\Mog;
-use Craft\Box\Mog\Context;
+use Craft\Box\Context;
+use Craft\Routing\Route;
 
 /**
  * The Request object contains
- * all the data given from context
+ * all the data given from route
  */
 class Request
 {
 
     /** @var float */
-    public $start;
+    public $time;
 
     /** @var string */
     public $query;
@@ -33,47 +34,30 @@ class Request
     public $action;
 
     /** @var array */
+    public $params = [];
+
+    /** @var array */
     public $meta = [];
+
+    /** @var Route */
+    public $route;
 
     /** @var string */
     public $error;
 
     /** @var Context */
-    public $ctx;
+    public $context;
 
 
     /**
-     * Init request
-     * @param string $query
-     * @param string|callable $action
-     * @param array $args
-     * @param array $meta
+     * New request
      */
-    public function __construct($query = null, $action = null, $args = [], $meta = [])
+    public function __construct($query = null)
     {
-        $this->start = microtime(true);
         $this->query = $query;
-        $this->action = $action;
-        $this->args = $args;
-        $this->meta = $meta;
-        $this->ctx = Mog::context();
-    }
-
-
-    /**
-     * Generate request from globals
-     */
-    public static function generate()
-    {
-        // resolve query (priority to pathinfo)
-        $query = Mog::server('PATH_INFO') ?: Mog::query();
-        $query = trim($query, '/');
-        if(!$query) {
-            $query = '/';
-        }
-
-        // create request
-        return new self($query);
+        $this->route = new Route;
+        $this->time = microtime(true);
+        $this->context = Mog::context();
     }
 
 } 

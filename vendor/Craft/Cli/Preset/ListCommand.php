@@ -2,31 +2,47 @@
 
 namespace Craft\Cli\Preset;
 
+use Craft\Cli\Console;
 use Craft\Cli\Command;
 
 class ListCommand extends Command
 {
 
+    /** @var string */
+    public $name = 'list';
+
+    /** @var Command[] */
+    protected $list;
+
+
     /**
-     * Register arguments
-     * @return mixed
+     * Init list
+     * @param array $list
      */
-    protected function register()
+    public function __construct(array $list)
     {
-        // TODO: Implement register() method.
+        $this->list = $list;
+        unset($this->list[$this->name]);
     }
 
 
     /**
      * Execute command
-     * @param array $arguments
-     * @param array $parameters
-     * @param array $flags
+     * @param object $args
+     * @param object $options
      * @return mixed
      */
-    public function execute(array $arguments, array $parameters, array $flags)
+    public function run($args, $options)
     {
-        // TODO: Implement execute() method.
+        // no commands
+        if(!$this->list) {
+            Console::say('no registered commands yet')->ln();
+        }
+        else {
+            foreach($this->list as $command){
+                Console::say($command->name, "\t", $command->description)->ln();
+            }
+        }
     }
 
 }
