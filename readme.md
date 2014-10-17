@@ -28,7 +28,7 @@ $router = new Routing\UrlRouter([
 $engine = new View\Engine(__APP__ . '/views');
 
 // forge your app with these components
-$app = new App\Bundle($router, $engine);
+$app = new App\Kernel($router, $engine);
 
 // catch 404
 $app->on(404, App\Event::redirect('/lost'));
