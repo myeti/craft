@@ -16,7 +16,11 @@
  */
 function classname($object)
 {
-    $segments = explode('\\', get_class($object));
+    if(is_object($object)) {
+        $object = get_class($object);
+    }
+
+    $segments = explode('\\', $object);
     return end($segments);
 }
 

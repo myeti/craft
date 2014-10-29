@@ -10,7 +10,7 @@
  */
 namespace Craft\Debug\Error;
 
-class NotImplemented extends \BadMethodCallException
+class NotImplemented extends \RuntimeException
 {
 
 } 

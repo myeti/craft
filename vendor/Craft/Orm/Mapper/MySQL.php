@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Orm\Adapter;
+namespace Craft\Orm\Mapper;
 
-use Craft\Orm\Database;
 use Craft\Debug\Logger;
+use Craft\Orm\Mapper;
 
-class MySQL extends Database
+class MySQL extends Mapper
 {
 
     /**

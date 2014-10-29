@@ -10,43 +10,40 @@
  */
 namespace Craft\Orm;
 
-use Craft\Orm\Adapter\MySQL;
-use Craft\Orm\Adapter\SQLite;
-
 abstract class Syn
 {
 
     /** DB priority */
-    const MASTER = 'master.db';
-    const SLAVE = 'slave.db';
+    const MASTER = 'master';
+    const SLAVE = 'slave';
 
-    /** @var Database[] */
-    protected static $dbs = [];
+    /** @var Mapper[] */
+    protected static $mappers = [];
 
     /** @var int */
     protected static $use = self::MASTER;
 
 
     /**
-     * Load database as master
-     * @param Database $db
+     * Plug custom mapper
+     * @param Mapper $mapper
      * @param string $as
-     * @return Database
+     * @return Mapper
      */
-    public static function load(Database $db, $as = self::MASTER)
+    public static function load(Mapper $mapper, $as = self::MASTER)
     {
-        static::$dbs[$as] = $db;
-        return static::db();
+        static::$mappers[$as] = $mapper;
+        return static::mapper();
     }
 
 
     /**
-     * Get database
+     * Get mapper
      * @param string $as
      * @throws \LogicException
-     * @return Database
+     * @return Mapper
      */
-    public static function db($as = null)
+    public static function mapper($as = null)
     {
         // set db
         if($as) {
@@ -54,33 +51,38 @@ abstract class Syn
         }
 
         // no db
-        if(!isset(static::$dbs[static::$use])) {
-            throw new \LogicException('No database [' . static::$use . '] loaded.');
+        if(!isset(static::$mappers[static::$use])) {
+            throw new \LogicException('No mapper [' . static::$use . '] loaded.');
         }
 
-        return static::$dbs[static::$use];
+        return static::$mappers[static::$use];
     }
 
 
     /**
      * Map entities to models
      * @param array $models
-     * @return Database
+     * @return Mapper
      */
     public static function map(array $models)
     {
-        return static::db()->map($models);
+        return static::mapper()->map($models);
     }
 
 
     /**
      * Get entity
      * @param $entity
-     * @return Database\Entity
+     * @return Entity
      */
     public static function get($entity)
     {
-        return static::db()->get($entity);
+        // model
+        if(class_exists($entity)) {
+            return static::mapper()->model($entity);
+        }
+
+        return static::mapper()->entity($entity);
     }
 
 
@@ -92,31 +94,9 @@ abstract class Syn
      * @param null $limit
      * @return array
      */
-    public static function all($entity, array $where = [], $sort = null, $limit = null)
+    public static function find($entity, array $where = [], $sort = null, $limit = null)
     {
-        $db = static::db()->get($entity);
-
-        foreach($where as $expression => $value) {
-            $db->where($expression, $value);
-        }
-
-        if($sort and is_array($sort)) {
-            foreach($sort as $field => $sorting) {
-                $db->sort($field, $sorting);
-            }
-        }
-        elseif($sort) {
-            $db->sort($sort);
-        }
-
-        if($limit and is_array($limit)) {
-            $db->limit($limit[0], $limit[1]);
-        }
-        elseif($limit) {
-            $db->limit($limit);
-        }
-
-        return $db->all();
+        return static::get($entity)->find($where, $sort, $limit);
     }
 
 
@@ -128,20 +108,7 @@ abstract class Syn
      */
     public static function one($entity, $where = [])
     {
-        $db = static::db()->get($entity);
-
-        // id
-        if(is_string($where)) {
-            $db->where('id', $where);
-        }
-        // where
-        elseif(is_array($where)) {
-            foreach($where as $expression => $value) {
-                $db->where($expression, $value);
-            }
-        }
-
-        return $db->one();
+        return static::get($entity)->one($where);
     }
 
 
@@ -153,18 +120,7 @@ abstract class Syn
      */
     public static function save($entity, $data)
     {
-        // parse object
-        if(is_object($data)) {
-            $data = get_object_vars($data);
-        }
-
-        // insert
-        if(empty($data['id'])) {
-            return static::db()->get($entity)->add($data);
-        }
-
-        // update
-        return static::db()->get($entity)->where('id', $data['id'])->set($data);
+        return static::get($entity)->save($data);
     }
 
 
@@ -176,20 +132,18 @@ abstract class Syn
      */
     public static function drop($entity, $where)
     {
-        $db = static::db()->get($entity);
+        return static::get($entity)->drop($where);
+    }
 
-        // id
-        if(is_string($where)) {
-            $db->where('id', $where);
-        }
-        // where
-        elseif(is_array($where)) {
-            foreach($where as $expression => $value) {
-                $db->where($expression, $value);
-            }
-        }
 
-        return $db->drop();
+    /**
+     * Clear entity
+     * @param $entity
+     * @return int
+     */
+    public static function clear($entity)
+    {
+        return static::get($entity)->clear();
     }
 
 
@@ -197,30 +151,30 @@ abstract class Syn
      * Setup mysql
      * @param string $dbname
      * @param array $config
-     * @return Database
+     * @return Mapper\MySQL
      */
     public static function MySQL($dbname, array $config = [])
     {
         // create db
-        $db = new MySQL($dbname, $config);
-        static::load($db);
+        $mapper = new Mapper\MySQL($dbname, $config);
+        static::load($mapper);
 
-        return $db;
+        return $mapper;
     }
 
 
     /**
-     * Setup mysql
+     * Setup sqlite
      * @param string $filename
-     * @return Database
+     * @return Mapper\SQLite
      */
     public static function SQLite($filename)
     {
         // create db
-        $db = new SQLite($filename);
-        static::load($db);
+        $mapper = new Mapper\SQLite($filename);
+        static::load($mapper);
 
-        return $db;
+        return $mapper;
     }
 
 }

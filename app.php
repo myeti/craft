@@ -18,7 +18,7 @@ use Craft\Routing;
  */
 
 Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, username, password])
-         ->map('App\Entity\User')           // map entity 'App\Model\User'
+         ->map('App\Entity\User')          // map entity 'App\Model\User'
          ->build();                        // build your models into your db
 
 

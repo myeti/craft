@@ -20,8 +20,8 @@ abstract class Auth
      */
     public static function login($rank = 1, $user = null)
     {
-        static::storage()->set('rank', $rank);
-        static::storage()->set('user', $user);
+        static::provider()->set('rank', $rank);
+        static::provider()->set('user', $user);
     }
 
 
@@ -32,7 +32,7 @@ abstract class Auth
      */
     public static function rank($compare = null)
     {
-        $rank = static::storage()->get('rank', 0);
+        $rank = static::provider()->get('rank', 0);
         return is_null($compare) ? $rank : ($compare >= $rank);
     }
 
@@ -43,7 +43,7 @@ abstract class Auth
      */
     public static function user()
     {
-        return static::storage()->get('user');
+        return static::provider()->get('user');
     }
 
 
@@ -52,8 +52,8 @@ abstract class Auth
      */
     public static function logout()
     {
-        static::storage()->drop('rank');
-        static::storage()->drop('user');
+        static::provider()->drop('rank');
+        static::provider()->drop('user');
     }
 
 
@@ -84,7 +84,7 @@ abstract class Auth
      * Singleton session instance
      * @return Session\Native
      */
-    protected static function storage()
+    protected static function provider()
     {
         static $instance;
         if(!$instance) {

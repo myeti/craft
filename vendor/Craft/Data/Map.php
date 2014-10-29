@@ -90,7 +90,7 @@ class Map extends \ArrayObject implements ProviderInterface
      */
     public static function of(array &$input)
     {
-        return new self($input);
+        return new static($input);
     }
 
 }

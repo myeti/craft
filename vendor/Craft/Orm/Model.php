@@ -13,11 +13,12 @@ namespace Craft\Orm;
 trait Model
 {
 
+
     /**
      * Get entity
-     * @return Database\Entity
+     * @return Entity
      */
-    public static function get()
+    public static function query()
     {
         return Syn::get(get_called_class());
     }
@@ -30,18 +31,18 @@ trait Model
      * @param mixed $limit
      * @return static[]
      */
-    public static function all(array $where = [], $sort = null, $limit = null)
+    public static function find(array $where = [], $sort = null, $limit = null)
     {
-        return Syn::all(get_called_class(), $where, $sort, $limit);
+        return Syn::find(get_called_class(), $where, $sort, $limit);
     }
 
 
     /**
      * Get one entity
-     * @param mixed $where
+     * @param $where
      * @return static
      */
-    public static function one($where = [])
+    public static function one($where)
     {
         return Syn::one(get_called_class(), $where);
     }
@@ -60,12 +61,22 @@ trait Model
 
     /**
      * Drop entity
-     * @param $id
+     * @param $where
      * @return int
      */
-    public static function drop($id)
+    public static function drop($where)
     {
-        return Syn::drop(get_called_class(), $id);
+        return Syn::drop(get_called_class(), $where);
+    }
+
+
+    /**
+     * Clear entity
+     * @return int
+     */
+    public static function clear()
+    {
+        return Syn::clear(get_called_class());
     }
 
 
@@ -78,7 +89,7 @@ trait Model
      */
     protected function _many($entity, $foreign, $local = 'id')
     {
-        return Syn::get($entity)->where($foreign, $this->{$local})->all();
+        return Syn::get($entity)->read()->where($foreign, $this->{$local})->find();
     }
 
 
@@ -91,7 +102,7 @@ trait Model
      */
     protected function _one($entity, $local, $foreign = 'id')
     {
-        return Syn::get($entity)->where($foreign, $this->{$local})->one();
+        return Syn::get($entity)->read()->where($foreign, $this->{$local})->one();
     }
 
 } 
