@@ -15,10 +15,10 @@ require 'vendor/autoload.php';
 
 use Craft\App;
 use Craft\View;
-use Craft\Routing;
+use Craft\Router;
 
 // create your routes
-$router = new Routing\UrlRouter([
+$router = new Router\Urls([
     '/'     => 'App\Logic\Front::hello',
     '/lost' => 'App\Logic\Front::lost',
     '/nope' => 'App\Logic\Front::nope'
@@ -28,13 +28,15 @@ $router = new Routing\UrlRouter([
 $engine = new View\Engine(__APP__ . '/views');
 
 // forge your app with these components
-$app = new App\Kernel($router, $engine);
+$app = new App\Web($router, $engine);
 
 // catch 404
-$app->on(404, App\Event::redirect('/lost'));
+$app->on(404, function($r, App\Response &$response){
+    $response = App\Response::redirect('/lost');
+});
 
 // let's go !
-$app->handle();
+$app->run();
 ```
 
 You can add params to your url : `/url/:with/:param`, your method will receive `$with` and `$param`.
@@ -54,9 +56,9 @@ Syn::MySQL('dbname')        // or Syn::SQLite(dbfile)
     ->map('App\Entity\User')
     ->build();              // deploy structure
 
-$users = User::all();
-$users = User::all(['id =' => 10]); // or
-$users = User::get()->where('age =', 10)->all();
+$users = User::find();
+$users = User::find(['id =' => 10]); // or
+$users = User::query()->read()->where('age =', 10)->find();
 
 $user = User::one(['id =' => 10]); // or
 $user = new App\Entity\User;
@@ -64,7 +66,7 @@ $user->age = 15;
 
 User::save($user);
 
-User::get()->where('id =', 2)->drop();
+User::query()->drop()->where('id =', 2)->apply();
 ```
 
 ## Session & Auth
