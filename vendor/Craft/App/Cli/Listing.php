@@ -1,10 +1,10 @@
 <?php
 
-namespace Craft\App\Console;
+namespace Craft\App\Cli;
 
-use Craft\App\Console;
+use Craft\App\Cli;
 
-class Listing extends  Console\Command
+class Listing extends  Cli\Command
 {
 
     /** @var string */
@@ -33,10 +33,10 @@ class Listing extends  Console\Command
     public function run($args, $options)
     {
         if(!$this->commands) {
-            Console::say('no command registered...')->ln();
+            Cli::say('no command registered...')->ln();
         }
         else {
-            Console::say('registered commands :')->ln();
+            Cli::say('registered commands :')->ln();
             foreach($this->commands as $name => $command) {
 
                 // get description
@@ -45,7 +45,13 @@ class Listing extends  Console\Command
                     : get_class_vars($command)['description'];
 
                 // display line
-                Console::say('- ' . $name . "\t\t" . $desc)->ln();
+                $offset = strlen($name);
+                $offset = 15 - $offset;
+                if($offset <= 4) {
+                    $offset = 4;
+                }
+
+                Cli::say('- ' . $name . str_repeat(' ', $offset) . $desc)->ln();
             }
         }
     }

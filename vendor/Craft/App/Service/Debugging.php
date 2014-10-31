@@ -10,7 +10,7 @@ use Craft\Debug\Logger;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 
-class Whoops extends App\Service
+class Debugging extends App\Service
 {
 
     /** @var Run */

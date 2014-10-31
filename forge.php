@@ -21,7 +21,7 @@ $router = new Router\Basic([
 /**
  * Create your application using these components
  */
-$app = new App\Console($router);
+$app = new App\Cli($router);
 
 
 /**

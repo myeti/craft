@@ -14,11 +14,11 @@ interface Renderer
 {
 
     /**
-     * Render template using data
-     * @param string $template
+     * Render content
+     * @param mixed $content
      * @param array $data
      * @return string
      */
-    public function render($template, $data = []);
+    public function render($content, $data = null);
 
 } 

@@ -22,21 +22,14 @@ class Api extends Web
     /**
      * Ready-to-use app
      * @param Router\Seeker $router
-     * @param View\Renderer $engine
      */
-    public function __construct(Router\Seeker $router, View\Renderer $engine = null)
+    public function __construct(Router\Seeker $router)
     {
         // init built-in services
         $this->plug(new Service\Routing($router));
-        $this->plug(new Service\Resolver);
+        $this->plug(new Service\Resolving);
         $this->plug(new Service\Firewall);
-
-        // output
-        $renderer = $engine
-            ? new Service\Rendering($engine)
-            : new Service\JsonOutput;
-
-        $this->plug($renderer);
+        $this->plug(new Service\Output('json'));
     }
 
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Craft\App\Console\Command;
+namespace Craft\App\Cli\Command;
 
-use Craft\App\Console\Command;
+use Craft\App\Cli\Command;
 
 class Raw extends Command
 {

@@ -2,9 +2,9 @@
 
 namespace App\Cli;
 
-use Craft\App\Console;
+use Craft\App\Cli;
 
-class Deploy extends  Console\Command
+class Deploy extends  Cli\Command
 {
 
     /** @var string */
@@ -18,7 +18,7 @@ class Deploy extends  Console\Command
      */
     public function run($args, $options)
     {
-        Console::say('Not implement yet')->ln();
+        Cli::say('Not implement yet')->ln();
     }
 
 }

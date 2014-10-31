@@ -18,7 +18,7 @@ use Craft\Debug\Logger;
 /**
  * Resolve action and read metadata.
  */
-class Resolver extends App\Service
+class Resolving extends App\Service
 {
 
     /** @var InjectorInterface */

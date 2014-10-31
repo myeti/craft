@@ -19,7 +19,7 @@ use Craft\Debug\Logger;
  *
  * Needs Service\RequestResolver
  */
-class Mapper extends App\Service
+class Mapping extends App\Service
 {
 
     /** @var callable[] */

@@ -2,9 +2,9 @@
 
 namespace App\Cli;
 
-use Craft\App\Console;
+use Craft\App\Cli;
 
-class Hello extends  Console\Command
+class Hello extends  Cli\Command
 {
 
     /** @var string */
@@ -18,7 +18,7 @@ class Hello extends  Console\Command
      */
     public function run($args, $options)
     {
-        Console::say('Hello you :D !')->ln();
+        Cli::say('Hello you :D !')->ln();
     }
 
 }

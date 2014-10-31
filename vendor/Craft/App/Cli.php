@@ -17,7 +17,7 @@ use Craft\Box\Mog;
 /**
  * Ready to use app
  */
-class Console extends Kernel
+class Cli extends Kernel
 {
 
     /**
@@ -28,14 +28,14 @@ class Console extends Kernel
     {
         // init built-in services
         $this->plug(new Service\Routing($router));
-        $this->plug(new Service\CliWrapper($router));
+        $this->plug(new Service\CliWrapping($router));
     }
 
 
     /**
      * Write message
      * @param string $message
-     * @return Console\Dialog
+     * @return Cli\Dialog
      */
     public static function say(...$message)
     {
@@ -45,7 +45,7 @@ class Console extends Kernel
 
     /**
      * Write new line
-     * @return Console\Dialog
+     * @return Cli\Dialog
      */
     public static function ln()
     {
@@ -76,13 +76,13 @@ class Console extends Kernel
 
     /**
      * Dialog instance
-     * @return Console\Dialog
+     * @return Cli\Dialog
      */
     protected static function dialog()
     {
         static $dialog;
         if(!$dialog) {
-            $dialog = new Console\Dialog;
+            $dialog = new Cli\Dialog;
         }
 
         return $dialog;

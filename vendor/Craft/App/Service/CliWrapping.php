@@ -19,7 +19,7 @@ use Craft\Router;
  *
  * Needs Service\RequestResolver
  */
-class CliWrapper extends App\Service
+class CliWrapping extends App\Service
 {
 
     /**
@@ -35,8 +35,8 @@ class CliWrapper extends App\Service
         }
 
         // set landing & listing command
-        $router->add(new Router\Route(null, new App\Console\Landing));
-        $router->add(new Router\Route('list', new App\Console\Listing($commands)));
+        $router->add(new Router\Route(null, new App\Cli\Landing));
+        $router->add(new Router\Route('list', new App\Cli\Listing($commands)));
     }
 
 
@@ -86,7 +86,7 @@ class CliWrapper extends App\Service
         $args = $options = [];
         $argv = $request->args;
 
-        /** @var App\Console\Command $command */
+        /** @var App\Cli\Command $command */
         $command = $request->action;
         if(!is_object($command)) {
             $command = new $command;
@@ -179,7 +179,7 @@ class CliWrapper extends App\Service
      */
     public function onNotFound(App\Request $request)
     {
-        App\Console::say('unknown command "', $request->query, '"')->ln();
+        App\Cli::say('unknown command "', $request->query, '"')->ln();
     }
 
 
@@ -189,7 +189,7 @@ class CliWrapper extends App\Service
      */
     public function onBadRequest(App\Request $request, App\Response $response, App\Internal $e)
     {
-        App\Console::say($e->getMessage())->ln();
+        App\Cli::say($e->getMessage())->ln();
     }
 
 }

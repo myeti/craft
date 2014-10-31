@@ -29,13 +29,13 @@ class Web extends Kernel
     {
         // init built-in services
         $this->plug(new Service\Routing($router));
-        $this->plug(new Service\Resolver);
+        $this->plug(new Service\Resolving);
         $this->plug(new Service\Firewall);
-        $this->plug(new Service\Rendering($engine));
+        $this->plug(new Service\Templating($engine));
 
         // error handling : dev mode only
         if(Mog::in('dev')) {
-            $this->plug(new Service\Whoops);
+            $this->plug(new Service\Debugging);
         }
     }
 

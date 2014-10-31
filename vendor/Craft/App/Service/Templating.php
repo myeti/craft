@@ -21,7 +21,7 @@ use Craft\Debug\Logger;
  *
  * Needs Service\RequestResolver
  */
-class Rendering extends App\Service
+class Templating extends App\Service
 {
 
     /** @var View\Renderer */
