@@ -2,8 +2,10 @@
 
 namespace Craft\Debug\Logger;
 
+use Craft\Box\Mog;
 use Craft\Debug\Error\DirectoryNotFound;
 use Psr\Log\AbstractLogger;
+use Psr\Log\LogLevel;
 
 class FileLogger extends AbstractLogger
 {
@@ -25,14 +27,12 @@ class FileLogger extends AbstractLogger
             throw new DirectoryNotFound('Directory "' . $directory . '" not found.');
         }
 
-        // current date
-        $date = date('Y-m-d');
-
         // open file
-        $this->file = fopen($directory . $date . '.logs', 'a+');
+        $filename = Mog::sapi() . '-' . date('Y-m-d') . '.log';
+        $this->file = fopen($directory . $filename, 'a+');
 
         // new session
-        fwrite($this->file, date('Y-m-d H:i:s') . ' Hello :)' . "\n");
+        $this->log(LogLevel::INFO, 'New session');
     }
 
 
@@ -46,7 +46,11 @@ class FileLogger extends AbstractLogger
      */
     public function log($level, $message, array $context = [])
     {
-        $string = date('Y-m-d H:i:s') . ' [' . $level . '] ' . $message;
+        $string = '[' . date('Y-m-d H:i:s') . '] ';
+        if($level != LogLevel::INFO) {
+            $string .= strtoupper($level) . ' : ';
+        }
+        $string .= $message;
         fwrite($this->file, $string . "\n");
     }
 

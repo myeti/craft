@@ -10,7 +10,7 @@
  */
 namespace Craft\View;
 
-class Engine implements EngineInterface
+class Engine implements Renderer
 {
 
     /** @var string */

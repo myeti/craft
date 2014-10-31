@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Routing;
+namespace Craft\Router;
 
-class UrlRouter implements RouterInterface
+class Urls implements Seeker
 {
 
     /** @var Route[] */

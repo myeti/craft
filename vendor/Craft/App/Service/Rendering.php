@@ -24,15 +24,15 @@ use Craft\Debug\Logger;
 class Rendering extends App\Service
 {
 
-    /** @var View\EngineInterface */
+    /** @var View\Renderer */
     protected $engine;
 
 
     /**
      * Setup engine
-     * @param View\EngineInterface $engine
+     * @param View\Renderer $engine
      */
-    public function __construct(View\EngineInterface $engine)
+    public function __construct(View\Renderer $engine)
     {
         $this->engine = $engine;
     }

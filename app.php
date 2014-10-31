@@ -9,11 +9,11 @@ require 'vendor/autoload.php';
 use Craft\App;
 use Craft\Orm;
 use Craft\View;
-use Craft\Routing;
+use Craft\Router;
 
 
 /**
- * Then, you might need to setup you database.
+ * First, you might need to setup you database.
  * Here is how to use a SQLite local base :
  */
 
@@ -28,7 +28,7 @@ Orm\Syn::SQLite(__APP__ . '/craft.db')     // or Syn::MySQL('dbname', [host, use
  * Or you can define env config /+lang/url, then you can retrieve with env('lang')
  */
 
-$router = new Routing\UrlRouter([
+$router = new Router\Urls([
     '/'     => 'App\Logic\Front::hello',
     '/lost' => 'App\Logic\Front::lost',
     '/nope' => 'App\Logic\Front::nope'
@@ -47,19 +47,24 @@ $engine = new View\Engine(__APP__ . '/views');
  * Create your application using these components
  */
 
-$app = new App\Kernel($router, $engine);
+$app = new App\Web($router, $engine);
 
 
 /**
  * Tell the app how to handle http errors (404 & 403)
  */
 
-$app->on(404, App\Event::redirect('/lost'));
-$app->on(403, App\Event::redirect('/nope'));
+$app->on(404, function($r, App\Response &$response){
+    $response = App\Response::redirect('/lost');
+});
+
+$app->on(403, function($r, App\Response &$response){
+    $response = App\Response::redirect('/lost');
+});
 
 
 /**
- * You can now run your webapp,
+ * You can now run your app,
  * well done !
  */
-$app->handle();
+$app->run();

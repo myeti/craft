@@ -29,25 +29,29 @@ $loader->add('App',     __APP__);
 
 
 /**
- * Setup http mode
- */
-if(php_sapi_name() != 'cli') {
-
-    // mode
-    Craft\Box\Mog::mode('dev');
-
-
-    // logger
-    Craft\Debug\Logger::register(
-        new Craft\Debug\Logger\FileLogger(__APP__ . '/logs')
-    );
-
-}
-
-
-/**
  * Load helpers
  */
 
 require __DIR__ . '/Craft/array.php';
 require __DIR__ . '/Craft/helpers.php';
+
+
+/**
+ * Setup env mode
+ */
+
+if(php_sapi_name() == 'cli') {
+    Craft\Box\Mog::cli(__ROOT__);
+}
+else {
+    Craft\Box\Mog::web('dev');
+}
+
+
+/**
+ * Setup logger
+ */
+
+Craft\Debug\Logger::register(
+    new Craft\Debug\Logger\FileLogger(__APP__ . '/logs')
+);

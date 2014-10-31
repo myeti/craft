@@ -12,7 +12,7 @@ namespace Craft\App;
 
 use Craft\Box\Mog;
 use Craft\Box\Context;
-use Craft\Routing\Route;
+use Craft\Router\Route;
 
 /**
  * The Request object contains

@@ -7,7 +7,7 @@ It only provides mere tools and libs, the rest is up to your creativity !
 
 - Craft\App
 - Craft\Box
-- Craft\Cli
+- Craft\App\Console
 - Craft\Data
 - Craft\Error
 - Craft\Event

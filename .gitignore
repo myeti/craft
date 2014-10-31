@@ -1,0 +1,4 @@
+.idea
+.idea*
+app/*.db
+app/logs/*

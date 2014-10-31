@@ -148,12 +148,12 @@ abstract class Mog
 
 
     /**
-     * Cli mode
-     * @return bool
+     * Get sapi name
+     * @return string
      */
-    public static function cli()
+    public static function sapi()
     {
-        return static::context()->cli;
+        return static::context()->sapi;
     }
 
 
@@ -345,17 +345,6 @@ abstract class Mog
 
 
     /**
-     * Set env mode (dev, test, prod)
-     * @param string $mode
-     * @return mixed
-     */
-    public static function mode($mode)
-    {
-        static::context()->mode($mode);
-    }
-
-
-    /**
      * Check env mode
      * @param string $mode
      * @return bool
@@ -383,9 +372,34 @@ abstract class Mog
     public static function context()
     {
         if(!static::$context) {
-            static::$context = Context::create();
+            static::$context = Context::web();
         }
 
+        return static::$context;
+    }
+
+
+    /**
+     * Create web context wrapper
+     * @param string $mode
+     * @return Context
+     */
+    public static function web($mode = 'dev')
+    {
+        static::$context = Context::web();
+        static::$context->mode($mode);
+        return static::$context;
+    }
+
+
+    /**
+     * Create cli context wrapper
+     * @param string $root
+     * @return Context
+     */
+    public static function cli($root)
+    {
+        static::$context = Context::cli($root);
         return static::$context;
     }
 

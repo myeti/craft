@@ -16,7 +16,7 @@ abstract class Logger
 {
 
     /** @var LoggerInterface[] */
-    protected static $instances;
+    protected static $instances = [];
 
 
     /**

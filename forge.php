@@ -1,12 +1,31 @@
 <?php
 
+/**
+ * Hello !
+ * I'll help you build your console app :)
+ */
 require 'vendor/autoload.php';
 
-use Craft\Cli;
+use Craft\App;
+use Craft\Router;
 
-$cli = new Cli\Console;
+/**
+ * You can now create your router based on your cli commands.
+ */
+$router = new Router\Basic([
+    'hello'  => 'App\Cli\Hello',
+    'deploy' => 'App\Cli\Deploy',
+]);
 
-// add user commands here
-//$cli->add(new App\Command\YourCommand);
 
-$cli->run();
+/**
+ * Create your application using these components
+ */
+$app = new App\Console($router);
+
+
+/**
+ * You can now run your app,
+ * well done !
+ */
+$app->run();

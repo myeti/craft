@@ -38,8 +38,8 @@ class Context
     /** @var Context\Url */
     public $url;
 
-    /** @var bool */
-    public $cli;
+    /** @var string */
+    public $sapi;
 
     /** @var string */
     public $ip;
@@ -229,10 +229,10 @@ class Context
 
 
     /**
-     * Generate request from env
+     * Generate request from web env
      * @return Context
      */
-    public static function create()
+    public static function web()
     {
         // create request
         $request = new static;
@@ -258,8 +258,8 @@ class Context
             $request->files[] = new Context\FormFile($file);
         }
 
-        // cli
-        $request->cli = php_sapi_name() == 'cli';
+        // sapi
+        $request->sapi = php_sapi_name();
 
         // devices
         $request->browser = @get_browser()->browser;
@@ -279,6 +279,45 @@ class Context
         $request->time = $request->server('REQUEST_TIME_FLOAT');
         $request->timezone = @date_default_timezone_get();
         $request->locale = @locale_get_default();
+
+        return $request;
+    }
+
+
+    /**
+     * Generate request from cli env
+     * @return Context
+     */
+    public static function cli($root)
+    {
+        // create request
+        $request = new static;
+
+        // data
+        $request->server = &$_SERVER;
+        $request->env = &$_ENV;
+
+        // argv
+        $argv = $request->server('argv', []);
+        array_shift($argv);
+
+        // physical path
+        $request->root = $root;
+
+        // sapi
+        $request->sapi = php_sapi_name();
+        $request->args = $argv;
+
+        // user
+        $request->local = true;
+        $request->time = microtime(true);
+        $request->timezone = @date_default_timezone_get();
+        if(!$request->timezone or $request->timezone == 'UTC') {
+            $request->timezone('Europe/Paris');
+        }
+        if(function_exists('locale_get_default')) {
+            $request->locale = locale_get_default();
+        }
 
         return $request;
     }

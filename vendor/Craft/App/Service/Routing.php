@@ -12,21 +12,21 @@ namespace Craft\App\Service;
 
 use Craft\App;
 use Craft\Box\Mog;
-use Craft\Routing\RouterInterface;
+use Craft\Router;
 use Craft\Debug\Logger;
 
 class Routing extends App\Service
 {
 
-    /** @var RouterInterface */
+    /** @var Router\Seeker */
     public $router;
 
 
     /**
      * Init with routes or router
-     * @param RouterInterface $router
+     * @param Router\Seeker $router
      */
-    public function __construct(RouterInterface $router)
+    public function __construct(Router\Seeker $router)
     {
         $this->router = $router;
     }

@@ -313,7 +313,7 @@ class Response
     public static function redirect($url, $outside = false)
     {
         $response = new self;
-        $response->code = 307;
+        $response->code = 302;
         $response->header('Location', $outside ? $url : url($url));
         $response->halt = true;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Cli\Command;
+namespace Craft\App\Console\Command;
 
 class Option extends Argument
 {

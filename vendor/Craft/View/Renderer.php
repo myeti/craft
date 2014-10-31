@@ -10,7 +10,7 @@
  */
 namespace Craft\View;
 
-interface EngineInterface
+interface Renderer
 {
 
     /**

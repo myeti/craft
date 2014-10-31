@@ -5,7 +5,6 @@
  * Use it to write all your business layer !
  */
 namespace App\Logic;
-use App\Entity\User;
 
 /**
  * You can already define some metadata that will be applied

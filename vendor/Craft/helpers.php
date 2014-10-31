@@ -112,6 +112,34 @@ function debug(...$args)
 
 
 /**
+ * Alias of debug()
+ * @param $args
+ */
+function dd(...$args)
+{
+    debug(...$args);
+}
+
+
+/**
+ * Debug with steps
+ * @param string $message
+ */
+function ds($message = 'step')
+{
+    static $steps;
+    if(!$steps) {
+        $steps = [];
+    }
+    if(!isset($steps[$message])) {
+        $steps[$message] = 1;
+    }
+
+    var_dump($message .':' . $steps[$message]++);
+}
+
+
+/**
  * Debug var in log
  * @param mixed $something
  */
