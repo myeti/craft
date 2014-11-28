@@ -98,4 +98,19 @@ abstract class Regex
         return static::replace($string, '/^' . $string . '$/', $wrapper);
     }
 
+
+    /**
+     * Apply regex using wildcard
+     * @param string $string
+     * @param string $pattern
+     * @return bool
+     */
+    public static function wildcard($string, $pattern)
+    {
+        $regex = preg_quote($pattern);
+        $regex = '#^' . str_replace('\\*', '(.*)', $regex) . '$#';
+
+        return (bool)static::match($string, $regex);
+    }
+
 } 

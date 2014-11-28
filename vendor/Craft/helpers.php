@@ -16,12 +16,7 @@
  */
 function classname($object)
 {
-    if(is_object($object)) {
-        $object = get_class($object);
-    }
-
-    $segments = explode('\\', $object);
-    return end($segments);
+    return \Craft\Kit\Object::classname($object);
 }
 
 
@@ -33,7 +28,7 @@ function classname($object)
  */
 function has_trait($object, $trait)
 {
-    return in_array($trait, class_uses($object));
+    return \Craft\Kit\Object::hasTrait($object, $trait);
 }
 
 
@@ -45,13 +40,7 @@ function has_trait($object, $trait)
  */
 function hydrate($object, array $data)
 {
-    foreach($data as $field => $value) {
-        if(property_exists($object, $field)) {
-            $object->{$field} = $value;
-        }
-    }
-
-    return $object;
+    return \Craft\Kit\Object::hydrate($object, $data);
 }
 
 
@@ -93,7 +82,7 @@ function url(...$segments)
  * Redirect to url
  * @param string $somewhere
  */
-function go(...$segments)
+function redirect(...$segments)
 {
     header('Location: ' . url(...$segments));
     exit;
@@ -102,22 +91,21 @@ function go(...$segments)
 
 /**
  * Debug var
- * @param mixed $something
+ * @param $vars
  */
-function debug(...$args)
+function boom(...$vars)
 {
-    var_dump(...$args);
-    exit;
+    \Craft\Debug\Bada::boom(...$vars);
 }
 
 
 /**
- * Alias of debug()
- * @param $args
+ * Alias of boom()
+ * @param $vars
  */
-function dd(...$args)
+function dd(...$vars)
 {
-    debug(...$args);
+    \Craft\Debug\Bada::boom(...$vars);
 }
 
 
@@ -127,15 +115,7 @@ function dd(...$args)
  */
 function ds($message = 'step')
 {
-    static $steps;
-    if(!$steps) {
-        $steps = [];
-    }
-    if(!isset($steps[$message])) {
-        $steps[$message] = 1;
-    }
-
-    var_dump($message .':' . $steps[$message]++);
+    \Craft\Debug\Bada::step($message);
 }
 
 
@@ -159,7 +139,7 @@ function log_debug(...$args)
  */
 function post($key, $fallback = null)
 {
-    return Craft\Box\Mog::post($key, $fallback);
+    return Craft\Box\Mog::value($key) ?: $fallback;
 }
 
 
@@ -193,7 +173,55 @@ function __($text, array $vars = [])
  * @param array $vars
  * @return mixed
  */
-function compose($string, array $vars = [])
+function str_compose($string, array $vars = [])
 {
     return Craft\Data\Text\String::compose($string, $vars);
+}
+
+
+/**
+ * Alias of Regex::match()
+ * @param string $string
+ * @param string $pattern
+ * @return bool
+ */
+function str_match($string, $pattern)
+{
+    return Craft\Data\Text\Regex::match($string, $pattern);
+}
+
+
+/**
+ * Alias of Regex::wildcard()
+ * @param string $string
+ * @param string $pattern
+ * @return bool
+ */
+function str_is($string, $pattern)
+{
+    return Craft\Data\Text\Regex::wildcard($string, $pattern);
+}
+
+
+/**
+ * Generate redirect response
+ * @param string $segments
+ * @return \Craft\App\Response
+ */
+function go(...$segments)
+{
+    $url = implode('/', $segments);
+    return \Craft\App\Response::redirect($url);
+}
+
+
+/**
+ * Generate redirect response away
+ * @param string $segments
+ * @return \Craft\App\Response
+ */
+function away(...$segments)
+{
+    $url = implode('/', $segments);
+    return \Craft\App\Response::redirect($url, true);
 }

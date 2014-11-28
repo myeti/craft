@@ -1,4 +1,4 @@
-# Craft 2.4
+# Craft 2.5
 
 Craft is a small & efficient PHP5.6 framework that helps you to quickly build webapps.
 It only provides mere tools and libs, the rest is up to your creativity !
@@ -6,16 +6,19 @@ It only provides mere tools and libs, the rest is up to your creativity !
 
 ## Quickstart
 
-Everything starts in your `index.php` :
+Everything starts in your `app/dev.php` :
 
 ```php
 <?php
 
-require 'vendor/autoload.php';
-
 use Craft\App;
 use Craft\View;
 use Craft\Router;
+use Craft\Box\Mog;
+
+// generate the request
+$request = App\Request::create();
+Mog::request($request);
 
 // create your routes
 $router = new Router\Urls([
@@ -25,15 +28,15 @@ $router = new Router\Urls([
 ]);
 
 // define your template engine
-$engine = new View\Engine(__APP__ . '/views');
+$html = new View\Engine\Html(__APP__ . '/views');
+
+// build your components
+$web      = new App\Service\Web($router, $html);
+$firewall = new App\Service\Firewall;
+$debugger = new App\Service\Debugger;
 
 // forge your app with these components
-$app = new App\Web($router, $engine);
-
-// catch 404
-$app->on(404, function($r, App\Response &$response){
-    $response = App\Response::redirect('/lost');
-});
+$app = new App\Kernel($web, $firewall, $debugger);
 
 // let's go !
 $app->run();

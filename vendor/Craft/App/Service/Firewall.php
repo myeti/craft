@@ -40,17 +40,18 @@ class Firewall extends App\Service
      */
     public function onKernelRequest(App\Request $request)
     {
+        // get action
+        $action = $request->action();
+
         // default value
-        if(!isset($request->meta['auth'])) {
-            $request->meta['auth'] = 0;
+        if(!isset($action->meta['auth'])) {
+            $action->meta['auth'] = 0;
         }
 
         // attempt
-        if(!Auth::rank($request->meta['auth'])) {
-            throw new App\Internal\Forbidden('User not allowed for query "' . $request->query . '"');
+        if(!Auth::rank($action->meta['auth'])) {
+            throw new App\Internal\Forbidden('User not allowed');
         }
-
-        Logger::info('User auth is allowed');
     }
 
 }

@@ -18,13 +18,14 @@ class ClassLoader
 
 
     /**
-     * Register as loader
-     * @return $this
+     * Init with built-in vendors
+     * @param array $vendors
      */
-    public function autoload()
+    public function __construct(array $vendors = [])
     {
-        spl_autoload_register([$this, 'load']);
-        return $this;
+        foreach($vendors as $vendor => $path) {
+            $this->add($vendor, $path);
+        }
     }
 
 
@@ -77,6 +78,16 @@ class ClassLoader
 
 
     /**
+     * Get registered vendors
+     * @return array
+     */
+    public function vendors()
+    {
+        return $this->vendors;
+    }
+
+
+    /**
      * Load a class
      * @param string $class
      * @return bool
@@ -111,12 +122,13 @@ class ClassLoader
 
 
     /**
-     * Get registered vendors
-     * @return array
+     * Invokable loader
+     * @param string $class
+     * @return bool
      */
-    public function vendors()
+    public function __invoke($class)
     {
-        return $this->vendors;
+        return $this->load($class);
     }
 
 }

@@ -17,9 +17,6 @@ class Engine implements Renderer
     public $templates;
 
     /** @var string */
-    public $assets;
-
-    /** @var string */
     protected $ext = '.php';
 
     /** @var callable[] */
@@ -31,32 +28,19 @@ class Engine implements Renderer
 
     /**
      * Setup engine
-     * @param string $templates path
-     * @param string $assets url
+     * @param string $directory
+     * @param string $ext
      */
-    public function __construct($templates = null, $assets = null)
+    public function __construct($directory, $ext = '.php')
     {
-        // set directories
-        $this->templates = rtrim($templates, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->assets = $assets ? rtrim($assets, '/') . '/' : url('/');
+        // template directory
+        $this->templates = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        // text helper
-        $this->set('e', '\Craft\Data\Text\String::escape');
-        $this->set('t', '\Craft\Data\Text\Lang::translate');
+        // file extension
+        $this->ext = $ext;
 
-        // box helper
-        $this->set('session', '\Craft\Box\Session::get');
-        $this->set('flash', '\Craft\Box\Flash::get');
-        $this->set('user', '\Craft\Box\Auth::user');
-        $this->set('rank', '\Craft\Box\Auth::rank');
-
-        // assets helper
-        $this->set('asset', [$this, 'asset']);
-        $this->set('css', [$this, 'css']);
-        $this->set('js', [$this, 'js']);
-
-        // engine helper
-        $this->set('partial', [$this, 'render']);
+        // inner rendering
+        $this->helper('partial', [$this, 'render']);
     }
 
 
@@ -66,7 +50,7 @@ class Engine implements Renderer
      * @param callable $callback
      * @return $this
      */
-    public function set($fn, callable $callback)
+    public function helper($fn, callable $callback)
     {
         $this->helpers[$fn] = $callback;
 
@@ -109,51 +93,6 @@ class Engine implements Renderer
         }
 
         return $content;
-    }
-
-
-    /**
-     * Get asset path
-     * @param string $filename
-     * @param string $ext
-     * @return string
-     */
-    public function asset($filename, $ext = null)
-    {
-        if($ext) {
-            $ext = '.' . ltrim($ext, '.');
-        }
-        return $this->assets . ltrim($filename, '/') . $ext;
-    }
-
-
-    /**
-     * Css tag
-     * @param $files
-     * @return string
-     */
-    public function css(...$files)
-    {
-        $css = [];
-        foreach($files as $file) {
-            $css[] = '<link type="text/css" href="' . $this->asset($file, '.css') . '" rel="stylesheet" />';
-        }
-        return implode("\n    ", $css) . "\n";
-    }
-
-
-    /**
-     * Js tag
-     * @param $files
-     * @return string
-     */
-    public function js(...$files)
-    {
-        $js = [];
-        foreach($files as $file) {
-            $js[] = '<script type="text/javascript" src="' . $this->asset($file, '.js')  . '"></script>';
-        }
-        return implode("\n    ", $js) . "\n";
     }
 
 

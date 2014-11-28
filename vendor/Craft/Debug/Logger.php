@@ -20,21 +20,14 @@ abstract class Logger
 
 
     /**
-     * Register logger
-     * @param LoggerInterface $logger
+     * Register logger(s)
+     * @param LoggerInterface $loggers
      */
-    public static function register(LoggerInterface $logger)
+    public static function register(LoggerInterface ...$loggers)
     {
-        static::$instances[] = $logger;
-    }
-
-
-    /**
-     * Clear loggers
-     */
-    public static function clear()
-    {
-        static::$instances[] = [];
+        foreach($loggers as $logger) {
+            static::$instances[] = $logger;
+        }
     }
 
 

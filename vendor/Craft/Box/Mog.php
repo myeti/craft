@@ -10,50 +10,25 @@
  */
 namespace Craft\Box;
 
+use Craft\Http;
+
 abstract class Mog
 {
 
-    /** @var Context */
-    protected static $context;
+    /** @var Http\Request */
+    protected static $request;
+
+    /** @var string */
+    protected static $mode = 'prod';
 
 
     /**
-     * Get root
-     * @return string
-     */
-    public static function root()
-    {
-        return static::context()->root;
-    }
-
-
-    /**
-     * Get path
-     * @return string
-     */
-    public static function path(...$args)
-    {
-        return static::context()->path(...$args);
-    }
-
-
-    /**
-     * Get http code
-     * @return string
+     * Get code
+     * @return int
      */
     public static function code()
     {
-        return static::context()->http->code;
-    }
-
-
-    /**
-     * Is https
-     * @return string
-     */
-    public static function secure()
-    {
-        return static::context()->http->secure;
+        return static::request()->code();
     }
 
 
@@ -63,344 +38,271 @@ abstract class Mog
      */
     public static function method()
     {
-        return static::context()->http->method;
+        return static::request()->method();
+    }
+
+
+    /**
+     * Is secure
+     * @return bool
+     */
+    public static function secure()
+    {
+        return static::request()->secure();
     }
 
 
     /**
      * Is async
-     * @return string
+     * @return bool
      */
     public static function ajax()
     {
-        return static::context()->http->ajax;
-    }
-
-
-    /**
-     * Get browser
-     * @return string
-     */
-    public static function browser()
-    {
-        return static::context()->browser;
-    }
-
-
-    /**
-     * Get mobile
-     * @return string
-     */
-    public static function mobile()
-    {
-        return static::context()->mobile;
+        return static::request()->ajax();
     }
 
 
     /**
      * Get url
+     * @return string|Http\Url
+     */
+    public static function url($to = null, ...$segments)
+    {
+        if($to) {
+            $to .= '/' . implode('/', $segments);
+            return static::request()->url()->relative($to);
+        }
+
+        return static::request()->url();
+    }
+
+
+    /**
+     * Get path from root
+     * @param string $path
      * @return string
      */
-    public static function url(...$args)
+    public static function path(...$path)
     {
-        return static::context()->url(...$args);
+        return static::request()->path(...$path);
     }
 
 
     /**
-     * Get query
-     * @return mixed|string
-     */
-    public static function query()
-    {
-        return static::context()->url->query;
-    }
-
-
-    /**
-     * Get base
+     * Get header
      * @return string
      */
-    public static function base()
+    public static function header($name)
     {
-        return static::context()->url->base;
+        return static::request()->header($name);
     }
 
 
     /**
-     * Get url from
-     * @return mixed|string
+     * Get headers
+     * @return array
      */
-    public static function from()
+    public static function headers()
     {
-        return static::context()->url->from;
+        return static::request()->headers();
     }
 
 
     /**
-     * Get ip
-     * @return mixed|string
+     * Get _server
+     * @return string
+     */
+    public static function server($name)
+    {
+        return static::request()->server($name);
+    }
+
+
+    /**
+     * Get all _server
+     * @return array
+     */
+    public static function servers()
+    {
+        return static::request()->servers();
+    }
+
+
+    /**
+     * Get _env
+     * @return string
+     */
+    public static function env($name)
+    {
+        return static::request()->env($name);
+    }
+
+
+    /**
+     * Get all _env
+     * @return array
+     */
+    public static function envs()
+    {
+        return static::request()->envs();
+    }
+
+
+    /**
+     * Get _get
+     * @return string
+     */
+    public static function param($name)
+    {
+        return static::request()->param($name);
+    }
+
+
+    /**
+     * Get all _get
+     * @return array
+     */
+    public static function params()
+    {
+        return static::request()->params();
+    }
+
+
+    /**
+     * Get _post
+     * @return string
+     */
+    public static function value($name)
+    {
+        return static::request()->value($name);
+    }
+
+
+    /**
+     * Get all _post
+     * @return array
+     */
+    public static function values()
+    {
+        return static::request()->values();
+    }
+
+
+    /**
+     * Get _file
+     * @return string
+     */
+    public static function file($name)
+    {
+        return static::request()->file($name);
+    }
+
+
+    /**
+     * Get all _file
+     * @return array
+     */
+    public static function files()
+    {
+        return static::request()->files();
+    }
+
+
+    /**
+     * Get _cookie
+     * @return string
+     */
+    public static function cookie($name)
+    {
+        return static::request()->cookie($name);
+    }
+
+
+    /**
+     * Get all _cookie
+     * @return array
+     */
+    public static function cookies()
+    {
+        return static::request()->code();
+    }
+
+
+    /**
+     * Set custom data
+     * @return Http\Request
+     */
+    public static function set($name, $value)
+    {
+        static::request()->set($name, $value);
+        return static::request();
+    }
+
+
+    /**
+     * Get custom data
+     * @return mixed
+     */
+    public static function get($name)
+    {
+        return static::request()->get($name);
+    }
+
+
+    /**
+     * Get user agent
+     * @return string
+     */
+    public static function agent()
+    {
+        return static::request()->agent();
+    }
+
+
+    /**
+     * Get user ip
+     * @return string
      */
     public static function ip()
     {
-        return static::context()->ip;
+        return static::request()->ip();
     }
 
 
     /**
-     * Get sapi name
+     * Get user locale
      * @return string
      */
-    public static function sapi()
+    public static function locale()
     {
-        return static::context()->sapi;
-    }
-
-
-    /**
-     * Is local
-     * @return bool
-     */
-    public static function local()
-    {
-       return static::context()->local;
+        return static::request()->locale();
     }
 
 
     /**
      * Get time
-     * @param mixed $set
-     * @return mixed|string
+     * @return float
      */
-    public static function time($set = null)
+    public static function time()
     {
-        if(!is_null($set)) {
-            static::context()->time = $set;
+        return static::request()->time();
+    }
+
+
+    /**
+     * Get request instance
+     * @return Http\Request
+     */
+    public static function request(Http\Request $request = null)
+    {
+        if($request) {
+            static::$request = $request;
+        }
+        if(!static::$request) {
+            static::$request = Http\Request::create();
         }
 
-        return static::context()->time;
-    }
-
-
-    /**
-     * Get timezone
-     * @param mixed $set
-     * @return string
-     */
-    public static function timezone($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->timezone = $set;
-        }
-
-        return static::context()->timezone;
-    }
-
-
-    /**
-     * Get locale
-     * @param mixed $set
-     * @return string
-     */
-    public static function locale($set = null)
-    {
-        if(!is_null($set)) {
-            static::context()->locale = $set;
-        }
-
-        return static::context()->locale;
-    }
-
-
-    /**
-     * $_GET value
-     * @param  string $key
-     * @param  string $fallback
-     * @return mixed
-     */
-    public static function arg($key, $fallback = null)
-    {
-        return static::context()->arg($key, $fallback);
-    }
-
-
-    /**
-     * $_GET values
-     * @return array
-     */
-    public static function args()
-    {
-        return static::context()->args;
-    }
-
-
-    /**
-     * $_POST value
-     * @param  string $key
-     * @param  string $fallback
-     * @return mixed
-     */
-    public static function form($key, $fallback = null)
-    {
-        return static::context()->form($key, $fallback);
-    }
-
-
-    /**
-     * $_POST values
-     * @return array
-     */
-    public static function forms()
-    {
-        return static::context()->form;
-    }
-
-
-    /**
-     * $_FILES value
-     * @param  string $key
-     * @param  string $fallback
-     * @return array|object
-     */
-    public static function file($key, $fallback = null)
-    {
-        return static::context()->file($key, $fallback);
-    }
-
-
-    /**
-     * $_FILES values
-     * @return array
-     */
-    public static function files()
-    {
-        return static::context()->files;
-    }
-
-
-    /**
-     * $_SERVER value
-     * @param  string $key
-     * @param  string $fallback
-     * @return mixed
-     */
-    public static function server($key, $fallback = null)
-    {
-        return static::context()->server($key, $fallback);
-    }
-
-
-    /**
-     * $_SERVER values
-     * @return array
-     */
-    public static function servers()
-    {
-        return static::context()->server;
-    }
-
-
-    /**
-     * Headers value
-     * @param string $key
-     * @param null $fallback
-     * @return mixed
-     */
-    public static function header($key, $fallback = null)
-    {
-        return static::context()->header($key, $fallback);
-    }
-
-
-    /**
-     * Header values
-     * @return array
-     */
-    public static function headers()
-    {
-        return static::context()->header;
-    }
-
-
-    /**
-     * Get env value
-     * @param string $key
-     * @param mixed $fallback
-     * @return mixed
-     */
-    public static function env($key, $fallback = null)
-    {
-        return static::context()->env($key, $fallback);
-    }
-
-
-    /**
-     * $_GET values
-     * @return array
-     */
-    public static function envs()
-    {
-        return static::context()->env;
-    }
-
-
-    /**
-     * Check env mode
-     * @param string $mode
-     * @return bool
-     */
-    public static function in($mode)
-    {
-        return static::context()->in($mode);
-    }
-
-
-    /**
-     * Kupo !
-     * @return string
-     */
-    public static function kupo()
-    {
-        return static::context()->kupo();
-    }
-
-
-    /**
-     * Create context wrapper
-     * @return Context
-     */
-    public static function context()
-    {
-        if(!static::$context) {
-            static::$context = Context::web();
-        }
-
-        return static::$context;
-    }
-
-
-    /**
-     * Create web context wrapper
-     * @param string $mode
-     * @return Context
-     */
-    public static function web($mode = 'dev')
-    {
-        static::$context = Context::web();
-        static::$context->mode($mode);
-        return static::$context;
-    }
-
-
-    /**
-     * Create cli context wrapper
-     * @param string $root
-     * @return Context
-     */
-    public static function cli($root)
-    {
-        static::$context = Context::cli($root);
-        return static::$context;
+        return static::$request;
     }
 
 }

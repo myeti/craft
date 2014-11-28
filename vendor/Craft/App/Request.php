@@ -10,54 +10,65 @@
  */
 namespace Craft\App;
 
-use Craft\Box\Mog;
-use Craft\Box\Context;
+use Craft\Http;
+use Craft\Kit\Action;
 use Craft\Router\Route;
 
-/**
- * The Request object contains
- * all the data given from route
- */
-class Request
+class Request extends Http\Request implements RequestInterface
 {
 
-    /** @var float */
-    public $time;
-
-    /** @var string */
-    public $query;
-
-    /** @var array */
-    public $args = [];
-
-    /** @var callable */
-    public $action;
-
-    /** @var array */
-    public $params = [];
-
-    /** @var array */
-    public $meta = [];
+    /** @var Action */
+    protected $action;
 
     /** @var Route */
-    public $route;
+    protected $route;
 
     /** @var string */
-    public $error;
-
-    /** @var Context */
-    public $context;
+    protected $error;
 
 
     /**
-     * New request
+     * Get or Set action
+     * @param Action $action
+     * @return Action
      */
-    public function __construct($query = null)
+    public function action(Action $action = null)
     {
-        $this->query = $query;
-        $this->route = new Route;
-        $this->time = microtime(true);
-        $this->context = Mog::context();
+        if($action) {
+            $this->action = $action;
+        }
+
+        return $this->action;
+    }
+
+
+    /**
+     * Get or Set route
+     * @param Route $route
+     * @return Route
+     */
+    public function route(Route $route = null)
+    {
+        if($route) {
+            $this->route = $route;
+        }
+
+        return $this->route;
+    }
+
+
+    /**
+     * Get or Set error
+     * @param $message
+     * @return string
+     */
+    public function error($message = null)
+    {
+        if($message) {
+            $this->error = $message;
+        }
+
+        return $this->error;
     }
 
 } 

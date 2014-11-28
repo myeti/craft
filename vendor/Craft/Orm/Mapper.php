@@ -62,26 +62,32 @@ class Mapper
     /**
      * Get entity by name
      * @param string $name
+     * @param bool $silent
      * @throws \RuntimeException
      * @return Entity
      */
-    public function entity($name)
+    public function entity($name, $silent = false)
     {
-        if(!isset($this->entities[$name])) {
+        if(isset($this->entities[$name])) {
+            return $this->entities[$name];
+        }
+
+        if(!$silent) {
             throw new \RuntimeException('Unknown entity "' . $name . '"');
         }
 
-        return $this->entities[$name];
+        return false;
     }
 
 
     /**
      * Get entity by model
      * @param string $model
+     * @param bool $silent
      * @throws \RuntimeException
      * @return Entity
      */
-    public function model($model)
+    public function model($model, $silent = false)
     {
         foreach($this->entities as $entity) {
             if($entity->model == $model) {
@@ -89,7 +95,11 @@ class Mapper
             }
         }
 
-        throw new \RuntimeException('Unknown entity with model "' . $model . '"');
+        if(!$silent) {
+            throw new \RuntimeException('Unknown entity with model "' . $model . '"');
+        }
+
+        return false;
     }
 
 

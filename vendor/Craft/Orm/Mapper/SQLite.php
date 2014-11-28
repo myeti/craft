@@ -11,7 +11,6 @@
 namespace Craft\Orm\Mapper;
 
 use Craft\Orm\Mapper;
-use Craft\Debug\Logger;
 
 class SQLite extends Mapper
 {
@@ -25,8 +24,6 @@ class SQLite extends Mapper
         // create pdo instance
         $pdo = new \PDO('sqlite:' . $filename);
         parent::__construct($pdo);
-
-        Logger::info('SQLite connected using `' . $filename . '`');
     }
 
 

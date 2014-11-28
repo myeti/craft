@@ -1,0 +1,66 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Console mode
+ */
+
+define('__ENV__', 'cli');
+
+require 'vendor/autoload.php';
+
+use Craft\Debug\Logger;
+use Craft\Box\Mog;
+use Craft\Router;
+use Craft\App;
+
+
+/**
+ * Error level
+ */
+
+error_reporting(E_ALL & ~E_NOTICE);
+ini_set('error_reporting', E_ALL & ~E_NOTICE);
+
+
+/**
+ * Generate request
+ */
+
+$request = App\Request::create();
+Mog::request($request);
+
+
+/**
+ * Logger setup
+ */
+
+Logger::register(
+    new Logger\DailyFile(__APP__ . '/logs')
+);
+
+
+/**
+ * Router setup
+ */
+
+$commands = new Router\Basic([
+    'hello'  => 'App\Console\Hello',
+    'deploy' => 'App\Console\Deploy',
+]);
+
+
+/**
+ * Final application setup
+ */
+
+$console = new App\Service\Console($commands);
+
+$app = new App\Kernel($console);
+
+
+/**
+ * Run ! You fools !
+ */
+
+$app->handle($request);

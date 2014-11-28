@@ -10,7 +10,6 @@
  */
 namespace Craft\Orm\Mapper;
 
-use Craft\Debug\Logger;
 use Craft\Orm\Mapper;
 
 class MySQL extends Mapper
@@ -37,7 +36,6 @@ class MySQL extends Mapper
 
         // init db
         parent::__construct($pdo);
-        Logger::info('MySQL connected using ' . $settings['username'] . '@' . $settings['host'] . '/' . $dbname);
     }
 
 } 

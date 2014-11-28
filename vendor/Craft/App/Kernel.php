@@ -12,6 +12,7 @@ namespace Craft\App;
 
 use Craft\Event;
 use Craft\Debug\Logger;
+use Psr\Log\LogLevel;
 
 /**
  * Very core app class :
@@ -19,6 +20,17 @@ use Craft\Debug\Logger;
  */
 class Kernel extends Event\Channel
 {
+
+    /**
+     * Init with built-in services
+     * @param Service $services
+     */
+    public function __construct(Service ...$services)
+    {
+        foreach($services as $service) {
+            $this->plug($service);
+        }
+    }
 
 
     /**
@@ -34,28 +46,16 @@ class Kernel extends Event\Channel
 
 
     /**
-     * Auto-resolve request and run
-     * @param mixed $query
-     * @return bool
-     */
-    public function run($query = null)
-    {
-        $request = new Request($query);
-        return $this->handle($request);
-    }
-
-
-    /**
      * Handle context request
-     * @param Request $request
+     * @param RequestInterface $request
      * @throws Internal
      * @throws \Exception
      * @return bool
      */
-    public function handle(Request $request)
+    public function handle(RequestInterface $request)
     {
         // init data
-        $response = $error = null;
+        $response = $e = null;
 
         // resolve & execute request
         try {
@@ -68,12 +68,11 @@ class Kernel extends Event\Channel
         }
         // catch normal error
         catch(\Exception $e) {
-            $error = $e;
             $response = $this->error($e, $request);
         }
         // output any response
         finally {
-            $this->respond($request, $response, $error);
+            $this->respond($request, $response, $e);
             return $this->end($request, $response);
         }
     }
@@ -81,16 +80,13 @@ class Kernel extends Event\Channel
 
     /**
      * Start process
-     * @param Request $request
-     * @return Request
+     * @param RequestInterface $request
+     * @return RequestInterface
      */
-    protected function start(Request $request)
+    protected function start(RequestInterface $request)
     {
         // filter event
         $this->fire('kernel.start', $request);
-
-        // log starting
-        Logger::info('Kernel start');
 
         return $request;
     }
@@ -98,38 +94,30 @@ class Kernel extends Event\Channel
 
     /**
      * Execute request
-     * @param Request $request
+     * @param RequestInterface $request
      * @return Response
      */
-    protected function execute(Request $request)
+    protected function execute(RequestInterface $request)
     {
         // event filter
         $this->fire('kernel.request', $request);
 
         // not a valid callable
-        if(!is_callable($request->action)) {
+        if(!is_callable($request->action()->callable)) {
             throw new \BadMethodCallException('Request::action must be a valid callable.');
         }
 
         // run
-        $data = call_user_func_array($request->action, $request->params);
+        $data = call_user_func_array($request->action()->callable, $request->action()->args);
 
         // action returned response object
         if($data instanceof Response) {
             $response = $data;
         }
-        // action returned printable content
-        elseif(is_string($data)) {
+        // action returned content
+        else {
             $response = new Response($data);
         }
-        // action returned mixed data
-        else {
-            $response = new Response;
-            $response->data = $data;
-        }
-
-        // log execution
-        Logger::info('Request executed');
 
         return $response;
     }
@@ -137,34 +125,24 @@ class Kernel extends Event\Channel
 
     /**
      * Send response
-     * @param Request $request
+     * @param RequestInterface $request
      * @param Response $response
      * @param \Exception $e
      * @return $this
      */
-    protected function respond(Request $request, Response $response, \Exception $e = null)
+    protected function respond(RequestInterface $request, Response $response, \Exception $e = null)
     {
-        // no response
-        if(!$response) {
-            Logger::info('No response to send');
-            return $this;
-        }
+        // has response
+        if($response) {
 
-        // no error, apply filter
-        if(!$e) {
-            $this->fire('kernel.response', $request, $response);
-            $log = 'Response ' . $response->code . ' sent';
-        }
-        // had error, skip filter
-        else {
-            $log = 'Response ' . $response->code . ' sent with error(s)';
-        }
+            // no error, apply filter
+            if(!$e) {
+                $this->fire('kernel.response', $request, $response);
+            }
 
-        // send response to client
-        $response->send();
-
-        // log sending
-        Logger::info($log);
+            // send response to client
+            $response->send();
+        }
 
         return $this;
     }
@@ -172,21 +150,18 @@ class Kernel extends Event\Channel
 
     /**
      * End process
-     * @param Request $request
+     * @param RequestInterface $request
      * @param Response $response
      * @return string
      */
-    protected function end(Request $request, Response $response)
+    protected function end(RequestInterface $request, Response $response)
     {
         // filter event
         $this->fire('kernel.end', $request, $response);
 
         // execution time
         $now = microtime(true);
-        $elapsed = number_format($now - $request->time, 4);
-
-        // finish log
-        Logger::info('Kernel end - execution time : ' . $elapsed . 's');
+        $elapsed = number_format($now - $request->time(), 4);
 
         return $elapsed;
     }
@@ -195,11 +170,11 @@ class Kernel extends Event\Channel
     /**
      * Catch internal error
      * @param Internal $e
-     * @param Request $request
+     * @param RequestInterface $request
      * @throws Internal
      * @return string
      */
-    protected function internal(Internal $e, Request $request)
+    protected function internal(Internal $e, RequestInterface $request)
     {
         // create response
         $response = new Response;
@@ -209,14 +184,14 @@ class Kernel extends Event\Channel
 
         // not caught, try as normal error
         if(!$caught) {
-            return $this->error($e, $request);
+            return $this->error($e, $request, LogLevel::WARNING);
         }
 
         // update request
-        $request->error = $e->getCode() . ' ' . $e->getMessage();
+        $request->error($e->getCode() . ' ' . $e->getMessage());
 
         // log error
-        Logger::notice('Internal : ' . $request->error);
+        Logger::notice('Internal : ' . $request->error());
 
         return $response;
     }
@@ -225,23 +200,24 @@ class Kernel extends Event\Channel
     /**
      * Catch other error
      * @param \Exception $e
-     * @param Request $request
+     * @param RequestInterface $request
+     * @param string $level
      * @throws \Exception
      * @return string
      */
-    protected function error(\Exception $e, Request $request)
+    protected function error(\Exception $e, RequestInterface $request, $level = LogLevel::CRITICAL)
     {
         // create message
         $class = get_class($e);
         $message = $class;
 
         // update request
-        if($e->getMessage()) {
-            $request->error = $e->getMessage();
-            $message .= ' "' . $request->error . '"';
+        if($error = $e->getMessage()) {
+            $request->error($error);
+            $message .= ' "' . $error . '"';
         }
         else {
-            $request->error = $message;
+            $request->error($message);
         }
 
         // add file:line
@@ -251,7 +227,7 @@ class Kernel extends Event\Channel
         $response = new Response;
 
         // log error
-        Logger::critical($message);
+        Logger::log($level, $message);
 
         // specific & general error
         $caught = $this->fire('kernel.error.' . $class, $request, $response, $e);

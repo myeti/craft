@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 /**
- * Hey ! This is your first model.
+ * This is a database model.
  *
- * A model is entity based on a database table.
+ * A model is an entity based on a database table.
  * Each property is a reference to a column.
  *
  * In order to create the table from the model,
@@ -21,7 +21,7 @@ class User
 {
 
     /**
-     * This trait allow the model to use the Syn methods
+     * This trait allow the model to use the Orm quick methods
      * such as : User::all(), User::save(), ...
      */
     use Model;

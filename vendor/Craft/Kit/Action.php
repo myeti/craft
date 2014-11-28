@@ -40,7 +40,7 @@ class Action
      * @param array $args
      * @param array $meta
      * @param int $type
-     * @param \Reflector $ref
+     * @param \ReflectionFunctionAbstract $ref
      */
     public function __construct(callable $callable, array $args = [], array $meta = [], $type = self::CLOSURE, \ReflectionFunctionAbstract $ref = null)
     {
