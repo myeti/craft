@@ -11,7 +11,7 @@ Everything starts in your `app/dev.php` :
 ```php
 <?php
 
-use Craft\Mog;
+use Craft\Box;
 use Craft\Web;
 use Craft\App;
 use Craft\View;
@@ -19,7 +19,6 @@ use Craft\Router;
 
 // generate the request
 $request = App\Request::create();
-Box\Mog::request($request);
 
 // create your routes
 $router = new Router\Urls([
@@ -33,7 +32,7 @@ $html = new View\Engine\Html(__APP__ . '/views');
 $app = new Web\App($router, $html);
 
 // let's go !
-$app->run();
+$app->handle($request);
 ```
 
 You can add params to your url : `/url/:with/:param`, your method will receive `$with` and `$param`.
