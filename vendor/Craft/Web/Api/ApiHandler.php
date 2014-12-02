@@ -1,23 +1,19 @@
 <?php
 
-namespace Craft\App\Service;
+namespace Craft\Web\Api;
 
+use Craft\Web;
 use Craft\App;
-use Craft\Debug\Error;
-use Craft\Debug\Logger;
-use Craft\Orm\Syn;
 use Craft\Router;
-use Craft\View;
-use Craft\Kit\Action;
 
 /**
  * Handle url routing, param mapping and json rendering
  */
-class Api extends WebHandler
+class Handler extends Web\App\Handler
 {
 
     /**
-     * Init HttpHandler
+     * Init Http Api Handler
      * @param Router\Seeker $router
      */
     public function __construct(Router\Seeker $router)

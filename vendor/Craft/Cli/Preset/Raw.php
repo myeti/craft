@@ -1,10 +1,12 @@
 <?php
 
-namespace Craft\App\Console\Command;
+namespace Craft\Cli\Command;
 
-use Craft\App\Console\Command;
+namespace Craft\Cli\Preset;
 
-class Raw extends Command
+use Craft\Cli;
+
+class Raw extends Cli\Command
 {
 
     /** @var string */

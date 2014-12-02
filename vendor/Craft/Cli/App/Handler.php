@@ -8,8 +8,9 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\App\Service;
+namespace Craft\Cli\App;
 
+use Craft\Cli;
 use Craft\App;
 use Craft\Kit\Action;
 use Craft\Router;
@@ -17,7 +18,7 @@ use Craft\Router;
 /**
  * Handle cli routing and command running
  */
-class Console extends App\Service
+class Handler extends App\Service
 {
 
     /** @var Router\Seeker */
@@ -61,8 +62,8 @@ class Console extends App\Service
         }
 
         // set landing & listing command
-        $this->router->add(new Router\Route(null, new App\Console\Landing));
-        $this->router->add(new Router\Route('list', new App\Console\Listing($commands)));
+        $this->router->add(new Router\Route(null, new Cli\Preset\Landing));
+        $this->router->add(new Router\Route('list', new Cli\Preset\Listing($commands)));
     }
 
 
@@ -86,7 +87,7 @@ class Console extends App\Service
         $args = $options = [];
         $argv = $request->cli()->argv;
 
-        /** @var App\Console\Command $command */
+        /** @var Cli\Command $command */
         $command = $route->action;
         if(!is_object($command)) {
             $command = new $command;
@@ -182,7 +183,7 @@ class Console extends App\Service
      */
     public function onNotFound(App\Request $request)
     {
-        App\Console\Dialog::say('unknown command ', $request->cli()->command);
+        Cli\Dialog::say('unknown command ', $request->cli()->command);
     }
 
 
@@ -195,7 +196,7 @@ class Console extends App\Service
      */
     public function onBadRequest($req, $res, \Exception $e)
     {
-        App\Console\Dialog::say($e->getMessage());
+        Cli\Dialog::say($e->getMessage());
     }
 
 }

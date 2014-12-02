@@ -1,11 +1,10 @@
 <?php
 
-namespace Craft\App\Service;
+namespace Craft\Web\Service;
 
 use Craft\App;
 use Craft\Box\Auth;
 use Craft\Box\Session;
-use Craft\Box\Mog;
 use Craft\Debug\Logger;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;

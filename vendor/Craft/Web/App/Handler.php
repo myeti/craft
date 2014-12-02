@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\App\Service;
+namespace Craft\Web\App;
 
 use Craft\App;
 use Craft\Debug\Error;
@@ -9,11 +9,12 @@ use Craft\Orm\Syn;
 use Craft\Router;
 use Craft\View;
 use Craft\Kit\Action;
+use Craft\Box\Mog;
 
 /**
  * Handle url routing, param mapping and html rendering
  */
-class Web extends App\Service
+class Handler extends App\Service
 {
 
     /** @var Router\Seeker */
@@ -27,7 +28,7 @@ class Web extends App\Service
 
 
     /**
-     * Init HttpHandler
+     * Init Http Handler
      * @param Router\Seeker $router
      * @param View\Renderer $engine
      */

@@ -1,10 +1,10 @@
 <?php
 
-namespace Craft\App\Console;
+namespace Craft\Cli\Preset;
 
-use Craft\App\Console;
+use Craft\Cli;
 
-class Landing extends  Console\Command
+class Landing extends Cli\Command
 {
 
     /** @var string */
@@ -18,7 +18,7 @@ class Landing extends  Console\Command
      */
     public function run($args, $options)
     {
-        Dialog::say('Welcome to the Craft cli interface');
+        Cli\Dialog::say('Welcome to the Craft cli interface');
     }
 
 }

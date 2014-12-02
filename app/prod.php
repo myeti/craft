@@ -10,6 +10,7 @@ use Craft\Orm;
 use Craft\Router;
 use Craft\View;
 use Craft\App;
+use Craft\Web;
 
 
 /**
@@ -67,14 +68,17 @@ $html = new View\Engine\Html(
 
 
 /**
+ * Firewall setup
+ */
+
+$firewall = new Web\Service\Firewall;
+
+
+/**
  * Final application setup
  */
 
-$web      = new App\Service\Web($router, $html);
-$firewall = new App\Service\Firewall;
-
-
-$app = new App\Kernel($web, $firewall);
+$app = new Web\App($router, $html, $firewall);
 
 
 /**
@@ -82,11 +86,13 @@ $app = new App\Kernel($web, $firewall);
  */
 
 $app->on(404, function($request, &$response) use($html) {
-    $response = new App\Response($html->render('error.404'), 404);
+    $template = $html->render('error.404');
+    $response = new App\Response($template, 404);
 });
 
 $app->on(403, function($request, &$response) use($html) {
-    $response = new App\Response($html->render('error.403'), 403);
+    $template = $html->render('error.403');
+    $response = new App\Response($template, 403);
 });
 
 

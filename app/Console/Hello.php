@@ -2,9 +2,9 @@
 
 namespace App\Console;
 
-use Craft\App\Console;
+use Craft\Cli;
 
-class Hello extends  Console\Command
+class Hello extends  Cli\Command
 {
 
     /** @var string */
@@ -18,7 +18,7 @@ class Hello extends  Console\Command
      */
     public function run($args, $options)
     {
-        Console\Dialog::say('Hello you :D !');
+        Cli\Dialog::say('Hello you :D !');
     }
 
 }

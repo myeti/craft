@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\App\Service;
+namespace Craft\Web\Service;
 
 use Craft\App;
 use Craft\Debug\Logger;

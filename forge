@@ -11,8 +11,8 @@ require 'vendor/autoload.php';
 
 use Craft\Debug\Logger;
 use Craft\Box\Mog;
-use Craft\Router;
-use Craft\App;
+use Craft\App\Request;
+use Craft\Cli;
 
 
 /**
@@ -27,7 +27,7 @@ ini_set('error_reporting', E_ALL & ~E_NOTICE);
  * Generate request
  */
 
-$request = App\Request::create();
+$request = Request::create();
 Mog::request($request);
 
 
@@ -41,22 +41,13 @@ Logger::register(
 
 
 /**
- * Router setup
+ * Application setup
  */
 
-$commands = new Router\Basic([
+$app = new Cli\App([
     'hello'  => 'App\Console\Hello',
     'deploy' => 'App\Console\Deploy',
 ]);
-
-
-/**
- * Final application setup
- */
-
-$console = new App\Service\Console($commands);
-
-$app = new App\Kernel($console);
 
 
 /**

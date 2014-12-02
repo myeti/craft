@@ -11,6 +11,7 @@ Everything starts in your `app/dev.php` :
 ```php
 <?php
 
+use Craft\Web;
 use Craft\App;
 use Craft\View;
 use Craft\Router;
@@ -30,13 +31,8 @@ $router = new Router\Urls([
 // define your template engine
 $html = new View\Engine\Html(__APP__ . '/views');
 
-// build your components
-$web      = new App\Service\Web($router, $html);
-$firewall = new App\Service\Firewall;
-$debugger = new App\Service\Debugger;
-
 // forge your app with these components
-$app = new App\Kernel($web, $firewall, $debugger);
+$app = new Web\App($router, $html, $firewall, $debugger);
 
 // let's go !
 $app->run();
