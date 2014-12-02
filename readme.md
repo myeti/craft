@@ -11,28 +11,26 @@ Everything starts in your `app/dev.php` :
 ```php
 <?php
 
+use Craft\Mog;
 use Craft\Web;
 use Craft\App;
 use Craft\View;
 use Craft\Router;
-use Craft\Box\Mog;
 
 // generate the request
 $request = App\Request::create();
-Mog::request($request);
+Box\Mog::request($request);
 
 // create your routes
 $router = new Router\Urls([
-    '/'     => 'App\Logic\Front::hello',
-    '/lost' => 'App\Logic\Front::lost',
-    '/nope' => 'App\Logic\Front::nope'
+    '/' => 'App\Logic\Front::hello',
 ]);
 
 // define your template engine
 $html = new View\Engine\Html(__APP__ . '/views');
 
 // forge your app with these components
-$app = new Web\App($router, $html, $firewall, $debugger);
+$app = new Web\App($router, $html);
 
 // let's go !
 $app->run();
