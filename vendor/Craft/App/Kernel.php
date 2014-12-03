@@ -23,24 +23,24 @@ class Kernel extends Event\Channel
 
     /**
      * Init with built-in services
-     * @param Service $services
+     * @param Plugin $plugins
      */
-    public function __construct(Service ...$services)
+    public function __construct(Plugin ...$plugins)
     {
-        foreach($services as $service) {
-            $this->plug($service);
+        foreach($plugins as $plugin) {
+            $this->plug($plugin);
         }
     }
 
 
     /**
-     * Add service
-     * @param Service $service
+     * Add plugin
+     * @param Plugin $plugin
      * @return $this
      */
-    public function plug(Service $service)
+    public function plug(Plugin $plugin)
     {
-        $service->listen($this);
+        $plugin->listen($this);
         return $this;
     }
 

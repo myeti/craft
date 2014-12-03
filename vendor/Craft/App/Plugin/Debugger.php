@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Web\Service;
+namespace Craft\App\Plugin;
 
 use Craft\App;
 use Craft\Box\Auth;
@@ -9,7 +9,7 @@ use Craft\Debug\Logger;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 
-class Debugger extends App\Service
+class Debugger extends App\Plugin
 {
 
     /** @var Run */
@@ -51,7 +51,6 @@ class Debugger extends App\Service
 
         // new handler
         $handler = new PrettyPageHandler;
-//        dd($request->error());
 
         // add data
         $handler->addDataTable('Craft/Url', (array)$request->url());

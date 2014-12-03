@@ -12,7 +12,7 @@ namespace Craft\App;
 
 use Craft\Event;
 
-abstract class Service implements Event\Listener
+abstract class Plugin implements Event\Listener
 {
 
     /**

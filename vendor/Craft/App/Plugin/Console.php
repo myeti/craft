@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Cli\App;
+namespace Craft\App\Plugin;
 
 use Craft\Cli;
 use Craft\App;
@@ -18,7 +18,7 @@ use Craft\Router;
 /**
  * Handle cli routing and command running
  */
-class Handler extends App\Service
+class Console extends App\Plugin
 {
 
     /** @var Router\Seeker */

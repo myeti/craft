@@ -10,7 +10,6 @@ use Craft\Orm;
 use Craft\Router;
 use Craft\View;
 use Craft\App;
-use Craft\Web;
 
 
 /**
@@ -69,13 +68,14 @@ $html = new View\Engine\Html(
 
 
 /**
- * Build services and application
+ * Build plugins and the final app
  */
 
-$firewall = new Web\Service\Firewall;
-$debugger = new Web\Service\Debugger;
+$web      = new App\Plugin\Web($router, $html);
+$firewall = new App\Plugin\Firewall;
+$debugger = new App\Plugin\Debugger;
 
-$app = new Web\App($router, $html, $firewall, $debugger);
+$app = new App\Kernel($web, $firewall, $debugger);
 
 
 /**

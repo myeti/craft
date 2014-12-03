@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\Web\Service;
+namespace Craft\App\Plugin;
 
 use Craft\App;
 use Craft\Debug\Logger;
@@ -20,7 +20,7 @@ use Craft\Box\Auth;
  *
  * Needs Service\RequestResolver
  */
-class Firewall extends App\Service
+class Firewall extends App\Plugin
 {
 
     /**

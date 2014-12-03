@@ -1,15 +1,14 @@
 <?php
 
-namespace Craft\Web\Api;
+namespace Craft\App\Plugin;
 
-use Craft\Web;
 use Craft\App;
 use Craft\Router;
 
 /**
  * Handle url routing, param mapping and json rendering
  */
-class Handler extends Web\App\Handler
+class Api extends Web
 {
 
     /**
@@ -31,5 +30,4 @@ class Handler extends Web\App\Handler
     {
         $response = App\Response::json($response->content());
     }
-
 }

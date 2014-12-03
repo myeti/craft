@@ -1,6 +1,6 @@
 <?php
 
-namespace Craft\Web\App;
+namespace Craft\App\Plugin;
 
 use Craft\App;
 use Craft\Debug\Error;
@@ -14,7 +14,7 @@ use Craft\Box\Mog;
 /**
  * Handle url routing, param mapping and html rendering
  */
-class Handler extends App\Service
+class Web extends App\Plugin
 {
 
     /** @var Router\Seeker */

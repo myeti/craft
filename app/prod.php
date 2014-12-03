@@ -68,17 +68,13 @@ $html = new View\Engine\Html(
 
 
 /**
- * Firewall setup
- */
-
-$firewall = new Web\Service\Firewall;
-
-
-/**
  * Final application setup
  */
 
-$app = new Web\App($router, $html, $firewall);
+$web      = new App\Plugin\Web($router, $html);
+$firewall = new App\Plugin\Firewall;
+
+$app = new App\Kernel($web, $firewall);
 
 
 /**

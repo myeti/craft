@@ -22,6 +22,9 @@ class Engine implements Renderer
     /** @var callable[] */
     protected $helpers = [];
 
+    /** @var array */
+    protected $data = [];
+
     /** @var Engine[] */
     protected static $instances = [];
 
@@ -41,6 +44,19 @@ class Engine implements Renderer
 
         // inner rendering
         $this->helper('partial', [$this, 'render']);
+    }
+
+
+    /**
+     * Set global data
+     * @param string $var
+     * @param mixed $value
+     * @return $this
+     */
+    public function set($var, $value)
+    {
+        $this->data[$var] = $value;
+        return $this;
     }
 
 
@@ -74,7 +90,7 @@ class Engine implements Renderer
 
         // define data
         $template = $this->templates . $template . $this->ext;
-        $data = array_merge((array)$this, $data);
+        $data = array_merge($this->data, $data);
 
         // create template & compile
         $template = new Template($template, $data, $sections, $this->helpers, $this);
