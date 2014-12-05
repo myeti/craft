@@ -11,14 +11,11 @@
 namespace Craft\App\Plugin;
 
 use Craft\App;
-use Craft\Debug\Logger;
 use Craft\Box\Auth;
 
 /**
  * Check if user is allowed to execute
- * the requested action when @auth is specified.
- *
- * Needs Service\RequestResolver
+ * the requested action when meta @auth is specified.
  */
 class Firewall extends App\Plugin
 {
@@ -49,7 +46,7 @@ class Firewall extends App\Plugin
         }
 
         // attempt
-        if(!Auth::rank($action->meta['auth'])) {
+        if(Auth::rank() < $action->meta['auth']) {
             throw new App\Internal\Forbidden('User not allowed');
         }
     }

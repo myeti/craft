@@ -80,7 +80,7 @@ class Select extends Query
 
             // return models or objects
             return ($this->model)
-                ? $sth->fetchAll(\PDO::FETCH_CLASS, $this->model)
+                ? $sth->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $this->model)
                 : $sth->fetchAll(\PDO::FETCH_OBJ);
         }
 

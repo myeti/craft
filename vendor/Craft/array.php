@@ -312,7 +312,9 @@ function array_flat_drop(&$array, $key)
 {
     if($resolved = array_flat_resolve($array, $key)) {
         list($item, $last) = $resolved;
-        unset($item[$last]);
+        if(isset($item[$last])) {
+            unset($item[$last]);
+        }
         return true;
     }
 

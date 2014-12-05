@@ -9,6 +9,10 @@ use Craft\Debug\Logger;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 
+/**
+ * Launch Whoops debugger tool when
+ * an error or exception is raised
+ */
 class Debugger extends App\Plugin
 {
 

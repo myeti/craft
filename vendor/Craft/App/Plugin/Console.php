@@ -24,6 +24,7 @@ class Console extends App\Plugin
     /** @var Router\Seeker */
     protected $router;
 
+
     /**
      * Init basic routes
      * @param Router\Seeker $router
@@ -41,8 +42,9 @@ class Console extends App\Plugin
     public function register()
     {
         return [
-            'kernel.start' => 'onKernelStart',
+            'kernel.start'   => 'onKernelStart',
             'kernel.request' => 'onKernelRequest',
+            'kernel.error'   => 'onKernelError',
             404 => 'onNotFound',
             400 => 'onBadRequest'
         ];
@@ -188,7 +190,7 @@ class Console extends App\Plugin
 
 
     /**
-     * Handle command not found
+     * Handle bad command line
      * @param $req
      * @param $res
      * @param \Exception $e
@@ -197,6 +199,18 @@ class Console extends App\Plugin
     public function onBadRequest($req, $res, \Exception $e)
     {
         Cli\Dialog::say($e->getMessage());
+    }
+
+
+    /**
+     * Handle error
+     * @param App\Request $request
+     * @param App\Response $response
+     * @param \Exception $e
+     */
+    public function onKernelError(App\Request $request, App\Response $response, \Exception $e)
+    {
+        Cli\Dialog::say('Error : ' . $e->getMessage());
     }
 
 }

@@ -27,13 +27,11 @@ abstract class Auth
 
     /**
      * Get rank
-     * @param int $compare
-     * @return int|bool
+     * @return int
      */
-    public static function rank($compare = null)
+    public static function rank()
     {
-        $rank = static::provider()->get('rank', 0);
-        return is_null($compare) ? $rank : ($compare >= $rank);
+        return static::provider()->get('rank', 0);
     }
 
 

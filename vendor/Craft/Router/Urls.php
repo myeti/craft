@@ -192,7 +192,7 @@ class Urls implements Seeker
     protected function compile($query)
     {
         $pattern = str_replace('/', '\/', $query);
-        $pattern = preg_replace('#\:(\w+)#', '(?P<$1>(.+))', $pattern);
+        $pattern = preg_replace('#\:([a-zA-Z0-9_]+)#', '(?P<$1>(\w+))', $pattern);
         return '#^' . $pattern . '$#';
     }
 

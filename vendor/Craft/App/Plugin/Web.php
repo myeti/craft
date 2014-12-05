@@ -4,7 +4,6 @@ namespace Craft\App\Plugin;
 
 use Craft\App;
 use Craft\Debug\Error;
-use Craft\Debug\Logger;
 use Craft\Orm\Syn;
 use Craft\Router;
 use Craft\View;
@@ -110,7 +109,7 @@ class Web extends App\Plugin
 
                     // get entity
                     $entity = isset($this->mappers[$classname])
-                        ? call_user_func_array($this->mappers[$classname], [$request])
+                        ? call_user_func($this->mappers[$classname], $request)
                         : Syn::one($classname, ['id' => $args[$key]]);
 
                     // model not found
@@ -148,8 +147,8 @@ class Web extends App\Plugin
             $content = $this->engine->render($meta['render'], $response->content());
             $response->content($content);
         }
-        // render json if async request
-        elseif(isset($meta['json']) and $meta['json'] == 'async' and Mog::ajax()) {
+        // render json if ajax request
+        elseif(isset($meta['json']) and $meta['json'] == 'on ajax' and Mog::ajax()) {
             $response = App\Response::json($response->content());
         }
         // render json on demand

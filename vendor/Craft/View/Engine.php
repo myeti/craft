@@ -100,10 +100,10 @@ class Engine implements Renderer
         if($parent = $template->parent()) {
 
             // extract layout data
-            list($layout, $data, $sections) = $parent;
+            list($layout, $parentData, $sections) = $parent;
 
             // define data & render layout
-            $data = array_merge((array)$this, $data);
+            $data = array_merge($data, $parentData);
             $content = $this->render($layout, $data, $sections);
 
         }
