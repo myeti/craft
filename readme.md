@@ -13,18 +13,14 @@ Everything starts in your `app.php` :
 
 use Craft\App;
 use Craft\App\Plugin;
-use Craft\Box\Mog;
 use Craft\View;
 use Craft\Router;
-use Craft\Orm;
-use Craft\Debug\Logger;
 
 
 /**
  * Generate the request
  */
 $request = App\Request::create();
-Mog::request($request);
 
 
 /**
@@ -40,14 +36,14 @@ $routing = new Plugin\Routing($urls);
 /**
  * Setup your html engine
  */
-$html = new Plugin\Templating(
+$templating = new Plugin\Templating(
     new View\Html(__APP__ . '/Front/views', $request->url()->relative())
 );
 
 /**
  * Forge your app with these components
  */
-$app = new App\Kernel($routing, $html);
+$app = new App\Kernel($routing, $templating);
 $app->handle($request);
 ```
 
