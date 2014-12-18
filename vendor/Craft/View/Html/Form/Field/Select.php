@@ -10,7 +10,7 @@
  */
 namespace Craft\View\Html\Form\Field;
 
-use Craft\View\Html\Engine;
+use Craft\View\Html;
 use Craft\View\Html\Form\Field;
 
 class Select extends Field
@@ -40,7 +40,7 @@ class Select extends Field
      */
     public function input()
     {
-        return Engine::make(dirname(__DIR__) . '/templates/select.input', ['field' => $this]);
+        return Html::make(dirname(__DIR__) . '/templates/select.input', ['field' => $this]);
     }
 
 } 

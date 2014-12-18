@@ -1,8 +1,6 @@
 <?php
 
-namespace Craft\View\Engine;
-
-use Craft\View\Engine;
+namespace Craft\View;
 
 class Html extends Engine
 {

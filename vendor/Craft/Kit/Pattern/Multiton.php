@@ -13,7 +13,7 @@ namespace Craft\Kit\Pattern;
 trait Multiton
 {
 
-    /** @var self[] */
+    /** @var static[] */
     protected static $instances = [];
 
 

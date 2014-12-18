@@ -10,7 +10,15 @@
  */
 namespace Craft\View;
 
-class Template extends Template\Sandbox
+interface EngineInterface
 {
-    // safe sandbox
+
+    /**
+     * Render content
+     * @param mixed $content
+     * @param array $data
+     * @return string
+     */
+    public function render($content, $data = null);
+
 } 

@@ -2,7 +2,7 @@
 
 namespace Craft\Orm;
 
-use Craft\Kit\Metadata;
+use Craft\Kit\Annot;
 
 class Entity
 {
@@ -260,7 +260,7 @@ class Entity
     public static function from($model, \PDO $pdo)
     {
         // get name
-        $name = Metadata::object($model, 'name') ?: strtolower(classname($model));
+        $name = Annot::object($model, 'name') ?: strtolower(get_classname($model));
 
         // create node
         $entity = new static($pdo, $name, $model);
@@ -270,13 +270,13 @@ class Entity
         foreach($properties as $property => $default) {
 
             // get type
-            $type = Metadata::property($model, $property, 'var');
+            $type = Annot::property($model, $property, 'var');
             if(!$type) {
                 $type = 'string';
             }
 
             // can be null ?
-            $null = (Metadata::property($model, $property, 'null') == 'true') ? true : false;
+            $null = (Annot::property($model, $property, 'null') == 'true') ? true : false;
 
             // add field
             $entity->set($property, $type, $null, $default);

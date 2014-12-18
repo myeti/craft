@@ -16,11 +16,22 @@ use Craft\App;
 
 
 /**
- * Error level
+ * Config
  */
 
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
+
+date_default_timezone_set('UTC');
+
+
+/**
+ * Logger setup
+ */
+
+Logger::register(
+    new Logger\DailyFile(__DIR__ . '/logs')
+);
 
 
 /**
@@ -32,29 +43,20 @@ Mog::request($request);
 
 
 /**
- * Logger setup
+ * Commands setup
  */
 
-Logger::register(
-    new Logger\DailyFile(__APP__ . '/logs')
-);
-
-
-/**
- * Router setup
- */
-
-$router = new Router\Basic([
-    'hello'  => 'App\Console\Hello',
-    'deploy' => 'App\Console\Deploy',
+$commands = new Router\Basic([
+    'hello'  => 'App\Cli\Hello',
+    'deploy' => 'App\Cli\Deploy',
 ]);
+
+$console = new App\Plugin\Console($commands);
 
 
 /**
  * Application setup
  */
-
-$console = new App\Plugin\Console($router);
 
 $app = new App\Kernel($console);
 

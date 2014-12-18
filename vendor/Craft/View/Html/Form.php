@@ -10,6 +10,8 @@
  */
 namespace Craft\View\Html;
 
+use Craft\View\Html;
+
 class Form implements \IteratorAggregate
 {
 
@@ -83,7 +85,7 @@ class Form implements \IteratorAggregate
      */
     public function open()
     {
-        return Engine::make(__DIR__ . '/Form/templates/form.open', ['form' => $this]);
+        return Html::make(__DIR__ . '/Form/templates/form.open', ['form' => $this]);
     }
 
 
@@ -93,7 +95,7 @@ class Form implements \IteratorAggregate
      */
     public function close()
     {
-        return Engine::make(__DIR__ . '/Form/templates/form.close');
+        return Html::make(__DIR__ . '/Form/templates/form.close');
     }
 
 
@@ -103,7 +105,7 @@ class Form implements \IteratorAggregate
      */
     public function __toString()
     {
-        return Engine::make(__DIR__ . '/Form/templates/form', ['form' => $this]);
+        return Html::make(__DIR__ . '/Form/templates/form', ['form' => $this]);
     }
 
 }

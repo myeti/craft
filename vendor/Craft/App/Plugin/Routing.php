@@ -4,37 +4,41 @@ namespace Craft\App\Plugin;
 
 use Craft\App;
 use Craft\Debug\Error;
+use Craft\Kit\Runnable;
 use Craft\Orm\Syn;
 use Craft\Router;
 use Craft\View;
-use Craft\Kit\Action;
-use Craft\Box\Mog;
 
 /**
  * Handle url routing, param mapping and html rendering
  */
-class Web extends App\Plugin
+class Routing extends App\Plugin
 {
 
-    /** @var Router\Seeker */
-    protected $router;
-
-    /** @var View\Renderer */
-    protected $engine;
+    /** @var Router\Seeker[] */
+    protected $routers = [];
 
     /** @var callable[] */
     protected $mappers = [];
 
 
     /**
-     * Init Http Handler
-     * @param Router\Seeker $router
-     * @param View\Renderer $engine
+     * Init Router Handler
+     * @param Router\Seeker $routers
      */
-    public function __construct(Router\Seeker $router, View\Renderer $engine)
+    public function __construct(Router\Seeker ...$routers)
     {
-        $this->router = $router;
-        $this->engine = $engine;
+        $this->routers = $routers;
+    }
+
+
+    /**
+     * Get listening methods
+     * @return array
+     */
+    public function register()
+    {
+        return ['kernel.request' => 'onKernelRequest'];
     }
 
 
@@ -52,19 +56,6 @@ class Web extends App\Plugin
 
 
     /**
-     * Get listening methods
-     * @return array
-     */
-    public function register()
-    {
-        return [
-            'kernel.request' => 'onKernelRequest',
-            'kernel.response' => 'onKernelResponse'
-        ];
-    }
-
-
-    /**
      * Handle request
      * @param App\Request $request
      * @throws App\Internal\NotFound
@@ -73,7 +64,12 @@ class Web extends App\Plugin
     public function onKernelRequest(App\Request $request)
     {
         // find route from query
-        $route = $this->router->find($request->url()->query);
+        $route = null;
+        foreach($this->routers as $router) {
+            if($route = $router->find($request->url()->query)) {
+                break;
+            }
+        }
 
         // 404
         if(!$route) {
@@ -81,11 +77,11 @@ class Web extends App\Plugin
         }
 
         // resolve action
-        $action = Action::resolve($route->action);
+        $action = new Runnable($route->action);
 
         // clean args
         $args = [];
-        $params = $action->ref->getParameters();
+        $params = $action->reflector->getParameters();
         foreach($params as $key => $param) {
 
             // map action arg names with route arg values
@@ -129,32 +125,6 @@ class Web extends App\Plugin
         $action->args = $args;
         $request->action($action);
         $request->route($route);
-    }
-
-
-    /**
-     * Handle response
-     * @param App\Response $response
-     * @param App\Request $request
-     */
-    public function onKernelResponse(App\Request $request, App\Response &$response = null)
-    {
-        // get meta
-        $meta = $request->action()->meta;
-
-        // render template on demand
-        if(!empty($meta['render'])) {
-            $content = $this->engine->render($meta['render'], $response->content());
-            $response->content($content);
-        }
-        // render json if ajax request
-        elseif(isset($meta['json']) and $meta['json'] == 'on ajax' and Mog::ajax()) {
-            $response = App\Response::json($response->content());
-        }
-        // render json on demand
-        elseif(isset($meta['json']) and !$meta['json']) {
-            $response = App\Response::json($response->content());
-        }
     }
 
 }

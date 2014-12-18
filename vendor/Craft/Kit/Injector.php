@@ -14,89 +14,30 @@ class Injector implements InjectorInterface
 {
 
     /** @var array */
-    protected $params = [];
-
-    /** @var array */
-    protected $shared = [];
-
-    /** @var array */
     protected $factories = [];
 
 
     /**
-     * Setup with params
-     * @param array $params
-     */
-    public function __construct(array $params = [])
-    {
-        foreach($params as $class => $param) {
-            $this->params[$class] = $param;
-        }
-    }
-
-
-    /**
-     * Check if injector has definition
-     * @param $class
+     * Check if instance has definition
+     * @param string $class
      * @return bool
      */
     public function has($class)
     {
-        return isset($this->shared[$class])
-            ?: isset($this->factories[$class])
-            ?: isset($this->params[$class]);
+        return isset($this->factories[$class]);
     }
 
 
     /**
-     * Define params for class instance
-     * @param $class
-     * @param array $params
+     * Store instance
+     * @param string $class
+     * @param object $instance
      * @return $this
      */
-    public function define($class, array $params = [])
+    public function store($class, &$instance)
     {
-        $class = is_object($class) ? get_class($class) : $class;
-        $this->params[$class] = $params;
-
-        return $this;
-    }
-
-
-    /**
-     * Set user factory
-     * @param $class
-     * @param callable $factory
-     * @return $this
-     */
-    public function factory($class, callable $factory)
-    {
-        $class = is_object($class) ? get_class($class) : $class;
-        $this->factories[$class] = $factory;
-
-        return $this;
-    }
-
-
-    /**
-     * Define singleton
-     * @param $class
-     * @param array $params
-     * @return $this
-     */
-    public function share($class, array $params = [])
-    {
-        $classname = is_object($class) ? get_class($class) : $class;
-        $this->define($classname, $params);
-        $this->shared[$classname] = function(array $params = []) use($class)
+        $this->factories[$class] = function() use(&$instance)
         {
-            static $instance;
-            if(!$instance) {
-                $instance = is_object($class)
-                    ? $class
-                    : $this->resolve($class, $params);
-            }
-
             return $instance;
         };
 
@@ -105,13 +46,28 @@ class Injector implements InjectorInterface
 
 
     /**
-     * Remove singleton
-     * @param $class
+     * Set user factory
+     * @param string $class
+     * @param callable $factory
+     * @param bool $singleton
      * @return $this
      */
-    public function unshare($class)
+    public function define($class, callable $factory, $singleton = false)
     {
-        unset($this->shared[$class]);
+        if(!$singleton) {
+            $this->factories[$class] = $factory;
+        }
+        else {
+            $this->factories[$class] = function(...$params) use($factory)
+            {
+                static $instance;
+                if(!$instance) {
+                    $instance = $factory(...$params);
+                }
+
+                return $instance;
+            };
+        }
 
         return $this;
     }
@@ -121,84 +77,16 @@ class Injector implements InjectorInterface
      * Make class instance
      * @param $class
      * @param array $params
-     * @return null
+     * @return object
      */
     public function make($class, array $params = [])
     {
-        // define params
-        if(!$params and isset($this->params[$class])) {
-            $params = $this->params[$class];
+        // no factory
+        if(!$this->has($class)) {
+            return false;
         }
 
-        // is shared
-        if(isset($this->shared[$class])) {
-
-            // already object
-            if(is_object($this->shared[$class])) {
-                return call_user_func_array($this->shared[$class], $params);
-            }
-
-            // resolve
-            return $this->resolve($class, $params);
-        }
-
-        // has factory
-        if(isset($this->factories[$class])) {
-            return call_user_func_array($this->factories[$class], $params);
-        }
-
-        return $this->resolve($class, $params);
-    }
-
-
-    /**
-     * Resolve instance
-     * @param $class
-     * @param array $params
-     * @return null
-     */
-    protected function resolve($class, array $params = [])
-    {
-        // already object
-        if(is_object($class)) {
-            return $class;
-        }
-
-        // scalar value
-        if(!class_exists($class)) {
-            return $class;
-        }
-
-        // get Kition
-        $Kitor = new \ReflectionClass($class);
-        $constructor = $Kitor->getConstructor();
-
-        // resolve params
-        $args = [];
-        if($constructor) {
-            foreach($constructor->getParameters() as $parameter) {
-
-                // define name
-                $name = $parameter->getName();
-
-                // user defined
-                if(isset($params[$name])) {
-                    $args[$name] = $this->make($params[$name]);
-                }
-                // type hint
-                elseif($hint = $parameter->getClass()) {
-                    $args[$name] = $this->make($hint->getName());
-                }
-                // default value
-                else {
-                    $args[$name] = $parameter->getDefaultValue();
-                }
-
-            }
-        }
-
-        // run constructor
-        return $Kitor->newInstanceArgs($args);
+        return call_user_func_array($this->factories[$class], $params);
     }
 
 } 

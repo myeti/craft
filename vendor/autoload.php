@@ -37,5 +37,4 @@ spl_autoload_register($loader);
  * Load helpers
  */
 
-require __DIR__ . '/Craft/array.php';
 require __DIR__ . '/Craft/helpers.php';

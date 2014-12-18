@@ -11,7 +11,7 @@
 namespace Craft\App;
 
 use Craft\Http;
-use Craft\Kit\Action;
+use Craft\Kit\Runnable;
 use Craft\Router\Route;
 
 interface RequestInterface extends Http\RequestInterface
@@ -20,10 +20,10 @@ interface RequestInterface extends Http\RequestInterface
 
     /**
      * Get or Set action
-     * @param Action $action
-     * @return Action
+     * @param Runnable $action
+     * @return Runnable
      */
-    public function action(Action $action = null);
+    public function action(Runnable $action = null);
 
 
     /**

@@ -10,7 +10,7 @@
  */
 namespace Craft\Router;
 
-use Craft\Kit\Metadata;
+use Craft\Kit\Annot;
 
 class Api extends Urls
 {
@@ -36,13 +36,13 @@ class Api extends Urls
     public function map($class)
     {
         // get prefix
-        if($prefix = Metadata::object($class, 'url')) {
+        if($prefix = Annot::object($class, 'url')) {
             $prefix = '/' . trim($prefix, '/');
         }
 
         // scan & parse
         foreach(get_class_methods($class) as $method) {
-            if($url = Metadata::method($class, $method, 'url')) {
+            if($url = Annot::method($class, $method, 'url')) {
                 $url = $prefix . '/' . ltrim($url, '/');
                 $route = new Route($url, $class . '::' . $method);
                 $this->add($route);

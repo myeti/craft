@@ -2,10 +2,8 @@
 
 namespace Craft\Debug\Logger;
 
-use Craft\Box\Mog;
 use Craft\Debug\Error\DirectoryNotFound;
 use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
 
 class DailyFile extends AbstractLogger
 {
@@ -21,7 +19,7 @@ class DailyFile extends AbstractLogger
      */
     public function __construct($directory)
     {
-        // error
+        // create directory
         $directory = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         if(!is_dir($directory)) {
             throw new DirectoryNotFound('Directory "' . $directory . '" not found.');

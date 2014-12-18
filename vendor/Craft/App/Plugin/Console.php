@@ -12,7 +12,7 @@ namespace Craft\App\Plugin;
 
 use Craft\Cli;
 use Craft\App;
-use Craft\Kit\Action;
+use Craft\Kit\Runnable;
 use Craft\Router;
 
 /**
@@ -171,7 +171,7 @@ class Console extends App\Plugin
         }
 
         // prepare action
-        $action = new Action([$command, 'run'], [$args, $options]);
+        $action = new Runnable([$command, 'run'], $args, $options);
 
         // update request
         $request->action($action);

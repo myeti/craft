@@ -30,7 +30,7 @@ class Native extends Map implements ProviderInterface
         $this->name = $name;
 
         // config
-        if(!session_id()) {
+        if(!session_id() and !headers_sent()) {
             ini_set('session.use_trans_sid', 0);
             ini_set('session.use_only_cookies', 1);
             ini_set("session.cookie_lifetime", 604800);

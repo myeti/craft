@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console;
+namespace App\Cli;
 
 use Craft\Cli;
 

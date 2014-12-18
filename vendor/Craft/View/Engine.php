@@ -10,7 +10,7 @@
  */
 namespace Craft\View;
 
-class Engine implements Renderer
+class Engine implements EngineInterface
 {
 
     /** @var string */
@@ -93,7 +93,7 @@ class Engine implements Renderer
         $data = array_merge($this->data, $data);
 
         // create template & compile
-        $template = new Template($template, $data, $sections, $this->helpers, $this);
+        $template = new Engine\Template($template, $data, $sections, $this->helpers, $this);
         $content = $template->compile();
 
         // layout ?

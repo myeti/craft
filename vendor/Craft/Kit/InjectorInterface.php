@@ -14,53 +14,35 @@ interface InjectorInterface
 {
 
     /**
-     * Check if injector has definition
-     * @param $class
+     * Has instance definition
+     * @param string $class
      * @return bool
      */
     public function has($class);
 
 
     /**
-     * Define params for class instance
-     * @param $class
-     * @param array $params
-     * @return $this
+     * Store instance
+     * @param string $class
+     * @param object $instance
      */
-    public function define($class, array $params = []);
+    public function store($class, &$instance);
 
 
     /**
      * Set user factory
-     * @param $class
+     * @param string $class
      * @param callable $factory
-     * @return $this
+     * @param bool $singleton
      */
-    public function factory($class, callable $factory);
-
-
-    /**
-     * Define singleton
-     * @param $class
-     * @param array $params
-     * @return $this
-     */
-    public function share($class, array $params = []);
-
-
-    /**
-     * Remove singleton
-     * @param $class
-     * @return $this
-     */
-    public function unshare($class);
+    public function define($class, callable $factory, $singleton = false);
 
 
     /**
      * Make class instance
-     * @param $class
+     * @param string $class
      * @param array $params
-     * @return null
+     * @return object
      */
     public function make($class, array $params = []);
 

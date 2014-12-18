@@ -2,7 +2,7 @@
 
 namespace Craft\Io;
 
-class Curl implements Transport
+class Curl
 {
 
     /** @var resource */
@@ -15,34 +15,10 @@ class Curl implements Transport
      */
     public function __construct($url)
     {
-        $this->open($url);
-        $this->opt(CURLOPT_RETURNTRANSFER, 1);
-    }
-
-
-    /**
-     * Open resource
-     * @param string $url
-     * @return bool
-     */
-    public function open($url)
-    {
-        if($this->curl) {
-            $this->close();
-        }
-
         $this->curl = curl_init($url);
         $this->opt(CURLOPT_URL, $url);
-
-        return (bool)$this->curl;
+        $this->opt(CURLOPT_RETURNTRANSFER, true);
     }
-
-
-    /**
-     * Receive data from service
-     * @return mixed
-     */
-    public function receive() {}
 
 
     /**
@@ -59,53 +35,41 @@ class Curl implements Transport
 
 
     /**
-     * Send data
-     * @param null $null
+     * Magic set option
+     * @param string $opt
+     * @param mixed $value
+     * @return $this
+     */
+    public function __call($opt, $value)
+    {
+        $opt = preg_replace('/[a-z]([A-Z])/', '_$1', $opt);
+        $opt = 'CURL_' . strtoupper($opt);
+        if(defined($opt)) {
+            $this->opt($opt, $value);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * Send request
      * @return mixed
      */
-    public function send($null = null)
+    public function send()
     {
         return curl_exec($this->curl);
     }
 
 
     /**
-     * Close resource
-     * @return bool
+     * Close curl
      */
-    public function close()
+    public function __destruct()
     {
-        curl_close($this->curl);
-        return true;
-    }
-
-
-    /**
-     * Create curl GET request
-     * @param string $url
-     * @param array $data
-     * @return self
-     */
-    public static function get($url, array $data = [])
-    {
-        $query = http_build_query($data);
-        return new self($url . '?' . $query);
-    }
-
-
-    /**
-     * Create curl POST request
-     * @param string $url
-     * @param array $data
-     * @return self
-     */
-    public static function post($url, array $data = [])
-    {
-        $curl = new self($url);
-        $curl->opt(CURLOPT_POST, 1);
-        $curl->opt(CURLOPT_POSTFIELDS, $data);
-
-        return $curl;
+        if($this->curl) {
+            curl_close($this->curl);
+        }
     }
 
 }

@@ -13,7 +13,7 @@ use Whoops\Handler\PrettyPageHandler;
  * Launch Whoops debugger tool when
  * an error or exception is raised
  */
-class Debugger extends App\Plugin
+class Debugging extends App\Plugin
 {
 
     /** @var Run */

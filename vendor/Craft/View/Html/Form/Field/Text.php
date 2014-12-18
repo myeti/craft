@@ -10,7 +10,7 @@
  */
 namespace Craft\View\Html\Form\Field;
 
-use Craft\View\Html\Engine;
+use Craft\View\Html;
 use Craft\View\Html\Form\Field;
 
 class Text extends Field
@@ -22,7 +22,7 @@ class Text extends Field
      */
     public function input()
     {
-        return Engine::make(dirname(__DIR__) . '/templates/text.input', ['field' => $this]);
+        return Html::make(dirname(__DIR__) . '/templates/text.input', ['field' => $this]);
     }
 
 } 

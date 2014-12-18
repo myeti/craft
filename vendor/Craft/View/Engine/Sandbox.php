@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the Licence.txt
  * file that was distributed with this source code.
  */
-namespace Craft\View\Template;
+namespace Craft\View\Engine;
 
 use Craft\View\Engine;
 use Craft\Debug\Error\FileNotFound;

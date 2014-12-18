@@ -8,6 +8,9 @@ class Request implements RequestInterface
     /** @var Url */
     protected $url;
 
+    /** @var Request\Accept */
+    protected $accept;
+
     /** @var Request\Cli */
     protected $cli;
 
@@ -18,11 +21,13 @@ class Request implements RequestInterface
     /**
      * New Request
      * @param Url $url
+     * @param Request\Accept $accept
      * @param Request\Cli $cli
      */
-    public function __construct(Url $url = null, Request\Cli $cli = null)
+    public function __construct(Url $url = null, Request\Accept $accept = null, Request\Cli $cli = null)
     {
         $this->url = $url ?: Url::current();
+        $this->accept = $accept ?: Request\Accept::create();
         $this->cli = $cli ?: Request\Cli::create();
 
         // default values from cli mode
@@ -274,6 +279,21 @@ class Request implements RequestInterface
         }
 
         return $this->cli;
+    }
+
+
+    /**
+     * Get accept header
+     * @param Request\Accept $accept
+     * @return Request\Accept
+     */
+    public function accept(Request\Accept $accept = null)
+    {
+        if($accept) {
+            $this->accept = $accept;
+        }
+
+        return $this->accept;
     }
 
 

@@ -120,6 +120,12 @@ interface RequestInterface
     public function cookies();
 
     /**
+     * Get accept header
+     * @return Request\Accept
+     */
+    public function accept();
+
+    /**
      * Get cli data
      * @return Request\Cli
      */
